@@ -33,6 +33,12 @@ public final class Banco extends JavaPlugin {
         saveDefaultConfig();
 
         registerListeners();
+
+        try {
+            saveData();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         loadData();
 
         if (getConfig().getBoolean("auto-save.enabled"))
