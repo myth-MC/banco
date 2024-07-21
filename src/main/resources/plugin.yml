@@ -1,0 +1,9 @@
+name: banco
+version: '${project.version}'
+authors: [mythMC, U8092]
+contributors:
+api-version: 1.21
+main: ovh.mythmc.banco.Banco
+softdepend: [ PlaceholderAPI ]
+loadbefore: [ Towny ]
+depend: [ Vault ]

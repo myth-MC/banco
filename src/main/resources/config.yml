@@ -1,0 +1,27 @@
+#
+# General settings
+#
+
+debug: true # Send debug messages to console
+
+#
+# Currency settings
+#
+
+currency:
+  name:
+    singular: Dollar
+    plural: Dollars
+  symbol: $
+  remove-drops: true # Prevent valuable items from dropping when killing mobs
+  value: # https://jd.papermc.io/paper/1.21/org/bukkit/Material.html
+    GOLD_INGOT: 1
+    GOLD_BLOCK: 9
+
+#
+# Auto save settings
+#
+
+auto-save:
+  enabled: true
+  frequency: 300 # Frequency in seconds (300 seconds = every 5 minutes)
