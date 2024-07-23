@@ -35,7 +35,26 @@
 **banco 🏦** provides server owners with a simple and configurable item-based currency system, ideal for RPG-style servers.
 
 >[!WARNING]
-> banco is still under heavy development. Although most of its features do work, we cannot promise a bug-free experience. You can report any misbehaviours or share any feedback by [creating an issue](https://github.com/myth-MC/banco/issues). 
+> banco is still under development. Although most of its features do work, we cannot promise a bug-free experience. You can report any misbehaviours or share any feedback by [creating an issue](https://github.com/myth-MC/banco/issues). 
+
+### Features
+
+* **Item-based** economy system
+* [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
+* [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
+* **Lightweight** and performant
+* Developed with **configurability** and simplicity on mind
+* No dependencies other than Vault
+
+### Planned features
+
+* [Folia](https://papermc.io/software/folia) support
+* [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlockedAPI) support
+* Commands
+* Custom Model Data support
+* MySQL support
+* Opt-in update tracker
+* Baltop
 
 ### Compatibility chart
 
@@ -115,8 +134,8 @@ auto-save:
 * [Towny Advanced](https://townyadvanced.github.io)
 * [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/): `%banco_balance%`
 * Any other plugin with Vault support
-
+  
 <div id="bugs"></div>
 
 ## 🐛 Known issues
-* None (for now 👀)
+* Items are dropped to the ground and can be picked up by other players
