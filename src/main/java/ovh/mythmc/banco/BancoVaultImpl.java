@@ -4,6 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import ovh.mythmc.banco.utils.PlayerUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,10 +48,7 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public boolean hasAccount(String s) {
-        if (Banco.getInstance().getEconomyManager().getAccount(Bukkit.getOfflinePlayer(s).getUniqueId()) == null)
-            return false;
-
-        return true;
+        return Banco.getInstance().getEconomyManager().getAccount(PlayerUtils.getUuid(s)) != null;
     }
 
     @Override
@@ -73,7 +71,7 @@ public class BancoVaultImpl implements Economy {
         if (!hasAccount(s))
             return 0;
 
-        return Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(s));
+        return Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s)));
     }
 
     @Override
@@ -88,7 +86,7 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer offlinePlayer, String s) {
-        return getBalance(offlinePlayer.getPlayer());
+        return getBalance(offlinePlayer);
     }
 
     @Override
@@ -114,13 +112,13 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.getInstance().getEconomyManager().createAccount(Bukkit.getOfflinePlayer(s).getUniqueId());
+            Banco.getInstance().getEconomyManager().createAccount(PlayerUtils.getUuid(s));
         }
 
-        Banco.getInstance().getEconomyManager().remove(Bukkit.getOfflinePlayer(s), (int) v);
+        Banco.getInstance().getEconomyManager().remove(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s)), (int) v);
 
         return new EconomyResponse(v,
-                Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(s)),
+                Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s))),
                 EconomyResponse.ResponseType.SUCCESS,
                 "");
     }
@@ -143,13 +141,13 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.getInstance().getEconomyManager().createAccount(Bukkit.getOfflinePlayer(s).getUniqueId());
+            Banco.getInstance().getEconomyManager().createAccount(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s)).getUniqueId());
         }
 
-        Banco.getInstance().getEconomyManager().add(Bukkit.getOfflinePlayer(s), (int) v);
+        Banco.getInstance().getEconomyManager().add(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s)), (int) v);
 
         return new EconomyResponse(v,
-                Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(s)),
+                Banco.getInstance().getEconomyManager().getActualAmount(Bukkit.getOfflinePlayer(PlayerUtils.getUuid(s))),
                 EconomyResponse.ResponseType.SUCCESS,
                 "");
     }

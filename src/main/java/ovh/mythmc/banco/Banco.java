@@ -29,16 +29,10 @@ public final class Banco extends JavaPlugin {
         vaultImpl = new BancoVaultImpl();
         economyManager = new AccountManager();
 
-        saveResource("config.yml", false);
-        saveDefaultConfig();
+        saveDefaultResources();
 
         registerListeners();
 
-        try {
-            saveData();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         loadData();
 
         if (getConfig().getBoolean("auto-save.enabled"))
@@ -60,6 +54,16 @@ public final class Banco extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void saveDefaultResources() {
+        File config = new File(getDataFolder(), "config.yml");
+        File data = new File(getDataFolder(), "data.yml");
+
+        if (!config.exists())
+            saveResource("config.yml", false);
+        if (!data.exists())
+            saveResource("data.yml", false);
     }
 
     private void loadData() {

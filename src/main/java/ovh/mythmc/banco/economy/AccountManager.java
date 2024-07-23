@@ -95,7 +95,7 @@ public class AccountManager {
         Account account = getAccount(player.getUniqueId());
 
         // Check whether player is online or not
-        if (player.getPlayer() != null) {
+        if (player.isOnline()) {
             account.setAmount(getAmount(player) + amount);
             // add gold to inv
             Bukkit.getScheduler().runTask(Banco.getInstance(), () -> {
@@ -113,7 +113,7 @@ public class AccountManager {
         Account account = getAccount(player.getUniqueId());
 
         // Check whether player is online or not
-        if (player.getPlayer() != null) {
+        if (player.isOnline()) {
             int newAmount = getAmount(player) - amount;
 
             // remove gold from inv
@@ -169,7 +169,7 @@ public class AccountManager {
 
     public int getAmount(OfflinePlayer offlinePlayer) {
         Account account = getAccount(offlinePlayer.getUniqueId());
-        if (offlinePlayer.getPlayer() != null) {
+        if (offlinePlayer.isOnline()) {
             account.setAmount(convertItemsToAmount(offlinePlayer.getPlayer().getInventory().getContents()));
         }
 
