@@ -14,7 +14,7 @@ import java.util.*;
 
 public class AccountManager {
 
-    private final Banco instance = Banco.getInstance();
+    private final Banco instance = Banco.get();
 
     private List<Account> accountsList;
     private final Map<Material, Integer> valuesMap;
@@ -98,7 +98,7 @@ public class AccountManager {
         if (player.isOnline()) {
             account.setAmount(getAmount(player) + amount);
             // add gold to inv
-            Bukkit.getScheduler().runTask(Banco.getInstance(), () -> {
+            Bukkit.getScheduler().runTask(Banco.get(), () -> {
                 for (ItemStack item : convertAmountToItems(amount)) {
                     player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
                 }
@@ -118,7 +118,7 @@ public class AccountManager {
 
             // remove gold from inv
             withdrawAll(player.getPlayer());
-            Bukkit.getScheduler().runTask(Banco.getInstance(), () -> {
+            Bukkit.getScheduler().runTask(Banco.get(), () -> {
                 for (ItemStack item : convertAmountToItems(newAmount)) {
                     player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
                 }

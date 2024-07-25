@@ -18,7 +18,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return Banco.getInstance().getDescription().getVersion();
+        return Banco.get().getDescription().getVersion();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("balance")) {
-            return Integer.toString(Banco.getInstance().getEconomyManager().convertItemsToAmount(player.getPlayer().getInventory().getContents()));
+            return Integer.toString(Banco.get().getAccountManager().convertItemsToAmount(player.getPlayer().getInventory().getContents()));
         }
 
         return null;

@@ -87,7 +87,7 @@ public final class Banco extends JavaPlugin {
             return;
 
         YamlConfiguration dataConfig = YamlConfiguration.loadConfiguration(dataFile);
-        getEconomyManager().loadData(dataConfig);
+        getAccountManager().loadData(dataConfig);
     }
 
     private void saveData() throws IOException {
@@ -96,7 +96,7 @@ public final class Banco extends JavaPlugin {
             dataFile.createNewFile();
 
         YamlConfiguration dataConfig = new YamlConfiguration();
-        getEconomyManager().saveData(dataConfig);
+        getAccountManager().saveData(dataConfig);
         dataConfig.save(dataFile);
     }
 
@@ -134,15 +134,8 @@ public final class Banco extends JavaPlugin {
         Bukkit.getServicesManager().unregister(Economy.class, vaultImpl);
     }
 
-    @Deprecated
-    public static Banco getInstance() {
-        return instance;
-    }
-
     public static Banco get() { return instance; }
 
-    @Deprecated
-    public AccountManager getEconomyManager() { return accountManager; }
-
     public AccountManager getAccountManager() { return accountManager; }
+
 }
