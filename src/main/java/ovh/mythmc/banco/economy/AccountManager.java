@@ -176,13 +176,25 @@ public class AccountManager {
         return account.getAmount();
     }
 
+    public int getAmount(UUID uuid) {
+        return getAmount(Bukkit.getOfflinePlayer(uuid));
+    }
+
     public int getTransactions(OfflinePlayer offlinePlayer) {
         Account account = getAccount(offlinePlayer.getUniqueId());
         return account.getTransactions();
     }
 
+    public int getTransactions(UUID uuid) {
+        return getTransactions(Bukkit.getOfflinePlayer(uuid));
+    }
+
     public int getActualAmount(OfflinePlayer offlinePlayer) {
         return getAmount(offlinePlayer) + getTransactions(offlinePlayer);
+    }
+
+    public int getActualAmount(UUID uuid) {
+        return getActualAmount(Bukkit.getOfflinePlayer(uuid));
     }
 
     public int getValue(Material material, int amount) {
