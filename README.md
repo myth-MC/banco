@@ -6,7 +6,7 @@
     <a href="https://github.com/myth-MC/banco/issues"><img src="https://img.shields.io/github/issues/myth-MC/banco" alt="Issues" /></a>
     <a href="https://github.com/myth-MC/banco/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License" /></a>
     <br>
-    A simple item-based economy plugin
+    A simple item-based economy plugin.
   </p>
 </div>
 
@@ -42,6 +42,7 @@
 * **Item-based** economy system
 * [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
 * [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
+* **Multi-language** (English and Spanish for now)
 * **Lightweight** and performant
 * Developed with **configurability** and simplicity on mind
 * No dependencies other than Vault
@@ -58,15 +59,15 @@
 
 ### Compatibility chart
 
-|                                                         | Compatible? | Version |
-|---------------------------------------------------------|-------------|---------|
-| [Paper](https://papermc.io/)                            | ✅          | 1.21+   |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.21+   |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.21+   |
-| [Folia](https://papermc.io/software/folia)              | ❌          |         |
+|                                                         | Compatible? | Version | Notes                                     |
+|---------------------------------------------------------|-------------|---------|-------------------------------------------|
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.21+   |                                           |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   |                                           |
+| [Spigot](https://www.spigotmc.org)                      | ❌          |         | Use [PaperMC](https://papermc.io) instead |
+| [Bukkit](https://bukkit.org)                            | ❌          |         | Use [PaperMC](https://papermc.io) instead |
+| [Folia](https://papermc.io/software/folia)              | ❌          |         |                                           |
 
-Versions prior to 1.21 _might_ work but you won't receive any support.
+Versions prior to 1.21 _may_ work but you won't receive any support.
 
 ### Dependencies
 
