@@ -142,13 +142,17 @@ public final class Banco extends JavaPlugin {
                 if (getConfig().getBoolean("debug"))
                     getLogger().info("Checking for updates...");
 
-                String latest = scanner.useDelimiter("\\A").next();
+                String latest = scanner.next();
                 String current = getPluginMeta().getVersion();
 
                 if (!current.equals(latest)) {
                     getLogger().info("A new update has been found: " + latest);
                     getLogger().info("You are currently running banco v" + current);
+                    return;
                 }
+
+                if (getConfig().getBoolean("debug"))
+                    getLogger().info("No updates have been found.");
             } catch (IOException e) {
                 if (getConfig().getBoolean("debug"))
                     getLogger().warning(e.getMessage());
