@@ -81,7 +81,7 @@ public final class Banco extends JavaPlugin {
         startAutoSaver();
     }
 
-    private void loadData() {
+    public void loadData() {
         File dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists())
             return;
@@ -90,7 +90,7 @@ public final class Banco extends JavaPlugin {
         getAccountManager().loadData(dataConfig);
     }
 
-    private void saveData() throws IOException {
+    public void saveData() throws IOException {
         File dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists())
             dataFile.createNewFile();

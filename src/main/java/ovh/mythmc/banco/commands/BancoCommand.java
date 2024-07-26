@@ -6,7 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ovh.mythmc.banco.commands.banco.LoadSubcommand;
 import ovh.mythmc.banco.commands.banco.ReloadSubcommand;
+import ovh.mythmc.banco.commands.banco.SaveSubcommand;
 import ovh.mythmc.banco.utils.MessageUtils;
 
 import java.util.Arrays;
@@ -22,6 +24,8 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
     public BancoCommand() {
         this.subCommands = new HashMap<>();
         subCommands.put("reload", new ReloadSubcommand());
+        subCommands.put("save", new SaveSubcommand());
+        subCommands.put("load", new LoadSubcommand());
     }
 
     @Override

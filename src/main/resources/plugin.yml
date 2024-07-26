@@ -10,7 +10,7 @@ depend: [ Vault ]
 
 commands:
   banco:
-    permission: banco.user
+    permission: banco.admin
   balance:
     permission: banco.user
     aliases:
@@ -20,3 +20,5 @@ commands:
 permissions:
   banco.user:
     default: true
+  banco.admin:
+    default: op
