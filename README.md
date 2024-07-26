@@ -59,13 +59,13 @@
 
 ### Compatibility chart
 
-|                                                         | Compatible? | Version | Notes                                     |
-|---------------------------------------------------------|-------------|---------|-------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.21+   |                                           |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   |                                           |
-| [Spigot](https://www.spigotmc.org)                      | ❌          |         | Use [PaperMC](https://papermc.io) instead |
-| [Bukkit](https://bukkit.org)                            | ❌          |         | Use [PaperMC](https://papermc.io) instead |
-| [Folia](https://papermc.io/software/folia)              | ❌          |         |                                           |
+|                                                         | Compatible? | Version | Notes                                        |
+|---------------------------------------------------------|-------------|---------|----------------------------------------------|
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.21+   |                                              |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   |                                              |
+| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.21+   | Consider using [PaperMC](https://papermc.io) |
+| [Bukkit](https://bukkit.org)                            | ✅          | 1.21+   | Consider using [PaperMC](https://papermc.io) |
+| [Folia](https://papermc.io/software/folia)              | ❌          |         |                                              |
 
 Versions prior to 1.21 _may_ work but you won't receive any support.
 
@@ -150,4 +150,4 @@ commands:
 <div id="bugs"></div>
 
 ## 🐛 Known issues
-* Items are dropped to the ground and can be picked up by other players
+* None (for now 👀)
