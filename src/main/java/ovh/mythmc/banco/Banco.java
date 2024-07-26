@@ -131,7 +131,7 @@ public final class Banco extends JavaPlugin {
         this.updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
             URLConnection connection = null;
             try {
-                String url = "https://raw.githubusercontent.com/myth-MC/banco/dev/0.2/VERSION";
+                String url = "https://raw.githubusercontent.com/myth-MC/banco/main/VERSION";
                 connection = new URL(url).openConnection();
             } catch (IOException e) {
                 if (getConfig().getBoolean("debug"))
