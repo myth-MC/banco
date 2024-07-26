@@ -51,10 +51,10 @@
 
 * [Folia](https://papermc.io/software/folia) support
 * [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlockedAPI) support
-* Commands
+* ~~Commands~~ ✅ (0.2+)
 * Custom Model Data support
 * MySQL support
-* Opt-in update tracker
+* ~~Update tracker~~ ✅ (0.2+)
 * Baltop
 
 ### Compatibility chart
@@ -125,7 +125,18 @@ currency:
 
 auto-save:
   enabled: true
-  frequency: 300 # Frequency in seconds (300 seconds = every 5 minutes)
+  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
+
+update-tracker:
+  enabled: true
+  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
+
+commands:
+  balance:
+    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /balance
+  pay:
+    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /pay
+
 ```
 
 </details>
