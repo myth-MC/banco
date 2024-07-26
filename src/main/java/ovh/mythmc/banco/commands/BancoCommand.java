@@ -1,20 +1,16 @@
 package ovh.mythmc.banco.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ovh.mythmc.banco.commands.banco.LoadSubcommand;
-import ovh.mythmc.banco.commands.banco.ReloadSubcommand;
-import ovh.mythmc.banco.commands.banco.SaveSubcommand;
+import ovh.mythmc.banco.commands.banco.*;
 import ovh.mythmc.banco.utils.MessageUtils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class BancoCommand implements CommandExecutor, TabCompleter {
@@ -23,6 +19,9 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
 
     public BancoCommand() {
         this.subCommands = new HashMap<>();
+        subCommands.put("set", new SetSubcommand());
+        subCommands.put("give", new GiveSubcommand());
+        subCommands.put("take", new TakeSubcommand());
         subCommands.put("reload", new ReloadSubcommand());
         subCommands.put("save", new SaveSubcommand());
         subCommands.put("load", new LoadSubcommand());
@@ -47,8 +46,18 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        if (args.length > 1)
+        if (args.length == 2) {
+            switch (args[0]) {
+                case "give", "take", "set":
+                    List<String> onlinePlayers = new ArrayList<>();
+                    Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
+                    return List.copyOf(onlinePlayers);
+            }
+        }
+
+        if (args.length > 2)
             return List.of();
+
         return List.copyOf(subCommands.keySet());
     }
 

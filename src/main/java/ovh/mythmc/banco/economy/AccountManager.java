@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import ovh.mythmc.banco.Banco;
 import ovh.mythmc.banco.utils.MapUtils;
+import ovh.mythmc.banco.utils.PlayerUtils;
 
 import java.util.*;
 
@@ -109,6 +110,10 @@ public class AccountManager {
         account.setTransactions(getTransactions(player) + amount);
     }
 
+    public void add(UUID uuid, int amount) {
+        add(Bukkit.getOfflinePlayer(uuid), amount);
+    }
+
     public void remove(OfflinePlayer player, int amount) {
         Account account = getAccount(player.getUniqueId());
 
@@ -129,6 +134,34 @@ public class AccountManager {
         }
 
         account.setTransactions(getTransactions(player) - amount);
+    }
+
+    public void remove(UUID uuid, int amount) {
+        remove(Bukkit.getOfflinePlayer(uuid), amount);
+    }
+
+    public void set(OfflinePlayer player, int amount) {
+        Account account = getAccount(player.getUniqueId());
+
+        // Check whether player is online or not
+        if (player.isOnline()) {
+            // remove gold from inv
+            withdrawAll(player.getPlayer());
+            Bukkit.getScheduler().runTask(Banco.get(), () -> {
+                for (ItemStack item : convertAmountToItems(amount)) {
+                    player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
+                }
+            });
+
+            account.setAmount(amount);
+            return;
+        }
+
+        account.setTransactions(amount);
+    }
+
+    public void set(UUID uuid, int amount) {
+        set(Bukkit.getOfflinePlayer(uuid), amount);
     }
 
     public List<ItemStack> convertAmountToItems(int amount) {
