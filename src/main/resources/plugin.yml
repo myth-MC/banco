@@ -1,9 +1,26 @@
 name: banco
 version: '${project.version}'
-authors: [mythMC, U8092]
+authors: [myth-MC, U8092]
 contributors:
 api-version: 1.21
 main: ovh.mythmc.banco.Banco
 softdepend: [ PlaceholderAPI ]
 loadbefore: [ Towny ]
 depend: [ Vault ]
+
+commands:
+  banco:
+    permission: banco.admin
+  balance:
+    permission: banco.user
+    aliases:
+      - bal
+      - money
+  pay:
+    permission: banco.user
+
+permissions:
+  banco.user:
+    default: true
+  banco.admin:
+    default: op

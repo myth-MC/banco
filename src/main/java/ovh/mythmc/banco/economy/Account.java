@@ -15,7 +15,7 @@ public class Account {
         this.transactions = transactions;
     }
 
-    protected UUID getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
 

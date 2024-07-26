@@ -2,14 +2,19 @@ package ovh.mythmc.banco;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import ovh.mythmc.banco.commands.BalanceCommand;
+import ovh.mythmc.banco.commands.BancoCommand;
+import ovh.mythmc.banco.commands.PayCommand;
 import ovh.mythmc.banco.economy.AccountManager;
 import ovh.mythmc.banco.listeners.EntityDeathListener;
 import ovh.mythmc.banco.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.listeners.PlayerQuitListener;
+import ovh.mythmc.banco.utils.TranslationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +22,8 @@ import java.io.IOException;
 public final class Banco extends JavaPlugin {
 
     private static Banco instance;
-    private AccountManager economyManager;
+
+    private AccountManager accountManager;
     private BancoVaultImpl vaultImpl;
 
     private BukkitTask autoSaveTask;
@@ -25,13 +31,14 @@ public final class Banco extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
         vaultImpl = new BancoVaultImpl();
-        economyManager = new AccountManager();
+        accountManager = new AccountManager();
 
         saveDefaultResources();
+        TranslationUtils.register();
 
         registerListeners();
+        registerCommands();
 
         loadData();
 
@@ -66,22 +73,31 @@ public final class Banco extends JavaPlugin {
             saveResource("data.yml", false);
     }
 
-    private void loadData() {
+    public void reload() {
+        reloadConfig();
+
+        if (autoSaveTask != null)
+            stopAutoSaver();
+
+        startAutoSaver();
+    }
+
+    public void loadData() {
         File dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists())
             return;
 
         YamlConfiguration dataConfig = YamlConfiguration.loadConfiguration(dataFile);
-        getEconomyManager().loadData(dataConfig);
+        getAccountManager().loadData(dataConfig);
     }
 
-    private void saveData() throws IOException {
+    public void saveData() throws IOException {
         File dataFile = new File(getDataFolder(), "data.yml");
         if (!dataFile.exists())
             dataFile.createNewFile();
 
         YamlConfiguration dataConfig = new YamlConfiguration();
-        getEconomyManager().saveData(dataConfig);
+        getAccountManager().saveData(dataConfig);
         dataConfig.save(dataFile);
     }
 
@@ -106,6 +122,22 @@ public final class Banco extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
     }
 
+    private void registerCommands() {
+        PluginCommand banco = getCommand("banco");
+        PluginCommand balance = getCommand("balance");
+        PluginCommand pay = getCommand("pay");
+
+        banco.setExecutor(new BancoCommand());
+        balance.setExecutor(new BalanceCommand());
+        pay.setExecutor(new PayCommand());
+
+        if (!getConfig().getBoolean("commands.balance.enabled"))
+            balance.setPermission("banco.admin");
+
+        if (!getConfig().getBoolean("commands.pay.enabled"))
+            pay.setPermission("banco.admin");
+    }
+
     private void hook() {
         Bukkit.getServicesManager().register(Economy.class, vaultImpl, this, ServicePriority.Normal);
     }
@@ -114,9 +146,8 @@ public final class Banco extends JavaPlugin {
         Bukkit.getServicesManager().unregister(Economy.class, vaultImpl);
     }
 
-    public static Banco getInstance() {
-        return instance;
-    }
+    public static Banco get() { return instance; }
 
-    public AccountManager getEconomyManager() { return economyManager; }
+    public AccountManager getAccountManager() { return accountManager; }
+
 }
