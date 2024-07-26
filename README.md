@@ -150,4 +150,4 @@ commands:
 <div id="bugs"></div>
 
 ## 🐛 Known issues
-* Items are dropped to the ground and can be picked up by other players
+* None (for now 👀)
