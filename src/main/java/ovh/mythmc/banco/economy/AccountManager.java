@@ -101,7 +101,9 @@ public class AccountManager {
             // add gold to inv
             Bukkit.getScheduler().runTask(Banco.get(), () -> {
                 for (ItemStack item : convertAmountToItems(amount)) {
-                    player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
+                    if (player.getPlayer().getInventory().addItem(item).size() != 0) {
+                        player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
+                    }
                 }
             });
             return;
@@ -125,7 +127,9 @@ public class AccountManager {
             withdrawAll(player.getPlayer());
             Bukkit.getScheduler().runTask(Banco.get(), () -> {
                 for (ItemStack item : convertAmountToItems(newAmount)) {
-                    player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
+                    if (player.getPlayer().getInventory().addItem(item).size() != 0) {
+                        player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
+                    }
                 }
             });
 
@@ -149,7 +153,9 @@ public class AccountManager {
             withdrawAll(player.getPlayer());
             Bukkit.getScheduler().runTask(Banco.get(), () -> {
                 for (ItemStack item : convertAmountToItems(amount)) {
-                    player.getPlayer().getWorld().dropItem(player.getPlayer().getLocation(), item);
+                    if (player.getPlayer().getInventory().addItem(item).size() != 0) {
+                        player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
+                    }
                 }
             });
 

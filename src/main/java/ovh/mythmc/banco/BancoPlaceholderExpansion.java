@@ -18,7 +18,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return Banco.get().getDescription().getVersion();
+        return Banco.get().getPluginMeta().getVersion();
     }
 
     @Override

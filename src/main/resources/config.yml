@@ -2,7 +2,7 @@
 # General settings
 #
 
-debug: true # Send debug messages to console
+debug: false # Send debug messages to console
 
 #
 # Currency settings
