@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class PlayerJoinListener implements Listener {
 
-    AccountManager accountManager = Banco.getInstance().getEconomyManager();
+    AccountManager accountManager = Banco.get().getAccountManager();
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
