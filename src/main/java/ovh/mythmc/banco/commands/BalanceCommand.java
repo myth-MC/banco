@@ -38,6 +38,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
         Account target = Banco.get().getAccountManager().getAccount(PlayerUtils.getUuid(args[0]));
 
         if (target == null) {
+            MessageUtils.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
             return true;
         }
 

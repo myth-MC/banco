@@ -16,6 +16,8 @@ commands:
     aliases:
       - bal
       - money
+  pay:
+    permission: banco.user
 
 permissions:
   banco.user:

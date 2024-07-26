@@ -2,12 +2,14 @@ package ovh.mythmc.banco;
 
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import ovh.mythmc.banco.commands.BalanceCommand;
 import ovh.mythmc.banco.commands.BancoCommand;
+import ovh.mythmc.banco.commands.PayCommand;
 import ovh.mythmc.banco.economy.AccountManager;
 import ovh.mythmc.banco.listeners.EntityDeathListener;
 import ovh.mythmc.banco.listeners.PlayerJoinListener;
@@ -16,7 +18,6 @@ import ovh.mythmc.banco.utils.TranslationUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 public final class Banco extends JavaPlugin {
 
@@ -122,8 +123,19 @@ public final class Banco extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("banco")).setExecutor(new BancoCommand());
-        Objects.requireNonNull(getCommand("balance")).setExecutor(new BalanceCommand());
+        PluginCommand banco = getCommand("banco");
+        PluginCommand balance = getCommand("balance");
+        PluginCommand pay = getCommand("pay");
+
+        banco.setExecutor(new BancoCommand());
+        balance.setExecutor(new BalanceCommand());
+        pay.setExecutor(new PayCommand());
+
+        if (!getConfig().getBoolean("commands.balance.enabled"))
+            balance.setPermission("banco.admin");
+
+        if (!getConfig().getBoolean("commands.pay.enabled"))
+            pay.setPermission("banco.admin");
     }
 
     private void hook() {
