@@ -18,6 +18,10 @@ import ovh.mythmc.banco.utils.TranslationUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Objects;
+import java.util.Scanner;
 
 public final class Banco extends JavaPlugin {
 
@@ -27,6 +31,7 @@ public final class Banco extends JavaPlugin {
     private BancoVaultImpl vaultImpl;
 
     private BukkitTask autoSaveTask;
+    private BukkitTask updaterTask;
 
     @Override
     public void onEnable() {
@@ -44,6 +49,9 @@ public final class Banco extends JavaPlugin {
 
         if (getConfig().getBoolean("auto-save.enabled"))
             startAutoSaver();
+
+        if (getConfig().getBoolean("update-tracker.enabled"))
+            startUpdateTracker();
 
         hook();
 
@@ -79,7 +87,11 @@ public final class Banco extends JavaPlugin {
         if (autoSaveTask != null)
             stopAutoSaver();
 
+        if (updaterTask != null)
+            stopUpdateTracker();
+
         startAutoSaver();
+        startUpdateTracker();
     }
 
     public void loadData() {
@@ -113,6 +125,39 @@ public final class Banco extends JavaPlugin {
 
     private void stopAutoSaver() {
         this.autoSaveTask.cancel();
+    }
+
+    private void startUpdateTracker() {
+        this.updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            URLConnection connection = null;
+            try {
+                String url = "https://raw.githubusercontent.com/myth-MC/banco/dev/0.2/VERSION";
+                connection = new URL(url).openConnection();
+            } catch (IOException e) {
+                if (getConfig().getBoolean("debug"))
+                    getLogger().warning(e.getMessage());
+            }
+
+            try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
+                if (getConfig().getBoolean("debug"))
+                    getLogger().info("Checking for updates...");
+
+                String latest = scanner.useDelimiter("\\A").next();
+                String current = getPluginMeta().getVersion();
+
+                if (!current.equals(latest)) {
+                    getLogger().info("A new update has been found: " + latest);
+                    getLogger().info("You are currently running banco v" + current);
+                }
+            } catch (IOException e) {
+                if (getConfig().getBoolean("debug"))
+                    getLogger().warning(e.getMessage());
+            }
+        }, 0, getConfig().getInt("update-tracker.frequency") * 20L);
+    }
+
+    private void stopUpdateTracker() {
+        this.updaterTask.cancel();
     }
 
     private void registerListeners() {

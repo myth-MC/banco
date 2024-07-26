@@ -26,6 +26,10 @@ auto-save:
   enabled: true
   frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
 
+update-tracker:
+  enabled: true
+  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
+
 commands:
   balance:
     enabled: true # Disabling this will prevent users with permission 'banco.user' from using /balance
