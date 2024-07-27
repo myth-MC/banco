@@ -92,54 +92,7 @@ When you run banco for the very first time it will automatically generate two fi
 * 'config.yml' contains general settings
 * 'data.yml' is where the data is stored
 
-banco comes with a very simple gold-based economy setup that can be expanded by modifying 'config.yml'
-
-<details>
-  <summary>Default config.yml</summary>
-  
-  ### Default config.yml
-  ```yaml
-#
-# General settings
-#
-
-debug: true # Send debug messages to console
-
-#
-# Currency settings
-#
-
-currency:
-  name:
-    singular: Dollar
-    plural: Dollars
-  symbol: $
-  remove-drops: true # Prevent valuable items from dropping when killing mobs
-  value: # https://jd.papermc.io/paper/1.21/org/bukkit/Material.html
-    GOLD_INGOT: 1
-    GOLD_BLOCK: 9
-
-#
-# Auto save settings
-#
-
-auto-save:
-  enabled: true
-  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
-
-update-tracker:
-  enabled: true
-  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
-
-commands:
-  balance:
-    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /balance
-  pay:
-    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /pay
-
-```
-
-</details>
+banco comes with a very simple gold-based economy setup that can be expanded by modifying '[config.yml](https://github.com/myth-MC/banco/blob/main/src/main/resources/config.yml)'
 
 #### Other supported plugins
 
