@@ -10,11 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>paper</module>
-        <module>common</module>
         <module>api</module>
+        <module>common</module>
+        <module>paper</module>
         <module>bukkit</module>
-        <module>folia</module>
     </modules>
 
     <properties>

@@ -1,5 +1,6 @@
 package ovh.mythmc.banco.paper;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.command.PluginCommand;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.BancoVaultImpl;
@@ -9,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
@@ -24,6 +24,7 @@ import ovh.mythmc.banco.paper.commands.PayCommand;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
@@ -32,7 +33,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     private BancoVaultImpl vaultImpl;
 
-    private BukkitTask autoSaveTask;
+    private ScheduledTask autoSaveTask;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -124,13 +125,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     public void setInventory(UUID uuid, int amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
 
-        Bukkit.getScheduler().runTask(getPlugin(), () -> {
+        player.getScheduler().run(getPlugin(), scheduledTask -> {
             for (ItemStack item : convertAmountToItems(amount)) {
                 if (!player.getPlayer().getInventory().addItem(item).isEmpty()) {
                     player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
                 }
             }
-        });
+        }, null);
     }
 
     public List<ItemStack> convertAmountToItems(int amount) {
@@ -173,13 +174,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> {
+        this.autoSaveTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), scheduledTask -> {
             try {
                 Banco.get().getStorage().save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency") * 20L);
+        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency"), TimeUnit.SECONDS);
     }
 
     private void stopAutoSaver() {
