@@ -49,7 +49,7 @@
 
 ### Planned features
 
-* [Folia](https://papermc.io/software/folia) support
+* ~~[Folia](https://papermc.io/software/folia) support~~ ✅ (0.3+)
 * [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlockedAPI) support
 * ~~Commands~~ ✅ (0.2+)
 * Custom Model Data support
@@ -61,13 +61,11 @@
 
 |                                                         | Compatible? | Version | Notes                                        |
 |---------------------------------------------------------|-------------|---------|----------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.21+   |                                              |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.21+   |                                              |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.21+   | Consider using [PaperMC](https://papermc.io) |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.21+   | Consider using [PaperMC](https://papermc.io) |
-| [Folia](https://papermc.io/software/folia)              | ❌          |         |                                              |
-
-Versions prior to 1.21 _may_ work but you won't receive any support.
+| [PaperMC](https://papermc.io/)                          | ✅          | 1.20+   |                                              |
+| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.20+   |                                              |
+| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
+| [Bukkit](https://bukkit.org)                            | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
+| [Folia](https://papermc.io/software/folia)              | ✅          | 1.20+   |                                              |
 
 ### Dependencies
 
