@@ -38,4 +38,5 @@ public class Account {
     protected void setTransactions(int transactions) {
         this.transactions = transactions;
     }
+
 }

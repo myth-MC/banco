@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
+import ovh.mythmc.banco.api.storage.BancoConfig;
 import ovh.mythmc.banco.api.storage.BancoStorage;
+import ovh.mythmc.banco.common.util.UpdateChecker;
 
 import java.io.File;
 import java.util.UUID;
@@ -15,6 +17,7 @@ import java.util.UUID;
 public abstract class BancoBootstrap<T> implements Banco {
 
     private T plugin;
+    private BancoConfig config;
     private BancoStorage storage;
 
     public BancoBootstrap(final @NotNull T plugin,
@@ -23,6 +26,7 @@ public abstract class BancoBootstrap<T> implements Banco {
         BancoSupplier.set(this);
 
         this.plugin = plugin;
+        this.config = new BancoConfig(dataDirectory);
         this.storage = new BancoStorage(dataDirectory);
     }
 
@@ -36,12 +40,13 @@ public abstract class BancoBootstrap<T> implements Banco {
 
             getLogger().info("Done!");
         } catch (Throwable throwable) {
-            getLogger().error("An error has occurred while initializing babnco: {}", throwable);
+            getLogger().error("An error has occurred while initializing banco: {}", throwable);
             throwable.printStackTrace(System.err);
             return;
         }
 
-        // update checker
+        if (Banco.get().getConfig().getSettings().getUpdateTracker().getBoolean("enabled"))
+            UpdateChecker.check();
     }
 
     public abstract void enable();
@@ -50,6 +55,7 @@ public abstract class BancoBootstrap<T> implements Banco {
 
     public final void reload() {
         getStorage().load();
+        getConfig().load();
     }
 
     public abstract String version();

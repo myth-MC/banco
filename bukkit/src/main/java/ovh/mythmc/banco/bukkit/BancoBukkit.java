@@ -22,7 +22,6 @@ import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
 import ovh.mythmc.banco.common.util.MapUtil;
 import ovh.mythmc.banco.common.util.TranslationUtil;
-import ovh.mythmc.banco.common.util.UpdaterUtil;
 import ovh.mythmc.banco.bukkit.commands.PayCommand;
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     private BancoVaultImpl vaultImpl;
 
     private BukkitTask autoSaveTask;
-    private BukkitTask updaterTask;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -76,10 +74,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         registerListeners();
         registerCommands();
 
-        if (Banco.get().getStorage().getConfig().getAutoSave().getBoolean("enabled"))
+        if (Banco.get().getConfig().getSettings().getAutoSave().getBoolean("enabled"))
             startAutoSaver();
-        if (Banco.get().getStorage().getConfig().getUpdateTracker().getBoolean("enabled"))
-            startUpdateTracker();
     }
 
     @Override
@@ -89,8 +85,11 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         if (autoSaveTask != null)
             stopAutoSaver();
 
-        if (updaterTask != null)
-            stopUpdateTracker();
+        try {
+            Banco.get().getStorage().save();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -157,7 +156,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     }
 
     private void registerListeners() {
-        if (Banco.get().getStorage().getConfig().getCurrency().getBoolean("remove-drops"))
+        if (Banco.get().getConfig().getSettings().getCurrency().getBoolean("remove-drops"))
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
@@ -172,33 +171,25 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         balance.setExecutor(new BalanceCommand());
         pay.setExecutor(new PayCommand());
 
-        if (!Banco.get().getStorage().getConfig().getCommands().getBoolean("balance.enabled"))
+        if (!Banco.get().getConfig().getSettings().getCommands().getBoolean("balance.enabled"))
             balance.setPermission("banco.admin");
 
-        if (!Banco.get().getStorage().getConfig().getCommands().getBoolean("pay.enabled"))
+        if (!Banco.get().getConfig().getSettings().getCommands().getBoolean("pay.enabled"))
             pay.setPermission("banco.admin");
     }
 
     private void startAutoSaver() {
         this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> {
             try {
-                Banco.get().getStorage().saveData();
+                Banco.get().getStorage().save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }, 0, Banco.get().getStorage().getConfig().getAutoSave().getInt("frequency") * 20L);
+        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency") * 20L);
     }
 
     private void stopAutoSaver() {
         this.autoSaveTask.cancel();
-    }
-
-    private void startUpdateTracker() {
-        this.updaterTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), UpdaterUtil::check, 0, Banco.get().getStorage().getConfig().getUpdateTracker().getInt("frequency") * 20L);
-    }
-
-    private void stopUpdateTracker() {
-        this.updaterTask.cancel();
     }
 
     public static @NonNull BukkitAudiences adventure() {

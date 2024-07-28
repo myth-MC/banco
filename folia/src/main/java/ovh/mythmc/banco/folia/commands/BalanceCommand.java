@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.paper.commands;
+package ovh.mythmc.banco.folia.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

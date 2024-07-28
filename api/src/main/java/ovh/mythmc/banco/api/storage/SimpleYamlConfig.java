@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static ovh.mythmc.banco.api.storage.BancoStorage.logger;
+import static ovh.mythmc.banco.api.storage.BancoConfig.logger;
 
 @Getter
 @SuppressWarnings("unused")

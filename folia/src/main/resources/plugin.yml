@@ -1,12 +1,22 @@
 name: banco
 version: '${project.version}'
-authors: [myth-MC, U8092]
-contributors:
-api-version: 1.16
-main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
+authors:
+  - myth-MC
+  - U8092
+api-version: 1.20
+main: ovh.mythmc.banco.folia.BancoFoliaPlugin
 softdepend: [ PlaceholderAPI ]
 loadbefore: [ Towny ]
 depend: [ Vault ]
+folia-supported: true
+
+dependencies:
+  Vault:
+    load: BEFORE
+    required: true
+  PlaceholderAPI:
+    load: AFTER
+    required: false
 
 commands:
   banco:

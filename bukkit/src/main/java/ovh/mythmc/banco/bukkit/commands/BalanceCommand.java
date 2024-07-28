@@ -24,13 +24,11 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return true;
-
         if (args.length == 0) {
-
+            if (!(sender instanceof Player)) return true;
             MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.balance",
                     text(Banco.get().getAccountManager().get(((Player) sender).getUniqueId()).amount()),
-                    text(Banco.get().getStorage().getConfig().getCurrency().getString("symbol")))
+                    text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")))
             );
             return true;
         }
@@ -45,7 +43,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
         MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),
                 text(Banco.get().getAccountManager().get(((Player) sender).getUniqueId()).amount()),
-                text(Banco.get().getStorage().getConfig().getCurrency().getString("symbol")))
+                text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")))
         );
         return true;
     }

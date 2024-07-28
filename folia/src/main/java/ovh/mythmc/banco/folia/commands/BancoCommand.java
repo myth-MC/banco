@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.bukkit.commands;
+package ovh.mythmc.banco.folia.commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -7,9 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ovh.mythmc.banco.bukkit.commands.banco.*;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.bukkit.BancoBukkit;
+import ovh.mythmc.banco.folia.commands.banco.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -30,13 +29,13 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
         if (args.length == 0) {
-            MessageUtil.error(BancoBukkit.adventure().sender(sender), "banco.errors.not-enough-arguments");
+            MessageUtil.error(sender, "banco.errors.not-enough-arguments");
             return true;
         }
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            MessageUtil.error(BancoBukkit.adventure().sender(sender), "banco.errors.invalid-command");
+            MessageUtil.error(sender, "banco.errors.invalid-command");
             return true;
         }
 

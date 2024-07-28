@@ -14,7 +14,7 @@ public class SaveSubcommand implements BiConsumer<CommandSender, String[]> {
     public void accept(CommandSender sender, String[] args) {
         MessageUtil.info(BancoBukkit.adventure().sender(sender), "banco.commands.banco.save");
         try {
-            Banco.get().getStorage().saveData();
+            Banco.get().getStorage().save();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -3,12 +3,12 @@ version: '${project.version}'
 authors:
   - myth-MC
   - U8092
-api-version: 1.21
+api-version: 1.16
 main: ovh.mythmc.banco.paper.BancoPaperPlugin
 softdepend: [ PlaceholderAPI ]
 loadbefore: [ Towny ]
 depend: [ Vault ]
-folia-supported: false
+folia-supported: true
 
 dependencies:
   Vault:

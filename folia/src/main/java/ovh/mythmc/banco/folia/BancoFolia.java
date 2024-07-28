@@ -1,5 +1,6 @@
-package ovh.mythmc.banco.paper;
+package ovh.mythmc.banco.folia;
 
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.command.PluginCommand;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.BancoVaultImpl;
@@ -9,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
@@ -18,21 +18,23 @@ import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
 import ovh.mythmc.banco.common.util.MapUtil;
 import ovh.mythmc.banco.common.util.TranslationUtil;
-import ovh.mythmc.banco.paper.commands.BalanceCommand;
-import ovh.mythmc.banco.paper.commands.BancoCommand;
-import ovh.mythmc.banco.paper.commands.PayCommand;
+import ovh.mythmc.banco.folia.commands.BalanceCommand;
+import ovh.mythmc.banco.folia.commands.BancoCommand;
+import ovh.mythmc.banco.folia.commands.PayCommand;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Getter
-public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
+public final class BancoFolia extends BancoBootstrap<BancoFoliaPlugin> {
 
-    public static BancoPaper instance;
+    public static BancoFolia instance;
 
     private BancoVaultImpl vaultImpl;
 
-    private BukkitTask autoSaveTask;
+    private ScheduledTask autoSaveTask;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -51,7 +53,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         }
     };
 
-    public BancoPaper(final @NotNull BancoPaperPlugin plugin) {
+    public BancoFolia(final @NotNull BancoFoliaPlugin plugin) {
         super(plugin, plugin.getDataFolder());
         instance = this;
     }
@@ -124,13 +126,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     public void setInventory(UUID uuid, int amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
 
-        Bukkit.getScheduler().runTask(getPlugin(), () -> {
+        player.getScheduler().run(getPlugin(), scheduledTask -> {
             for (ItemStack item : convertAmountToItems(amount)) {
                 if (!player.getPlayer().getInventory().addItem(item).isEmpty()) {
                     player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
                 }
             }
-        });
+        }, null);
     }
 
     public List<ItemStack> convertAmountToItems(int amount) {
@@ -173,13 +175,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> {
+        this.autoSaveTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), scheduledTask -> {
             try {
                 Banco.get().getStorage().save();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency") * 20L);
+        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency"), TimeUnit.SECONDS);
     }
 
     private void stopAutoSaver() {

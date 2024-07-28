@@ -27,8 +27,7 @@ auto-save:
   frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
 
 update-tracker:
-  enabled: true
-  frequency: 900 # Frequency in seconds (900 seconds = every 15 minutes)
+  enabled: true # Check for updates on startup
 
 commands:
   balance:

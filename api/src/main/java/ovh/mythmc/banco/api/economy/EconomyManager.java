@@ -34,13 +34,12 @@ public final class EconomyManager {
 
     public void registerAll(ConfigurationSection configurationSection) {
         for (String materialName : configurationSection.getKeys(false)) {
-
             int value = configurationSection.getInt(materialName);
 
-            if (Banco.get().getStorage().getConfig().isDebug())
+            if (Banco.get().getConfig().getSettings().isDebug())
                 logger.info(materialName + ": " + value);
 
-            valuesMap.put(materialName, value);
+            register(materialName, value);
         }
     }
 
