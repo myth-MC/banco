@@ -24,8 +24,10 @@ public final class BalanceCommand implements BasicCommand {
         if (args.length == 0) {
             if (!(stack.getSender() instanceof Player)) return;
 
+            double amount = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount();
+
             MessageUtil.info(stack.getSender(), translatable("banco.commands.balance",
-                    text(Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount()),
+                    text(MessageUtil.format(amount)),
                     text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
             );
             return;
@@ -38,9 +40,11 @@ public final class BalanceCommand implements BasicCommand {
             return;
         }
 
+        double amount = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount();
+
         MessageUtil.info(stack.getSender(), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),
-                text(Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount()),
+                text(MessageUtil.format(amount)),
                 text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
         );
     }

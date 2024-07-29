@@ -14,6 +14,7 @@ currency:
     plural: Dollars
   symbol: $
   remove-drops: true # Prevent valuable items from dropping when killing mobs
+  format: '#,###.#'
   value: # https://jd.papermc.io/paper/1.21/org/bukkit/Material.html
     GOLD_INGOT: 1
     GOLD_BLOCK: 9

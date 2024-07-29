@@ -57,8 +57,8 @@ public final class BancoStorage {
                 accounts.getKeys(false).forEach(key -> {
                     ConfigurationSection account = accounts.getConfigurationSection(key);
                     UUID uuid = UUID.fromString(key);
-                    int amount = account.getInt("amount");
-                    int transactions = account.getInt("transactions");
+                    double amount = account.getDouble("amount");
+                    double transactions = account.getDouble("transactions");
 
                     Banco.get().getAccountManager().add(new Account(uuid, amount, transactions));
                 });
@@ -86,8 +86,7 @@ public final class BancoStorage {
         ConfigurationSection accountsSection = yamlFile.createSection("accounts");
         Banco.get().getAccountManager().get().forEach(account -> {
             ConfigurationSection accountSection = accountsSection.createSection(account.getUuid().toString());
-            accountSection.set("amount", account.amount());
-            accountSection.set("transactions", account.transactions());
+            account.serialize().forEach(accountSection::set);
         });
 
         yamlFile.save();

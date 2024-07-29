@@ -67,7 +67,7 @@ public class PayCommand implements BasicCommand {
         Banco.get().getAccountManager().deposit(target, amount);
 
         MessageUtil.success(stack.getSender(), translatable("banco.commands.pay.success",
-                text(amount),
+                text(MessageUtil.format(amount)),
                 text(Banco.get().getConfig().getSettings().getCurrency().symbol()),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
@@ -75,7 +75,7 @@ public class PayCommand implements BasicCommand {
         if (Bukkit.getOfflinePlayer(target.getUuid()).isOnline()) {
             MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
-                    text(amount),
+                    text(MessageUtil.format(amount)),
                     text(Banco.get().getConfig().getSettings().getCurrency().symbol())
             ));
         }
