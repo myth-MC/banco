@@ -33,6 +33,8 @@ public final class EconomyManager {
     private static final Map<String, Integer> valuesMap = new HashMap<>();
 
     public void registerAll(ConfigurationSection configurationSection) {
+        values().clear();
+
         for (String materialName : configurationSection.getKeys(false)) {
             int value = configurationSection.getInt(materialName);
 

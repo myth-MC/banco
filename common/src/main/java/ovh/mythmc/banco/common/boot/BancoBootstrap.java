@@ -45,7 +45,7 @@ public abstract class BancoBootstrap<T> implements Banco {
             return;
         }
 
-        if (Banco.get().getConfig().getSettings().getUpdateTracker().getBoolean("enabled"))
+        if (Banco.get().getConfig().getSettings().getUpdateTracker().enabled())
             UpdateChecker.check();
     }
 
@@ -54,6 +54,7 @@ public abstract class BancoBootstrap<T> implements Banco {
     public abstract void shutdown();
 
     public final void reload() {
+        getStorage().clear();
         getStorage().load();
         getConfig().load();
     }

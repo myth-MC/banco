@@ -37,7 +37,7 @@ public class TakeSubcommand implements BiConsumer<CommandSender, String[]> {
         MessageUtil.success(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.take.success",
                 text(args[0]),
                 text(amount),
-                text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")))
+                text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
         );
     }
 

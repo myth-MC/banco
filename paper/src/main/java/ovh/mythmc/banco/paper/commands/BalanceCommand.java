@@ -26,7 +26,7 @@ public final class BalanceCommand implements BasicCommand {
 
             MessageUtil.info(stack.getSender(), translatable("banco.commands.balance",
                     text(Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount()),
-                    text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")))
+                    text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
             );
             return;
         }
@@ -41,7 +41,7 @@ public final class BalanceCommand implements BasicCommand {
         MessageUtil.info(stack.getSender(), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),
                 text(Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount()),
-                text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")))
+                text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
         );
     }
 

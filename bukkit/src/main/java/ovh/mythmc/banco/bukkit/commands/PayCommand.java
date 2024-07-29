@@ -61,7 +61,7 @@ public class PayCommand implements CommandExecutor, TabCompleter {
 
         MessageUtil.success(BancoBukkit.adventure().sender(sender), translatable("banco.commands.pay.success",
                 text(amount),
-                text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")),
+                text(Banco.get().getConfig().getSettings().getCurrency().symbol()),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
 
@@ -69,7 +69,7 @@ public class PayCommand implements CommandExecutor, TabCompleter {
             MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
                     text(amount),
-                    text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol"))
+                    text(Banco.get().getConfig().getSettings().getCurrency().symbol())
             ));
         }
 
