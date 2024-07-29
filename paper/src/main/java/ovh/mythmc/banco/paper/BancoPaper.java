@@ -146,13 +146,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         List<ItemStack> items = new ArrayList<>();
 
         for (String materialName : MapUtil.sortByValue(Banco.get().getEconomyManager().values()).keySet()) {
-            double itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
+            int itemAmount = (int) Math.floor(amount / Banco.get().getEconomyManager().value(materialName));
 
             if (itemAmount > 0) {
-                items.add(new ItemStack(Objects.requireNonNull(Material.getMaterial(materialName)), (int) Math.round(itemAmount)));
+                items.add(new ItemStack(Objects.requireNonNull(Material.getMaterial(materialName)), itemAmount));
             }
 
-            amount = amount - Banco.get().getEconomyManager().value(materialName, (int) Math.round(itemAmount));
+            amount = amount - Banco.get().getEconomyManager().value(materialName, itemAmount);
         }
 
         return items;

@@ -42,7 +42,7 @@ public final class AccountManager {
     public void set(final @NotNull Account account, double amount) {
         if (Banco.get().isOnline(account.getUuid())) {
             Banco.get().clearInventory(account.getUuid());
-            Banco.get().setInventory(account.getUuid(), (int) Math.round(amount));
+            Banco.get().setInventory(account.getUuid(), (int) Math.floor(amount));
 
             account.setAmount(amount);
             return;
