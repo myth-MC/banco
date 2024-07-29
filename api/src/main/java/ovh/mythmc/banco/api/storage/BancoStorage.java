@@ -86,8 +86,7 @@ public final class BancoStorage {
         ConfigurationSection accountsSection = yamlFile.createSection("accounts");
         Banco.get().getAccountManager().get().forEach(account -> {
             ConfigurationSection accountSection = accountsSection.createSection(account.getUuid().toString());
-            accountSection.set("amount", account.amount());
-            accountSection.set("transactions", account.transactions());
+            account.serialize().forEach(accountSection::set);
         });
 
         yamlFile.save();

@@ -59,11 +59,11 @@ public final class AccountManager {
         if (Banco.get().isOnline(account.getUuid()))
             account.setAmount(Banco.get().getInventoryValue(account.getUuid()));
 
-        return account.getAmount() + account.transactions();
+        return account.getAmount() + account.getTransactions();
     }
 
     public void updateTransactions(final @NotNull Account account) {
-        set(account, account.amount() + account.transactions());
+        set(account, account.amount() + account.getTransactions());
     }
 
 }
