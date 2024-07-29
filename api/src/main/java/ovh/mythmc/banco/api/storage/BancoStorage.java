@@ -57,8 +57,8 @@ public final class BancoStorage {
                 accounts.getKeys(false).forEach(key -> {
                     ConfigurationSection account = accounts.getConfigurationSection(key);
                     UUID uuid = UUID.fromString(key);
-                    int amount = account.getInt("amount");
-                    int transactions = account.getInt("transactions");
+                    double amount = account.getDouble("amount");
+                    double transactions = account.getDouble("transactions");
 
                     Banco.get().getAccountManager().add(new Account(uuid, amount, transactions));
                 });

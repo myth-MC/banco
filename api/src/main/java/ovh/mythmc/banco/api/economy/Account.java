@@ -15,24 +15,24 @@ public class Account {
     @Getter(AccessLevel.PUBLIC)
     private final UUID uuid;
 
-    private int amount;
+    private double amount;
 
     @Setter(AccessLevel.PROTECTED)
-    private int transactions;
+    private double transactions;
 
     public Account(UUID uuid,
-                   int amount,
-                   int transactions) {
+                   double amount,
+                   double transactions) {
         this.uuid = uuid;
         this.amount = amount;
         this.transactions = transactions;
     }
 
-    public int amount() {
+    public double amount() {
         return Banco.get().getAccountManager().amount(this);
     }
-
-    protected void setAmount(int amount) {
+    
+    protected void setAmount(double amount) {
         this.amount = Math.max(amount, 0);
     }
 

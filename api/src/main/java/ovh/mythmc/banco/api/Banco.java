@@ -19,7 +19,7 @@ public interface Banco {
 
     boolean isOnline(UUID uuid);
 
-    int getInventoryValue(UUID uuid);
+    double getInventoryValue(UUID uuid);
 
     void clearInventory(UUID uuid);
 

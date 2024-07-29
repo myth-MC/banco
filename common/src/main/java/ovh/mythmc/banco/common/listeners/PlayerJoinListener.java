@@ -20,7 +20,7 @@ public class PlayerJoinListener implements Listener {
 
         if (account == null) {
             account = new Account(uuid, 0, 0);
-            accountManager.add(new Account(uuid, 0, 0));
+            accountManager.add(account);
         }
 
         accountManager.updateTransactions(account);

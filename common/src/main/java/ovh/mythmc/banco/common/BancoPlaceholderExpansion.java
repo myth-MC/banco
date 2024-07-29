@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.common.util.MessageUtil;
 
 public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
@@ -34,7 +35,15 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("balance")) {
-            return Integer.toString(Banco.get().getInventoryValue(player.getUniqueId()));
+            return MessageUtil.format(Banco.get().getInventoryValue(player.getUniqueId()));
+        } else if (params.equalsIgnoreCase("symbol")) {
+            return Banco.get().getConfig().getSettings().getCurrency().symbol();
+        } else if (params.equalsIgnoreCase("name_plural")) {
+            return Banco.get().getConfig().getSettings().getCurrency().namePlural();
+        } else if (params.equalsIgnoreCase("name_singular")) {
+            return Banco.get().getConfig().getSettings().getCurrency().nameSingular();
+        } else if (params.equalsIgnoreCase("version")) {
+            return Banco.get().version();
         }
 
         return null;

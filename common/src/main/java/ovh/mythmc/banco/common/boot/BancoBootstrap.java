@@ -63,7 +63,7 @@ public abstract class BancoBootstrap<T> implements Banco {
 
     public abstract boolean isOnline(UUID uuid);
 
-    public abstract int getInventoryValue(UUID uuid);
+    public abstract double getInventoryValue(UUID uuid);
 
     public abstract void clearInventory(UUID uuid);
 

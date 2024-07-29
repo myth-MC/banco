@@ -31,18 +31,18 @@ public final class AccountManager {
         return null;
     }
 
-    public void deposit(final @NotNull Account account, int amount) {
+    public void deposit(final @NotNull Account account, double amount) {
         set(account, account.amount() + amount);
     }
 
-    public void withdraw(final @NotNull Account account, int amount) {
+    public void withdraw(final @NotNull Account account, double amount) {
         set(account, account.amount() - amount);
     }
 
-    public void set(final @NotNull Account account, int amount) {
+    public void set(final @NotNull Account account, double amount) {
         if (Banco.get().isOnline(account.getUuid())) {
             Banco.get().clearInventory(account.getUuid());
-            Banco.get().setInventory(account.getUuid(), amount);
+            Banco.get().setInventory(account.getUuid(), (int) Math.round(amount));
 
             account.setAmount(amount);
             return;
@@ -55,11 +55,14 @@ public final class AccountManager {
         return account.amount() >= amount;
     }
 
-    public int amount(final @NotNull Account account) {
+    public double amount(final @NotNull Account account) {
+        //final int decimals = Banco.get().getConfig().getSettings().getCurrency().decimals() * 10;
+
         if (Banco.get().isOnline(account.getUuid()))
             account.setAmount(Banco.get().getInventoryValue(account.getUuid()));
 
         return account.getAmount() + account.getTransactions();
+        //return (double) Math.round((account.getAmount() + account.getTransactions()) * decimals) / decimals;
     }
 
     public void updateTransactions(final @NotNull Account account) {

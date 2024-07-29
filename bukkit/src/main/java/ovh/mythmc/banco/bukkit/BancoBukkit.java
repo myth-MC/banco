@@ -103,8 +103,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     }
 
     @Override
-    public int getInventoryValue(UUID uuid) {
-        int value = 0;
+    public double getInventoryValue(UUID uuid) {
+        double value = 0;
 
         for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getInventory()) {
             if (item != null)
@@ -139,17 +139,17 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         });
     }
 
-    public List<ItemStack> convertAmountToItems(int amount) {
+    public List<ItemStack> convertAmountToItems(double amount) {
         List<ItemStack> items = new ArrayList<>();
 
         for (String materialName : MapUtil.sortByValue(Banco.get().getEconomyManager().values()).keySet()) {
-            int itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
+            double itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
 
             if (itemAmount > 0) {
-                items.add(new ItemStack(Material.getMaterial(materialName), itemAmount));
+                items.add(new ItemStack(Material.getMaterial(materialName), (int) Math.round(itemAmount)));
             }
 
-            amount = amount - Banco.get().getEconomyManager().value(materialName, itemAmount);
+            amount = amount - Banco.get().getEconomyManager().value(materialName, (int) Math.round(itemAmount));
         }
 
         return items;
