@@ -1,64 +1,72 @@
 package ovh.mythmc.banco.paper.commands;
 
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.Account;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
-public class PayCommand implements CommandExecutor, TabCompleter {
+@SuppressWarnings("UnstableApiUsage")
+public class PayCommand implements BasicCommand {
+
+    private boolean isParsable(String input) {
+        try {
+            Integer.parseInt(input);
+            return true;
+        } catch (final NumberFormatException e) {
+            return false;
+        }
+    }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return true;
+    public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
+        if (!(stack.getSender() instanceof Player)) return;
 
-        Account source = Banco.get().getAccountManager().get(((Player) sender).getUniqueId());
+        Account source = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId());
 
         if (args.length < 2) {
-            MessageUtil.error(sender, "banco.errors.not-enough-arguments");
-            return true;
+            MessageUtil.error(stack.getSender(), "banco.errors.not-enough-arguments");
+            return;
         }
 
         Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
         if (target == null) {
-            MessageUtil.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
-            return true;
+            MessageUtil.error(stack.getSender(), translatable("banco.errors.player-not-found", text(args[0])));
+            return;
         }
 
         if (target.equals(source)) {
-            MessageUtil.error(sender, "banco.commands.pay.cannot-send-money-to-yourself");
-            return true;
+            MessageUtil.error(stack.getSender(), "banco.commands.pay.cannot-send-money-to-yourself");
+            return;
         }
 
         if (!isParsable(args[1])) {
-            MessageUtil.error(sender, translatable("banco.errors.invalid-value", text(args[1])));
-            return true;
+            MessageUtil.error(stack.getSender(), translatable("banco.errors.invalid-value", text(args[1])));
+            return;
         }
 
         int amount = Integer.parseInt(args[1]);
         if (Banco.get().getAccountManager().amount(source) < amount) {
-            MessageUtil.error(sender, "banco.errors.not-enough-funds");
-            return true;
+            MessageUtil.error(stack.getSender(), "banco.errors.not-enough-funds");
+            return;
         }
 
         Banco.get().getAccountManager().withdraw(source, amount);
         Banco.get().getAccountManager().deposit(target, amount);
 
-        MessageUtil.success(sender, translatable("banco.commands.pay.success",
+        MessageUtil.success(stack.getSender(), translatable("banco.commands.pay.success",
                 text(amount),
                 text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol")),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
@@ -71,13 +79,11 @@ public class PayCommand implements CommandExecutor, TabCompleter {
                     text(Banco.get().getConfig().getSettings().getCurrency().getString("symbol"))
             ));
         }
-
-        return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        if (args.length > 1)
+    public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
+        if (args.length > 0)
             return List.of();
 
         List<String> onlinePlayers = new ArrayList<>();
@@ -85,13 +91,9 @@ public class PayCommand implements CommandExecutor, TabCompleter {
         return List.copyOf(onlinePlayers);
     }
 
-    private boolean isParsable(String input) {
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (final NumberFormatException e) {
-            return false;
-        }
+    @Override
+    public String permission() {
+        return "banco.user";
     }
 
 }

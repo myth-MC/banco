@@ -1,19 +1,18 @@
 package ovh.mythmc.banco.paper.commands;
 
+import io.papermc.paper.command.brigadier.BasicCommand;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.paper.commands.banco.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public class BancoCommand implements CommandExecutor, TabCompleter {
+@SuppressWarnings("UnstableApiUsage")
+public final class BancoCommand implements BasicCommand {
 
     private final Map<String, BiConsumer<CommandSender, String[]>> subCommands;
 
@@ -25,27 +24,25 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
         subCommands.put("reload", new ReloadSubcommand());
         subCommands.put("save", new SaveSubcommand());
     }
-
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
+    public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
         if (args.length == 0) {
-            MessageUtil.error(sender, "banco.errors.not-enough-arguments");
-            return true;
+            MessageUtil.error(stack.getSender(), "banco.errors.not-enough-arguments");
+            return;
         }
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            MessageUtil.error(sender, "banco.errors.invalid-command");
-            return true;
+            MessageUtil.error(stack.getSender(), "banco.errors.invalid-command");
+            return;
         }
 
-        command.accept(sender, Arrays.copyOfRange(args, 1, args.length));
-        return true;
+        command.accept(stack.getSender(), Arrays.copyOfRange(args, 1, args.length));
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
-        if (args.length == 2) {
+    public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
+        if (args.length == 1) {
             switch (args[0]) {
                 case "give", "take", "set":
                     List<String> onlinePlayers = new ArrayList<>();
@@ -54,10 +51,15 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
             }
         }
 
-        if (args.length > 2)
+        if (args.length > 1)
             return List.of();
 
         return List.copyOf(subCommands.keySet());
+    }
+
+    @Override
+    public String permission() {
+        return "banco.admin";
     }
 
 }

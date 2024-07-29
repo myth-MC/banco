@@ -31,6 +31,6 @@ update-tracker:
 
 commands:
   balance:
-    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /balance
+    enabled: true # This only works on PaperMC and its forks
   pay:
-    enabled: true # Disabling this will prevent users with permission 'banco.user' from using /pay
+    enabled: true # This only works on PaperMC and its forks

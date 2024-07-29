@@ -1,7 +1,10 @@
 package ovh.mythmc.banco.paper;
 
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
@@ -66,8 +69,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
-        registerListeners();
         registerCommands();
+        registerListeners();
 
         if (Banco.get().getConfig().getSettings().getAutoSave().getBoolean("enabled"))
             startAutoSaver();
@@ -87,6 +90,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     @Override
     public String version() {
         return getPlugin().getPluginMeta().getVersion();
@@ -112,6 +116,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     @Override
     public void clearInventory(UUID uuid) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+        if (player == null)
+            return;
 
         for (ItemStack item : player.getInventory().getContents()) {
             if (item == null)
@@ -124,11 +130,13 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     @Override
     public void setInventory(UUID uuid, int amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+        if (player == null)
+            return;
 
         player.getScheduler().run(getPlugin(), scheduledTask -> {
             for (ItemStack item : convertAmountToItems(amount)) {
-                if (!player.getPlayer().getInventory().addItem(item).isEmpty()) {
-                    player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
+                if (!player.getInventory().addItem(item).isEmpty()) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), item);
                 }
             }
         }, null);
@@ -141,7 +149,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
             int itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
 
             if (itemAmount > 0) {
-                items.add(new ItemStack(Material.getMaterial(materialName), itemAmount));
+                items.add(new ItemStack(Objects.requireNonNull(Material.getMaterial(materialName)), itemAmount));
             }
 
             amount = amount - Banco.get().getEconomyManager().value(materialName, itemAmount);
@@ -157,20 +165,17 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void registerCommands() {
-        PluginCommand banco = getPlugin().getCommand("banco");
-        PluginCommand balance = getPlugin().getCommand("balance");
-        PluginCommand pay = getPlugin().getCommand("pay");
-
-        Objects.requireNonNull(banco).setExecutor(new BancoCommand());
-        Objects.requireNonNull(balance).setExecutor(new BalanceCommand());
-        Objects.requireNonNull(pay).setExecutor(new PayCommand());
-
-        if (!Banco.get().getConfig().getSettings().getCommands().getBoolean("balance.enabled"))
-            balance.setPermission("banco.admin");
-
-        if (!Banco.get().getConfig().getSettings().getCommands().getBoolean("pay.enabled"))
-            pay.setPermission("banco.admin");
+        LifecycleEventManager<Plugin> manager = getPlugin().getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            commands.register("banco", "Main command for managing banco accounts", new BancoCommand());
+            if (Banco.get().getConfig().getSettings().getCommands().getBoolean("balance.enabled"))
+                commands.register("balance", List.of("bal", "money"), new BalanceCommand());
+            if (Banco.get().getConfig().getSettings().getCommands().getBoolean("pay.enabled"))
+                commands.register("pay", new PayCommand());
+        });
     }
 
     private void startAutoSaver() {
