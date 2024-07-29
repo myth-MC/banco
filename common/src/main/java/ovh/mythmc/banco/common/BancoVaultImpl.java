@@ -45,17 +45,17 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public String format(double v) {
-        return v + Banco.get().getConfig().getSettings().getCurrency().getString("symbol");
+        return v + Banco.get().getConfig().getSettings().getCurrency().symbol();
     }
 
     @Override
     public String currencyNamePlural() {
-        return Banco.get().getConfig().getSettings().getCurrency().getString("name.plural");
+        return Banco.get().getConfig().getSettings().getCurrency().namePlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        return Banco.get().getConfig().getSettings().getCurrency().getString("name.singular");
+        return Banco.get().getConfig().getSettings().getCurrency().nameSingular();
     }
 
     @Override

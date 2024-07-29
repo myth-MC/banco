@@ -10,9 +10,6 @@ public class EntityDeathListener implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (!Banco.get().getConfig().getSettings().getCurrency().getBoolean("remove-drops"))
-            return;
-
         if (event.getEntityType().equals(EntityType.PLAYER))
             return;
 

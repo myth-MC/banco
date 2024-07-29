@@ -38,6 +38,13 @@ public final class BancoStorage {
         this.yamlFile = new YamlFile(new File(pluginFolder, "data.yml"));
     }
 
+    public void clear() {
+        for (int i = 0; i < Banco.get().getAccountManager().get().size(); i++) {
+            Account account = Banco.get().getAccountManager().get().get(i);
+            Banco.get().getAccountManager().remove(account);
+        }
+    }
+
     public void load() {
         try {
             if (yamlFile.exists()) {
@@ -63,11 +70,10 @@ public final class BancoStorage {
                 yamlFile.createNewFile(true);
                 yamlFile.createSection("accounts");
                 yamlFile.save();
-
             }
 
             if (Banco.get().getConfig().getSettings().isDebug())
-                logger.info("Done!");
+                logger.info("Done! (" + Banco.get().getAccountManager().get().size() + " accounts loaded)");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

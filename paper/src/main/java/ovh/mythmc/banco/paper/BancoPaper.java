@@ -72,7 +72,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         registerCommands();
         registerListeners();
 
-        if (Banco.get().getConfig().getSettings().getAutoSave().getBoolean("enabled"))
+        if (Banco.get().getConfig().getSettings().getAutoSave().enabled())
             startAutoSaver();
     }
 
@@ -159,7 +159,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     private void registerListeners() {
-        if (Banco.get().getConfig().getSettings().getCurrency().getBoolean("remove-drops"))
+        if (Banco.get().getConfig().getSettings().getCurrency().removeDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
@@ -171,9 +171,9 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
             commands.register("banco", "Main command for managing banco accounts", new BancoCommand());
-            if (Banco.get().getConfig().getSettings().getCommands().getBoolean("balance.enabled"))
+            if (Banco.get().getConfig().getSettings().getCommands().balanceEnabled())
                 commands.register("balance", List.of("bal", "money"), new BalanceCommand());
-            if (Banco.get().getConfig().getSettings().getCommands().getBoolean("pay.enabled"))
+            if (Banco.get().getConfig().getSettings().getCommands().payEnabled())
                 commands.register("pay", new PayCommand());
         });
     }
@@ -185,7 +185,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }, 0, Banco.get().getConfig().getSettings().getAutoSave().getInt("frequency"), TimeUnit.SECONDS);
+        }, 0, Banco.get().getConfig().getSettings().getAutoSave().frequency(), TimeUnit.SECONDS);
     }
 
     private void stopAutoSaver() {
