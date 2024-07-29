@@ -40,7 +40,7 @@ public final class BalanceCommand implements BasicCommand {
             return;
         }
 
-        double amount = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount();
+        double amount = Banco.get().getAccountManager().get(((Player) target).getUniqueId()).amount();
 
         MessageUtil.info(stack.getSender(), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),

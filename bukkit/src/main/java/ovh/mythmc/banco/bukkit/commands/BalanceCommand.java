@@ -41,7 +41,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        double amount = Banco.get().getAccountManager().get(((Player) sender).getUniqueId()).amount();
+        double amount = Banco.get().getAccountManager().get(((Player) target).getUniqueId()).amount();
 
         MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),

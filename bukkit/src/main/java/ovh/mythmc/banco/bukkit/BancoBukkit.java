@@ -111,6 +111,11 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
                 value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
         }
 
+        for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getEnderChest()) {
+            if (item != null)
+                value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
+        }
+
         return value;
     }
 

@@ -110,6 +110,11 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
                 value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
         }
 
+        for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getEnderChest()) {
+            if (item != null)
+                value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
+        }
+
         return value;
     }
 
