@@ -14,8 +14,10 @@ currency:
     plural: Dollars
   symbol: $
   remove-drops: true # Prevent valuable items from dropping when killing mobs
-  format: '#,###.#'
+  count-ender-chest: true # Whether to count ender chest items or not
+  format: '#,###.#' # How money will be displayed (1,753.3)
   value: # https://jd.papermc.io/paper/1.21/org/bukkit/Material.html
+    COPPER_INGOT: 0.1 # Can contain decimals
     GOLD_INGOT: 1
     GOLD_BLOCK: 9
 

@@ -69,6 +69,7 @@ public final class BancoConfig {
                 yamlFile.getString("currency.name.plural", "Dollars"),
                 yamlFile.getString("currency.symbol", "$"),
                 yamlFile.getBoolean("currency.remove-drops", true),
+                yamlFile.getBoolean("currency.count-ender-chest", true),
                 yamlFile.getString("currency.format", "#,###.#"),
                 yamlFile.getConfigurationSection("currency.value")
         );
@@ -99,6 +100,7 @@ public final class BancoConfig {
                         @NotNull String namePlural,
                         @NotNull String symbol,
                         boolean removeDrops,
+                        boolean countEnderChest,
                         @NotNull String format,
                         @NotNull ConfigurationSection value) { }
 

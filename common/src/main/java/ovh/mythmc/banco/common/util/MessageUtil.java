@@ -3,8 +3,10 @@ package ovh.mythmc.banco.common.util;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 @SuppressWarnings("unused")
@@ -68,7 +70,7 @@ public final class MessageUtil {
                 .append(message.color(TEXT_COLOR)));
     }
 
-    public static String format(final double value) {
+    public static String format(final @NotNull BigDecimal value) {
         DecimalFormat format = new DecimalFormat(Banco.get().getConfig().getSettings().getCurrency().format());
         return format.format(value);
     }

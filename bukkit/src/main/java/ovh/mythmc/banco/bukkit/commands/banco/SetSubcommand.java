@@ -2,11 +2,13 @@ package ovh.mythmc.banco.bukkit.commands.banco;
 
 import org.bukkit.command.CommandSender;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.bukkit.BancoBukkit;
+import ovh.mythmc.banco.common.util.MathUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
+import java.math.BigDecimal;
 import java.util.function.BiConsumer;
 
 import static net.kyori.adventure.text.Component.text;
@@ -27,27 +29,18 @@ public class SetSubcommand implements BiConsumer<CommandSender, String[]> {
             return;
         }
 
-        if (!isParsable(args[1])) {
+        if (!MathUtil.isDouble(args[1])) {
             MessageUtil.error(BancoBukkit.adventure().sender(sender), translatable("banco.errors.invalid-value", text(args[1])));
             return;
         }
 
-        int amount = Integer.parseInt(args[1]);
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
         Banco.get().getAccountManager().set(target, amount);
         MessageUtil.success(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.set.success",
                 text(args[0]),
                 text(MessageUtil.format(amount)),
                 text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
         );
-    }
-
-    private boolean isParsable(String input) {
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (final NumberFormatException e) {
-            return false;
-        }
     }
 
 }

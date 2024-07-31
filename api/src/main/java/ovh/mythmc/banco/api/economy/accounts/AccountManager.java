@@ -1,0 +1,81 @@
+package ovh.mythmc.banco.api.economy.accounts;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.economy.BancoHelper;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+@SuppressWarnings("unused")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AccountManager {
+
+    public static final AccountManager instance = new AccountManager();
+    private static final List<Account> accountsList = new ArrayList<>();
+
+    public void add(final @NotNull Account account) { accountsList.add(account); }
+
+    public void remove(final @NotNull Account account) { accountsList.remove(account); }
+
+    public List<Account> get() { return accountsList; }
+
+    public Account get(UUID uuid) {
+        for (Account account : accountsList) {
+            if (account.getUuid().equals(uuid))
+                return account;
+        }
+
+        return null;
+    }
+
+    public void deposit(final @NotNull Account account, BigDecimal amount) {
+        set(account, account.amount().add(amount));
+    }
+
+    public void withdraw(final @NotNull Account account, BigDecimal amount) {
+        set(account, account.amount().subtract(amount));
+    }
+
+    public void set(final @NotNull Account account, BigDecimal amount) {
+        if (Objects.equals(account.amount(), amount))
+            return;
+
+        if (account.amount().compareTo(amount) < 0) {
+            if (BancoHelper.get().isOnline(account.getUuid())) {
+                BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
+                return;
+            }
+
+            account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
+        } else {
+            if (BancoHelper.get().isOnline(account.getUuid())) {
+                BancoHelper.get().remove(account.getUuid(), account.amount().subtract(amount));
+                return;
+            }
+
+            account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
+        }
+    }
+
+    public boolean has(final @NotNull Account account, BigDecimal amount) {
+        return account.amount().compareTo(amount) >= 0;
+    }
+
+    public BigDecimal amount(final @NotNull Account account) {
+        if (BancoHelper.get().isOnline(account.getUuid()))
+            account.setAmount(BancoHelper.get().getInventoryValue(account.getUuid()));
+
+        return account.getAmount().add(account.getTransactions());
+    }
+
+    public void updateTransactions(final @NotNull Account account) {
+        set(account, account.amount().add(account.getTransactions()));
+        account.setTransactions(BigDecimal.valueOf(0));
+    }
+
+}
