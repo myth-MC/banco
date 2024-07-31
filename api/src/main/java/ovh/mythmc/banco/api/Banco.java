@@ -2,12 +2,10 @@ package ovh.mythmc.banco.api;
 
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.storage.BancoConfig;
-import ovh.mythmc.banco.api.economy.AccountManager;
+import ovh.mythmc.banco.api.economy.accounts.AccountManager;
 import ovh.mythmc.banco.api.economy.EconomyManager;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.storage.BancoStorage;
-
-import java.util.UUID;
 
 public interface Banco {
 
@@ -16,14 +14,6 @@ public interface Banco {
     void reload();
 
     String version();
-
-    boolean isOnline(UUID uuid);
-
-    int getInventoryValue(UUID uuid);
-
-    void clearInventory(UUID uuid);
-
-    void setInventory(UUID uuid, int amount);
 
     @NotNull LoggerWrapper getLogger();
 

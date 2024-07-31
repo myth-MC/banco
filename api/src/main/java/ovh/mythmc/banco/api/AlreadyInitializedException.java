@@ -1,4 +1,4 @@
 package ovh.mythmc.banco.api;
 
-final class AlreadyInitializedException extends RuntimeException {
+public final class AlreadyInitializedException extends RuntimeException {
 }

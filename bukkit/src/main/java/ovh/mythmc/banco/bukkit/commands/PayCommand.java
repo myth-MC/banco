@@ -10,11 +10,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.bukkit.BancoBukkit;
+import ovh.mythmc.banco.common.util.MathUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,13 +47,13 @@ public class PayCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (!isParsable(args[1])) {
+        if (!MathUtil.isDouble(args[1])) {
             MessageUtil.error(BancoBukkit.adventure().sender(sender), translatable("banco.errors.invalid-value", text(args[1])));
             return true;
         }
 
-        int amount = Integer.parseInt(args[1]);
-        if (Banco.get().getAccountManager().amount(source) < amount) {
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
+        if (Banco.get().getAccountManager().amount(source).compareTo(amount) < 0) {
             MessageUtil.error(BancoBukkit.adventure().sender(sender), "banco.errors.not-enough-funds");
             return true;
         }
@@ -60,7 +62,7 @@ public class PayCommand implements CommandExecutor, TabCompleter {
         Banco.get().getAccountManager().deposit(target, amount);
 
         MessageUtil.success(BancoBukkit.adventure().sender(sender), translatable("banco.commands.pay.success",
-                text(amount),
+                text(MessageUtil.format(amount)),
                 text(Banco.get().getConfig().getSettings().getCurrency().symbol()),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
@@ -68,7 +70,7 @@ public class PayCommand implements CommandExecutor, TabCompleter {
         if (Bukkit.getOfflinePlayer(target.getUuid()).isOnline()) {
             MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
-                    text(amount),
+                    text(MessageUtil.format(amount)),
                     text(Banco.get().getConfig().getSettings().getCurrency().symbol())
             ));
         }
@@ -84,15 +86,6 @@ public class PayCommand implements CommandExecutor, TabCompleter {
         List<String> onlinePlayers = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
         return List.copyOf(onlinePlayers);
-    }
-
-    private boolean isParsable(String input) {
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (final NumberFormatException e) {
-            return false;
-        }
     }
 
 }

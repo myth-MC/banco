@@ -10,7 +10,6 @@ import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.common.util.UpdateChecker;
 
 import java.io.File;
-import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
@@ -60,13 +59,5 @@ public abstract class BancoBootstrap<T> implements Banco {
     }
 
     public abstract String version();
-
-    public abstract boolean isOnline(UUID uuid);
-
-    public abstract int getInventoryValue(UUID uuid);
-
-    public abstract void clearInventory(UUID uuid);
-
-    public abstract void setInventory(UUID uuid, int amount);
 
 }

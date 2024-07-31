@@ -7,10 +7,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.common.util.MathUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,15 +22,6 @@ import static net.kyori.adventure.text.Component.translatable;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PayCommand implements BasicCommand {
-
-    private boolean isParsable(String input) {
-        try {
-            Integer.parseInt(input);
-            return true;
-        } catch (final NumberFormatException e) {
-            return false;
-        }
-    }
 
     @Override
     public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
@@ -52,13 +45,13 @@ public class PayCommand implements BasicCommand {
             return;
         }
 
-        if (!isParsable(args[1])) {
+        if (!MathUtil.isDouble(args[1])) {
             MessageUtil.error(stack.getSender(), translatable("banco.errors.invalid-value", text(args[1])));
             return;
         }
 
-        int amount = Integer.parseInt(args[1]);
-        if (Banco.get().getAccountManager().amount(source) < amount) {
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
+        if (Banco.get().getAccountManager().amount(source).compareTo(amount) < 0) {
             MessageUtil.error(stack.getSender(), "banco.errors.not-enough-funds");
             return;
         }
@@ -67,7 +60,7 @@ public class PayCommand implements BasicCommand {
         Banco.get().getAccountManager().deposit(target, amount);
 
         MessageUtil.success(stack.getSender(), translatable("banco.commands.pay.success",
-                text(amount),
+                text(MessageUtil.format(amount)),
                 text(Banco.get().getConfig().getSettings().getCurrency().symbol()),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
@@ -75,7 +68,7 @@ public class PayCommand implements BasicCommand {
         if (Bukkit.getOfflinePlayer(target.getUuid()).isOnline()) {
             MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
-                    text(amount),
+                    text(MessageUtil.format(amount)),
                     text(Banco.get().getConfig().getSettings().getCurrency().symbol())
             ));
         }

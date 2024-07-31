@@ -10,20 +10,17 @@ import ovh.mythmc.banco.common.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
-import ovh.mythmc.banco.common.util.MapUtil;
 import ovh.mythmc.banco.common.util.TranslationUtil;
 import ovh.mythmc.banco.paper.commands.BalanceCommand;
 import ovh.mythmc.banco.paper.commands.BancoCommand;
 import ovh.mythmc.banco.paper.commands.PayCommand;
+import ovh.mythmc.banco.paper.impl.BancoHelperImpl;
 
 import java.io.IOException;
 import java.util.*;
@@ -66,6 +63,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
+        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
@@ -94,68 +93,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     @Override
     public String version() {
         return getPlugin().getPluginMeta().getVersion();
-    }
-
-    @Override
-    public boolean isOnline(UUID uuid) {
-        return Bukkit.getOfflinePlayer(uuid).isOnline();
-    }
-
-    @Override
-    public int getInventoryValue(UUID uuid) {
-        int value = 0;
-
-        for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getInventory()) {
-            if (item != null)
-                value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
-        }
-
-        return value;
-    }
-
-    @Override
-    public void clearInventory(UUID uuid) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-        if (player == null)
-            return;
-
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null)
-                return;
-            if (Banco.get().getEconomyManager().value(item.getType().name()) > 0)
-                player.getInventory().remove(item);
-        }
-    }
-
-    @Override
-    public void setInventory(UUID uuid, int amount) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-        if (player == null)
-            return;
-
-        player.getScheduler().run(getPlugin(), scheduledTask -> {
-            for (ItemStack item : convertAmountToItems(amount)) {
-                if (!player.getInventory().addItem(item).isEmpty()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), item);
-                }
-            }
-        }, null);
-    }
-
-    public List<ItemStack> convertAmountToItems(int amount) {
-        List<ItemStack> items = new ArrayList<>();
-
-        for (String materialName : MapUtil.sortByValue(Banco.get().getEconomyManager().values()).keySet()) {
-            int itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
-
-            if (itemAmount > 0) {
-                items.add(new ItemStack(Objects.requireNonNull(Material.getMaterial(materialName)), itemAmount));
-            }
-
-            amount = amount - Banco.get().getEconomyManager().value(materialName, itemAmount);
-        }
-
-        return items;
     }
 
     private void registerListeners() {

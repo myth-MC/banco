@@ -5,14 +5,12 @@ import org.bukkit.command.PluginCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
 import ovh.mythmc.banco.bukkit.commands.BancoCommand;
+import ovh.mythmc.banco.bukkit.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
@@ -20,7 +18,6 @@ import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
-import ovh.mythmc.banco.common.util.MapUtil;
 import ovh.mythmc.banco.common.util.TranslationUtil;
 import ovh.mythmc.banco.bukkit.commands.PayCommand;
 
@@ -69,6 +66,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
+        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+
         adventure = BukkitAudiences.create(getPlugin());
 
         registerListeners();
@@ -97,64 +96,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         return getPlugin().getDescription().getVersion();
     }
 
-    @Override
-    public boolean isOnline(UUID uuid) {
-        return Bukkit.getOfflinePlayer(uuid).isOnline();
-    }
-
-    @Override
-    public int getInventoryValue(UUID uuid) {
-        int value = 0;
-
-        for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getInventory()) {
-            if (item != null)
-                value = value + Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
-        }
-
-        return value;
-    }
-
-    @Override
-    public void clearInventory(UUID uuid) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null)
-                return;
-            if (Banco.get().getEconomyManager().value(item.getType().name()) > 0)
-                player.getInventory().remove(item);
-        }
-    }
-
-    @Override
-    public void setInventory(UUID uuid, int amount) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-
-        Bukkit.getScheduler().runTask(getPlugin(), () -> {
-            for (ItemStack item : convertAmountToItems(amount)) {
-                if (!player.getPlayer().getInventory().addItem(item).isEmpty()) {
-                    player.getPlayer().getWorld().dropItemNaturally(player.getPlayer().getLocation(), item);
-                }
-            }
-        });
-    }
-
-    public List<ItemStack> convertAmountToItems(int amount) {
-        List<ItemStack> items = new ArrayList<>();
-
-        for (String materialName : MapUtil.sortByValue(Banco.get().getEconomyManager().values()).keySet()) {
-            int itemAmount = amount / Banco.get().getEconomyManager().value(materialName);
-
-            if (itemAmount > 0) {
-                items.add(new ItemStack(Material.getMaterial(materialName), itemAmount));
-            }
-
-            amount = amount - Banco.get().getEconomyManager().value(materialName, itemAmount);
-        }
-
-        return items;
-    }
-
     private void registerListeners() {
         if (Banco.get().getConfig().getSettings().getCurrency().removeDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
@@ -167,9 +108,9 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         PluginCommand balance = getPlugin().getCommand("balance");
         PluginCommand pay = getPlugin().getCommand("pay");
 
-        banco.setExecutor(new BancoCommand());
-        balance.setExecutor(new BalanceCommand());
-        pay.setExecutor(new PayCommand());
+        Objects.requireNonNull(banco).setExecutor(new BancoCommand());
+        Objects.requireNonNull(balance).setExecutor(new BalanceCommand());
+        Objects.requireNonNull(pay).setExecutor(new PayCommand());
 
         if (!Banco.get().getConfig().getSettings().getCommands().balanceEnabled())
             balance.setPermission("banco.admin");

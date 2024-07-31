@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 @Getter
@@ -53,7 +51,7 @@ public final class BancoConfig {
     public void load() {
         try {
             if (!yamlFile.exists())
-                Files.copy(Banco.class.getResourceAsStream("/config.yml"),
+                Files.copy(Objects.requireNonNull(Banco.class.getResourceAsStream("/config.yml")),
                         Path.of(yamlFile.getFilePath()));
 
             yamlFile.load();
@@ -67,25 +65,27 @@ public final class BancoConfig {
     public void loadValues() {
         settings.debug = yamlFile.getBoolean("debug");
         settings.currency = new Settings.Currency(
-                yamlFile.getString("currency.name.singular"),
-                yamlFile.getString("currency.name.plural"),
-                yamlFile.getString("currency.symbol"),
-                yamlFile.getBoolean("currency.remove-drops"),
+                yamlFile.getString("currency.name.singular", "Dollar"),
+                yamlFile.getString("currency.name.plural", "Dollars"),
+                yamlFile.getString("currency.symbol", "$"),
+                yamlFile.getBoolean("currency.remove-drops", true),
+                yamlFile.getBoolean("currency.count-ender-chest", true),
+                yamlFile.getString("currency.format", "#,###.#"),
                 yamlFile.getConfigurationSection("currency.value")
         );
 
         settings.autoSave = new Settings.AutoSave(
-                yamlFile.getBoolean("auto-save.enabled"),
-                yamlFile.getInt("auto-save.frequency")
+                yamlFile.getBoolean("auto-save.enabled", true),
+                yamlFile.getInt("auto-save.frequency", 300)
         );
 
         settings.updateTracker = new Settings.UpdateTracker(
-                yamlFile.getBoolean("update-tracker.enabled")
+                yamlFile.getBoolean("update-tracker.enabled", true)
         );
 
         settings.commands = new Settings.Commands(
-                yamlFile.getBoolean("commands.balance.enabled"),
-                yamlFile.getBoolean("commands.pay.enabled")
+                yamlFile.getBoolean("commands.balance.enabled", true),
+                yamlFile.getBoolean("commands.pay.enabled", true)
         );
 
         Banco.get().getEconomyManager().registerAll(settings.currency.value());
@@ -100,6 +100,8 @@ public final class BancoConfig {
                         @NotNull String namePlural,
                         @NotNull String symbol,
                         boolean removeDrops,
+                        boolean countEnderChest,
+                        @NotNull String format,
                         @NotNull ConfigurationSection value) { }
 
         public record AutoSave(boolean enabled,

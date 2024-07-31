@@ -1,0 +1,47 @@
+package ovh.mythmc.banco.api.economy.accounts;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import ovh.mythmc.banco.api.Banco;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
+@Getter(AccessLevel.PROTECTED)
+public class Account {
+
+    @Getter(AccessLevel.PUBLIC)
+    private final UUID uuid;
+
+    private BigDecimal amount;
+
+    @Setter(AccessLevel.PROTECTED)
+    private BigDecimal transactions;
+
+    public Account(UUID uuid,
+                   BigDecimal amount,
+                   BigDecimal transactions) {
+        this.uuid = uuid;
+        this.amount = amount;
+        this.transactions = transactions;
+    }
+
+    public BigDecimal amount() {
+        return Banco.get().getAccountManager().amount(this);
+    }
+    
+    protected void setAmount(BigDecimal amount) {
+        this.amount = BigDecimal.valueOf(0).max(amount);
+    }
+
+    public final Map<String, Object> serialize() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("amount", amount.doubleValue());
+        map.put("transactions", transactions.doubleValue());
+        return map;
+    }
+
+}

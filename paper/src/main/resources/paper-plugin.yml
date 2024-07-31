@@ -13,7 +13,7 @@ dependencies:
       load: BEFORE
       required: true
     PlaceholderAPI:
-      load: AFTER
+      load: BEFORE
       required: false
     Towny:
       load: AFTER

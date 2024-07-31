@@ -3,23 +3,29 @@ package ovh.mythmc.banco.common.util;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.Banco;
 
-public class MessageUtil {
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
-    private static class Icons {
-        public static final String WARNING = "\u26A0";
-        public static final String CHECKMARK = "\u2714";
-        public static final String CROSS = "\u274C";
-        public static final String BELL = "\uD83D\uDD14";
-        public static final String BUG = "\uD83E\uDEB2";
+@SuppressWarnings("unused")
+public final class MessageUtil {
+
+    private static final class Icons {
+        public static String WARNING = "\u26A0";
+        public static String CHECKMARK = "\u2714";
+        public static String CROSS = "\u274C";
+        public static String BELL = "\uD83D\uDD14";
+        public static String BUG = "\uD83E\uDEB2";
     }
 
-    public static final TextColor INFO_COLOR = TextColor.color(106, 178, 197);
-    public static final TextColor WARN_COLOR = TextColor.color(255, 163, 25);
-    public static final TextColor SUCCESS_COLOR = TextColor.color(110,188,81);
-    public static final TextColor ERROR_COLOR = TextColor.color(129,9,10);
-    public static final TextColor DEBUG_COLOR = TextColor.color(44, 200, 60);
-    public static final TextColor TEXT_COLOR = TextColor.color(240,239,255);
+    public static TextColor INFO_COLOR = TextColor.color(106, 178, 197);
+    public static TextColor WARN_COLOR = TextColor.color(255, 163, 25);
+    public static TextColor SUCCESS_COLOR = TextColor.color(110,188,81);
+    public static TextColor ERROR_COLOR = TextColor.color(129,9,10);
+    public static TextColor DEBUG_COLOR = TextColor.color(44, 200, 60);
+    public static TextColor TEXT_COLOR = TextColor.color(240,239,255);
 
     public static void info(Audience audience, String message) {
         info(audience, Component.translatable(message));
@@ -62,6 +68,11 @@ public class MessageUtil {
     public static void debug(Audience audience, Component message) {
         audience.sendMessage(Component.translatable(Icons.BUG + " ", DEBUG_COLOR)
                 .append(message.color(TEXT_COLOR)));
+    }
+
+    public static String format(final @NotNull BigDecimal value) {
+        DecimalFormat format = new DecimalFormat(Banco.get().getConfig().getSettings().getCurrency().format());
+        return format.format(value);
     }
 
 }

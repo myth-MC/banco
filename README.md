@@ -56,7 +56,7 @@
 * MySQL support
 * ~~Update tracker~~ ✅ (0.2+)
 * Baltop
-* Count ender chest items
+* ~~Count Ender Chest items~~ ✅ (0.4+)
 
 ### Compatibility chart
 

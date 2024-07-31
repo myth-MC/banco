@@ -7,9 +7,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class BancoVaultImpl implements Economy {
         if (!hasAccount(s))
             return 0;
 
-        return Banco.get().getAccountManager().amount(Banco.get().getAccountManager().get(PlayerUtil.getUuid(s)));
+        return Banco.get().getAccountManager().amount(Banco.get().getAccountManager().get(PlayerUtil.getUuid(s))).doubleValue();
     }
 
     @Override
@@ -124,11 +125,11 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), 0, 0));
+            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
         Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
-        Banco.get().getAccountManager().withdraw(account, (int) v);
+        Banco.get().getAccountManager().withdraw(account, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
                 getBalance(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(s))),
@@ -154,11 +155,11 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), 0, 0));
+            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
         Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
-        Banco.get().getAccountManager().deposit(account, (int) v);
+        Banco.get().getAccountManager().deposit(account, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
                 getBalance(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(s))),
