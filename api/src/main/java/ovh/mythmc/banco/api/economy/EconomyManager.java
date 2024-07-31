@@ -6,6 +6,7 @@ import org.simpleyaml.configuration.ConfigurationSection;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public final class EconomyManager {
     };
 
     public static final EconomyManager instance = new EconomyManager();
-    private static final Map<String, Double> valuesMap = new HashMap<>();
+    private static final Map<String, BigDecimal> valuesMap = new HashMap<>();
 
     public void registerAll(ConfigurationSection configurationSection) {
         values().clear();
@@ -42,27 +43,27 @@ public final class EconomyManager {
             if (Banco.get().getConfig().getSettings().isDebug())
                 logger.info(materialName + ": " + value);
 
-            register(materialName, value);
+            register(materialName, BigDecimal.valueOf(value));
         }
     }
 
-    public void register(String materialName, double value) { valuesMap.put(materialName, value); }
+    public void register(String materialName, BigDecimal value) { valuesMap.put(materialName, value); }
 
     public void unregister(String materialName) { valuesMap.remove(materialName); }
 
     public void clear() { valuesMap.clear(); }
 
-    public Map<String, Double> values() { return valuesMap; }
+    public Map<String, BigDecimal> values() { return valuesMap; }
 
-    public double value(String materialName) { return value(materialName, 1); }
+    public BigDecimal value(String materialName) { return value(materialName, 1); }
 
-    public double value(String materialName, int amount) {
-        for (Map.Entry<String, Double> entry : valuesMap.entrySet()) {
+    public BigDecimal value(String materialName, int amount) {
+        for (Map.Entry<String, BigDecimal> entry : valuesMap.entrySet()) {
             if (!materialName.equals(entry.getKey())) continue;
-            return entry.getValue() * amount;
+            return entry.getValue().multiply(BigDecimal.valueOf(amount));
         }
 
-        return 0;
+        return BigDecimal.valueOf(0);
     }
 
 }

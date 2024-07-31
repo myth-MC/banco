@@ -6,10 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ public final class BalanceCommand implements BasicCommand {
         if (args.length == 0) {
             if (!(stack.getSender() instanceof Player)) return;
 
-            double amount = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount();
+            BigDecimal amount = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId()).amount();
 
             MessageUtil.info(stack.getSender(), translatable("banco.commands.balance",
                     text(MessageUtil.format(amount)),
@@ -40,7 +41,7 @@ public final class BalanceCommand implements BasicCommand {
             return;
         }
 
-        double amount = Banco.get().getAccountManager().get(((Player) target).getUniqueId()).amount();
+        BigDecimal amount = target.amount();
 
         MessageUtil.info(stack.getSender(), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),

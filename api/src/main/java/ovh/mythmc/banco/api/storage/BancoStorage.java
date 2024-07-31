@@ -5,11 +5,12 @@ import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.Account;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -57,8 +58,8 @@ public final class BancoStorage {
                 accounts.getKeys(false).forEach(key -> {
                     ConfigurationSection account = accounts.getConfigurationSection(key);
                     UUID uuid = UUID.fromString(key);
-                    double amount = account.getDouble("amount");
-                    double transactions = account.getDouble("transactions");
+                    BigDecimal amount = BigDecimal.valueOf(account.getDouble("amount"));
+                    BigDecimal transactions = BigDecimal.valueOf(account.getDouble("transactions"));
 
                     Banco.get().getAccountManager().add(new Account(uuid, amount, transactions));
                 });
