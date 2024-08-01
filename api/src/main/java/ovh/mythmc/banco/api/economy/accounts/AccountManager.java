@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @SuppressWarnings("unused")
@@ -42,19 +42,26 @@ public final class AccountManager {
     }
 
     public void set(final @NotNull Account account, BigDecimal amount) {
-        if (Objects.equals(account.amount(), amount))
+        if (account.amount().compareTo(amount) == 0)
             return;
 
         if (account.amount().compareTo(amount) < 0) {
             if (BancoHelper.get().isOnline(account.getUuid())) {
-                BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
+                account.setTransactions(BigDecimal.valueOf(0));
+
+                BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
+                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;
             }
 
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
         } else {
             if (BancoHelper.get().isOnline(account.getUuid())) {
-                BancoHelper.get().remove(account.getUuid(), account.amount().subtract(amount));
+                account.setTransactions(BigDecimal.valueOf(0));
+                BigDecimal toRemove = account.amount().subtract(amount);
+                BigDecimal remainder = BancoHelper.get().remove(account.getUuid(), toRemove);
+
+                account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;
             }
 
@@ -74,8 +81,10 @@ public final class AccountManager {
     }
 
     public void updateTransactions(final @NotNull Account account) {
-        set(account, account.amount().add(account.getTransactions()));
+        BigDecimal amount = account.amount();
         account.setTransactions(BigDecimal.valueOf(0));
+
+        set(account, amount);
     }
 
 }

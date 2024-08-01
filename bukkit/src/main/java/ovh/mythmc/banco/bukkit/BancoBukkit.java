@@ -5,7 +5,7 @@ import org.bukkit.command.PluginCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
 import ovh.mythmc.banco.bukkit.commands.BancoCommand;
-import ovh.mythmc.banco.bukkit.impl.BancoHelperImpl;
+import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
