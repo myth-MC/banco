@@ -1,5 +1,8 @@
 package ovh.mythmc.banco.common.util;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
@@ -11,10 +14,14 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 
 @UtilityClass
 public class UpdateChecker {
+
+    @Getter
+    @Setter(AccessLevel.PRIVATE)
+    private String latest = Banco.get().version();
+
     private final ExecutorService asyncExecutor = Executors.newSingleThreadExecutor();
 
     private final LoggerWrapper logger = new LoggerWrapper() {
@@ -35,24 +42,6 @@ public class UpdateChecker {
     };
 
     public void check() {
-        if (Banco.get().getConfig().getSettings().isDebug())
-            logger.info("Checking for updates...");
-
-        String latest = getLatest();
-
-        if (!Banco.get().version().equals(latest)) {
-            logger.info("A new update has been found: " + latest);
-            logger.info("You are currently running banco v" + Banco.get().version());
-            return;
-        }
-
-        if (Banco.get().getConfig().getSettings().isDebug())
-            logger.info("No updates have been found.");
-    }
-
-    public static String getLatest() {
-        AtomicReference<String> latest = new AtomicReference<>(Banco.get().version());
-
         asyncExecutor.execute(() -> {
             URLConnection connection = null;
             try {
@@ -64,14 +53,25 @@ public class UpdateChecker {
             }
 
             try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
-                latest.set(scanner.next());
+                if (Banco.get().getConfig().getSettings().isDebug())
+                    logger.info("Checking for updates...");
+
+                String latest = scanner.next();
+                setLatest(latest);
+
+                if (!Banco.get().version().equals(latest)) {
+                    logger.info("A new update has been found: " + latest);
+                    logger.info("You are currently running banco v" + Banco.get().version());
+                    return;
+                }
+
+                if (Banco.get().getConfig().getSettings().isDebug())
+                    logger.info("No updates have been found.");
             } catch (IOException e) {
                 if (Banco.get().getConfig().getSettings().isDebug())
                     logger.warn(e.getMessage());
             }
         });
-
-        return latest.get();
     }
 
 }
