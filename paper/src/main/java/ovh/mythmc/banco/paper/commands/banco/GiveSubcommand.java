@@ -35,7 +35,7 @@ public class GiveSubcommand implements BiConsumer<CommandSender, String[]> {
         }
 
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
-        BancoHelper.get().add(target.getUuid(), amount);
+        Banco.get().getAccountManager().deposit(target, amount);
         MessageUtil.success(sender, translatable("banco.commands.banco.give.success",
                         text(args[0]),
                         text(MessageUtil.format(amount)),

@@ -28,35 +28,39 @@ public class BancoHelperImpl implements BancoHelper {
     }
 
     @Override
-    public void add(UUID uuid, BigDecimal amount) {
+    public final BigDecimal add(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
         if (player == null)
-            return;
+            return BigDecimal.valueOf(0);
 
-        Bukkit.getScheduler().runTask(plugin, scheduledTask -> {
-            for (ItemStack item : convertAmountToItems(amount)) {
-                if (!player.getInventory().addItem(item).isEmpty())
-                    player.getWorld().dropItemNaturally(player.getLocation(), item);
-            }
-        });
+        //player.getScheduler().run(plugin, scheduledTask -> {
+        BigDecimal amountGiven = BigDecimal.valueOf(0);
+
+        for (ItemStack item : convertAmountToItems(amount)) {
+            if (!player.getInventory().addItem(item).isEmpty())
+                player.getWorld().dropItemNaturally(player.getLocation(), item);
+
+
+            amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
+        }
+
+        return amount.subtract(amountGiven);
+        //}, null);
     }
 
     // Todo: look for less valuable items first
     @Override
-    public void remove(UUID uuid, BigDecimal amount) {
+    public BigDecimal remove(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
         if (player == null)
-            return;
+            return BigDecimal.valueOf(0);
 
-        Bukkit.getScheduler().runTask(plugin, scheduledTask -> {
-            if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
-                if (removeFromInventory(player.getEnderChest().getContents(), uuid, amount).compareTo(BigDecimal.valueOf(0)) > 0)
-                    removeFromInventory(player.getInventory().getContents(), uuid, amount);
-                return;
-            }
+        if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
+            if (removeFromInventory(player.getEnderChest().getContents(), uuid, amount).compareTo(BigDecimal.valueOf(0)) > 0)
+                return removeFromInventory(player.getInventory().getContents(), uuid, amount);
+        }
 
-            removeFromInventory(player.getInventory().getContents(), uuid, amount);
-        });
+        return removeFromInventory(player.getInventory().getContents(), uuid, amount);
     }
 
     private BigDecimal removeFromInventory(ItemStack[] inventory, UUID uuid, BigDecimal amount) {

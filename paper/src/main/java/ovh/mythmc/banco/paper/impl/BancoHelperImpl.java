@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
+import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.common.util.MathUtil;
 
 import java.math.BigDecimal;
@@ -28,49 +29,64 @@ public class BancoHelperImpl implements BancoHelper {
     }
 
     @Override
-    public void add(UUID uuid, BigDecimal amount) {
+    public final BigDecimal add(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
         if (player == null)
-            return;
+            return BigDecimal.valueOf(0);
 
-        player.getScheduler().run(plugin, scheduledTask -> {
-            for (ItemStack item : convertAmountToItems(amount)) {
-                if (!player.getInventory().addItem(item).isEmpty())
-                    player.getWorld().dropItemNaturally(player.getLocation(), item);
-            }
-        }, null);
+        Banco.get().getLogger().info("adding " + amount);
+
+        //player.getScheduler().run(plugin, scheduledTask -> {
+        BigDecimal amountGiven = BigDecimal.valueOf(0);
+
+        for (ItemStack item : convertAmountToItems(amount)) {
+            if (!player.getInventory().addItem(item).isEmpty())
+                player.getWorld().dropItemNaturally(player.getLocation(), item);
+
+
+            amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
+        }
+
+        return amount.subtract(amountGiven);
+        //}, null);
     }
 
     // Todo: look for less valuable items first
     @Override
-    public void remove(UUID uuid, BigDecimal amount) {
+    public BigDecimal remove(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
         if (player == null)
-            return;
+            return BigDecimal.valueOf(0);
 
-        player.getScheduler().run(plugin, scheduledTask -> {
-            if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
-                if (removeFromInventory(player.getEnderChest().getContents(), uuid, amount).compareTo(BigDecimal.valueOf(0)) > 0)
-                    removeFromInventory(player.getInventory().getContents(), uuid, amount);
-                return;
-            }
+        if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
+            BigDecimal remainingAmount = removeFromInventory(player.getEnderChest().getContents(), uuid, amount);
 
-            removeFromInventory(player.getInventory().getContents(), uuid, amount);
-        }, null);
+            if (remainingAmount.compareTo(BigDecimal.valueOf(0)) > 0)
+                return removeFromInventory(player.getInventory().getContents(), uuid, remainingAmount);
+        }
+
+        return removeFromInventory(player.getInventory().getContents(), uuid, amount);
     }
 
     private BigDecimal removeFromInventory(ItemStack[] inventory, UUID uuid, BigDecimal amount) {
         for (ItemStack item : inventory) {
             if (item == null) continue;
-            if (amount.compareTo(BigDecimal.valueOf(0.001)) < 0) continue;
+            if (amount.compareTo(BigDecimal.valueOf(0)) < 0.01) continue;
 
             BigDecimal value = Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
 
             if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
                 item.setAmount(0);
-                if (value.compareTo(amount) > 0)
-                    add(uuid, value.subtract(amount));
-                amount = amount.subtract(value);
+                BigDecimal added = BigDecimal.valueOf(0);
+                if (value.compareTo(amount) > 0) {
+                    added = value.subtract(amount);
+                    Account account = Banco.get().getAccountManager().get(uuid);
+                    Banco.get().getAccountManager().set(account, account.amount().add(added));
+                    //add(uuid, added);
+                }
+
+                amount = amount.subtract(value.subtract(added));
+                //amount = amount.subtract(value);
             }
         }
 

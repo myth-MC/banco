@@ -3,9 +3,11 @@ package ovh.mythmc.banco.api.economy.accounts;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,19 +49,29 @@ public final class AccountManager {
 
         if (account.amount().compareTo(amount) < 0) {
             if (BancoHelper.get().isOnline(account.getUuid())) {
-                BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
+                BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
+                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;
             }
 
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
         } else {
             if (BancoHelper.get().isOnline(account.getUuid())) {
-                BancoHelper.get().remove(account.getUuid(), account.amount().subtract(amount));
+                account.setTransactions(BigDecimal.valueOf(0));
+
+                BigDecimal toRemove = account.amount().subtract(amount);
+                BigDecimal remainder = BancoHelper.get().remove(account.getUuid(), toRemove);
+
+                Banco.get().getLogger().info(remainder + " (AccountManager) amount:" + amount + " toRemove:" + toRemove);
+
+                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;
             }
 
             account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
         }
+
+        updateTransactions(account);
     }
 
     public boolean has(final @NotNull Account account, BigDecimal amount) {
@@ -74,8 +86,14 @@ public final class AccountManager {
     }
 
     public void updateTransactions(final @NotNull Account account) {
-        set(account, account.amount().add(account.getTransactions()));
-        account.setTransactions(BigDecimal.valueOf(0));
+        BigDecimal amount = account.amount();
+        BigDecimal operation = account.amount().add(account.getTransactions());
+
+        set(account, operation);
+        account.setTransactions(account.getTransactions().add(amount.subtract(operation)));
+        //account.setTransactions(account.getTransactions().add(operation.subtract(amount)));
+
+        //account.setTransactions(account.getTransactions().subtract(operation));
     }
 
 }

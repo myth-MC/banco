@@ -9,9 +9,9 @@ public interface BancoHelper {
 
     @NotNull static BancoHelper get() { return BancoHelperSupplier.get(); }
 
-    void add(UUID uuid, BigDecimal amount);
+    BigDecimal add(UUID uuid, BigDecimal amount);
 
-    void remove(UUID uuid, BigDecimal amount);
+    BigDecimal remove(UUID uuid, BigDecimal amount);
 
     boolean isOnline(UUID uuid);
 
