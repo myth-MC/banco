@@ -20,7 +20,7 @@ import ovh.mythmc.banco.common.util.TranslationUtil;
 import ovh.mythmc.banco.paper.commands.BalanceCommand;
 import ovh.mythmc.banco.paper.commands.BancoCommand;
 import ovh.mythmc.banco.paper.commands.PayCommand;
-import ovh.mythmc.banco.paper.impl.BancoHelperImpl;
+import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
 import java.io.IOException;
 import java.util.*;
