@@ -3,7 +3,9 @@ package ovh.mythmc.banco.api.economy.accounts;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
+import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -49,6 +51,8 @@ public final class AccountManager {
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
 
+                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, amount.subtract(account.amount())));
+
                 BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
                 account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;
@@ -60,6 +64,8 @@ public final class AccountManager {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);
                 BigDecimal remainder = BancoHelper.get().remove(account.getUuid(), toRemove);
+
+                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
 
                 account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.FLOOR)));
                 return;

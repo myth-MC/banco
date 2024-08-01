@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
@@ -96,10 +97,14 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     private void registerListeners() {
+        // Paper listeners
         if (Banco.get().getConfig().getSettings().getCurrency().removeDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
+
+        // banco listeners
+        Banco.get().getEventManager().registerListener(new BancoListener());
     }
 
     @SuppressWarnings("UnstableApiUsage")
