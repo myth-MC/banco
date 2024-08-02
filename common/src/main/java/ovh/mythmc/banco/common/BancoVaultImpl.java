@@ -8,19 +8,41 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
 public class BancoVaultImpl implements Economy {
 
+    private final LoggerWrapper logger = new LoggerWrapper() {
+        @Override
+        public void info(final String message, final Object... args) {
+            Banco.get().getLogger().info("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void warn(final String message, final Object... args) {
+            Banco.get().getLogger().warn("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void error(final String message, final Object... args) {
+            Banco.get().getLogger().error("[vault-impl] " + message, args);
+        }
+    };
+
     public void hook(Plugin plugin) {
-        Bukkit.getServicesManager().register(Economy.class, this, plugin, ServicePriority.Normal);
+        try {
+            Class.forName("net.milkbowl.vault.economy.Economy");
+            Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, this, plugin, ServicePriority.Highest);
+            logger.info("Hooked with Vault " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
+        } catch (ClassNotFoundException ignored) {
+            logger.error("Vault not found");
+        }
     }
 
     public void unhook() {

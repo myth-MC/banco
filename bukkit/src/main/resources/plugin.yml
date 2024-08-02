@@ -1,9 +1,10 @@
 name: banco
-version: '${project.version}'
 authors: [myth-MC, U8092]
-contributors:
+version: '${project.version}'
 api-version: 1.20
+
 main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
+load: STARTUP
 softdepend: [ PlaceholderAPI ]
 loadbefore:
   - Essentials
