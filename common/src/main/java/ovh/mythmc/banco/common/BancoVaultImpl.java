@@ -8,9 +8,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,7 +49,7 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public String format(double v) {
-        return v + Banco.get().getConfig().getSettings().getCurrency().symbol();
+        return MessageUtil.format(BigDecimal.valueOf(v)) + Banco.get().getConfig().getSettings().getCurrency().symbol();
     }
 
     @Override

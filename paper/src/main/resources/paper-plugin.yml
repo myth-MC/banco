@@ -15,6 +15,9 @@ dependencies:
     PlaceholderAPI:
       load: BEFORE
       required: false
+    Essentials:
+      load: AFTER
+      required: false
     Towny:
       load: AFTER
       required: false
