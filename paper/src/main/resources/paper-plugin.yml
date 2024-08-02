@@ -1,10 +1,12 @@
 name: banco
-version: '${project.version}'
 authors:
   - myth-MC
   - U8092
+version: '${project.version}'
 api-version: '1.20'
+
 main: ovh.mythmc.banco.paper.BancoPaperPlugin
+load: STARTUP
 folia-supported: true
 
 dependencies:
@@ -15,7 +17,34 @@ dependencies:
     PlaceholderAPI:
       load: BEFORE
       required: false
+    Essentials:
+      load: AFTER
+      required: false
     Towny:
+      load: AFTER
+      required: false
+    LiteDelivery:
+      load: AFTER
+      required: false
+    LiteFarm:
+      load: AFTER
+      required: false
+    LiteDungeon:
+      load: AFTER
+      required: false
+    LiteBase:
+      load: AFTER
+      required: false
+    LiteMatter:
+      load: AFTER
+      required: false
+    LiteGuilds:
+      load: AFTER
+      required: false
+    LiteSleep:
+      load: AFTER
+      required: false
+    LiteFish:
       load: AFTER
       required: false
 

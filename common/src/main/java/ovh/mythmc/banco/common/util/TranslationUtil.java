@@ -21,6 +21,7 @@ public class TranslationUtil {
 
         translator.registerAll(Locale.forLanguageTag("en-US"), ResourceBundle.getBundle("i10n_en_US", Locale.forLanguageTag("en-US"), UTF8ResourceBundleControl.get()), true);
         translator.registerAll(Locale.forLanguageTag("es-ES"), ResourceBundle.getBundle("i10n_es_ES", Locale.forLanguageTag("es-ES"), UTF8ResourceBundleControl.get()), true);
+        translator.registerAll(Locale.forLanguageTag("zh-CN"), ResourceBundle.getBundle("i10n_zh_CN", Locale.forLanguageTag("zh-CN"), UTF8ResourceBundleControl.get()), true);
 
         translator.defaultLocale(Locale.forLanguageTag(defaultLanguage));
         GlobalTranslator.translator().addSource(translator);

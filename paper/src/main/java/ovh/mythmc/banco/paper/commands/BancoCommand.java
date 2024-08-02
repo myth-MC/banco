@@ -2,14 +2,20 @@ package ovh.mythmc.banco.paper.commands;
 
 import io.papermc.paper.command.brigadier.BasicCommand;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.common.util.UpdateChecker;
 import ovh.mythmc.banco.paper.commands.banco.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class BancoCommand implements BasicCommand {
@@ -27,7 +33,25 @@ public final class BancoCommand implements BasicCommand {
     @Override
     public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
         if (args.length == 0) {
-            MessageUtil.error(stack.getSender(), "banco.errors.not-enough-arguments");
+            String version = Banco.get().version();
+            String latest = UpdateChecker.getLatest();
+
+            MessageUtil.info(stack.getSender(), translatable("banco.commands.banco", text(version)));
+            if (version.equals(latest)) {
+                MessageUtil.info(stack.getSender(), translatable("banco.commands.banco.up-to-date"));
+            } else {
+                MessageUtil.info(stack.getSender(), translatable("banco.commands.banco.new-version", text(latest))
+                        .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
+            }
+
+            if (Banco.get().getConfig().getSettings().isDebug()) {
+                MessageUtil.debug(stack.getSender(), "banco.commands.banco.debug-mode");
+                MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug-info",
+                        text(Banco.get().getAccountManager().get().size()),
+                        text(Banco.get().getEconomyManager().values().size())
+                ));
+            }
+
             return;
         }
 
