@@ -18,6 +18,27 @@ dependencies:
     Towny:
       load: AFTER
       required: false
+    LiteDelivery:
+      load: AFTER
+      required: false
+    LiteFarm:
+      load: AFTER
+      required: false
+    LiteDungeon:
+      load: AFTER
+      required: false
+    LiteBase:
+      load: AFTER
+      required: false
+    LiteMatter:
+      load: AFTER
+      required: false
+    LiteGuilds:
+      load: AFTER
+      required: false
+    LiteSleep:
+      load: AFTER
+      required: false
 
 permissions:
   banco.user:
