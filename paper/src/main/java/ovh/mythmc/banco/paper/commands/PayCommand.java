@@ -27,7 +27,7 @@ public class PayCommand implements BasicCommand {
     public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
         if (!(stack.getSender() instanceof Player)) return;
 
-        Account source = Banco.get().getAccountManager().get(((Player) stack.getSender()).getUniqueId());
+        Account source = Banco.get().getAccountManager().get(PlayerUtil.getUuid(stack.getSender().getName()));
 
         if (args.length < 2) {
             MessageUtil.error(stack.getSender(), "banco.errors.not-enough-arguments");

@@ -54,7 +54,7 @@ public final class AccountManager {
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, amount.subtract(account.amount())));
 
                 BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
-                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.FLOOR)));
+                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 
@@ -67,7 +67,7 @@ public final class AccountManager {
 
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
 
-                account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.FLOOR)));
+                account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 

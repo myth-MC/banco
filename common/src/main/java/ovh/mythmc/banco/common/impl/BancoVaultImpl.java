@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common;
+package ovh.mythmc.banco.common.impl;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;

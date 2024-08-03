@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.accounts.Account;
 import ovh.mythmc.banco.api.economy.accounts.AccountManager;
+import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        UUID uuid = event.getPlayer().getUniqueId();
+        UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
         Account account = accountManager.get(uuid);
 
         if (account == null) {

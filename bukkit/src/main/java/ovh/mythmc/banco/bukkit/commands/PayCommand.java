@@ -29,7 +29,7 @@ public class PayCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
         if (!(sender instanceof Player)) return true;
 
-        Account source = Banco.get().getAccountManager().get(((Player) sender).getUniqueId());
+        Account source = Banco.get().getAccountManager().get(PlayerUtil.getUuid(sender.getName()));
 
         if (args.length < 2) {
             MessageUtil.error(BancoBukkit.adventure().sender(sender), "banco.errors.not-enough-arguments");

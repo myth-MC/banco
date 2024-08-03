@@ -7,7 +7,7 @@ import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
 import ovh.mythmc.banco.bukkit.commands.BancoCommand;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.BancoVaultImpl;
+import ovh.mythmc.banco.common.impl.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;

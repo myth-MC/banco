@@ -42,7 +42,7 @@
 * **Item-based** economy system
 * [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
 * [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
-* **Multi-language** (English and Spanish for now)
+* **Multi-language** (English, Spanish and Simplified Chinese)
 * **Lightweight** and performant
 * Developed with **configurability** and simplicity on mind
 * No dependencies other than Vault
