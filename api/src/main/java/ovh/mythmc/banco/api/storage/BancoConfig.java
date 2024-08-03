@@ -64,6 +64,7 @@ public final class BancoConfig {
 
     public void loadValues() {
         settings.debug = yamlFile.getBoolean("debug");
+        settings.defaultLanguageTag = yamlFile.getString("default-language-tag", "en-US");
         settings.currency = new Settings.Currency(
                 yamlFile.getString("currency.name.singular", "Dollar"),
                 yamlFile.getString("currency.name.plural", "Dollars"),
@@ -95,6 +96,7 @@ public final class BancoConfig {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Settings {
         private boolean debug;
+        private String defaultLanguageTag;
 
         public record Currency(@NotNull String nameSingular,
                         @NotNull String namePlural,

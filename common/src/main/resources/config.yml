@@ -3,6 +3,7 @@
 #
 
 debug: false # Send debug messages to console
+default-language-tag: 'en-US' # Language that will be sent if player's locale is not available
 
 #
 # Currency settings

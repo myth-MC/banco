@@ -19,7 +19,7 @@ import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
-import ovh.mythmc.banco.common.util.TranslationUtil;
+import ovh.mythmc.banco.common.translation.BancoTranslation;
 import ovh.mythmc.banco.bukkit.commands.PayCommand;
 
 import java.io.IOException;
@@ -60,7 +60,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     @Override
     public void enable() {
-        TranslationUtil.register();
+        new BancoTranslation().load(getPlugin().getDataFolder());
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
