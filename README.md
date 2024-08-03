@@ -50,7 +50,6 @@
 ### Planned features
 
 * ~~[Folia](https://papermc.io/software/folia) support~~ ✅ (0.3+)
-* [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlockedAPI) support
 * ~~Commands~~ ✅ (0.2+)
 * Custom Model Data support
 * MySQL support
@@ -70,7 +69,7 @@
 
 ### Dependencies
 
-* [Vault](https://www.spigotmc.org/resources/vault.34315/) 1.7+ (required)
+* [Vault](https://www.spigotmc.org/resources/vault.34315/) 1.7+ or [VaultUnlocked](https://www.spigotmc.org/resources/vaultunlocked.117277/) 2.2+ (required)
 * [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (optional)
 * [Towny Advanced](https://townyadvanced.github.io) (optional)
 
