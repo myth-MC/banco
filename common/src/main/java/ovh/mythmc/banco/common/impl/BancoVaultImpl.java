@@ -71,17 +71,17 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public String format(double v) {
-        return MessageUtil.format(BigDecimal.valueOf(v)) + Banco.get().getConfig().getSettings().getCurrency().symbol();
+        return MessageUtil.format(BigDecimal.valueOf(v)) + Banco.get().getSettings().get().getCurrency().getSymbol();
     }
 
     @Override
     public String currencyNamePlural() {
-        return Banco.get().getConfig().getSettings().getCurrency().namePlural();
+        return Banco.get().getSettings().get().getCurrency().getNamePlural();
     }
 
     @Override
     public String currencyNameSingular() {
-        return Banco.get().getConfig().getSettings().getCurrency().nameSingular();
+        return Banco.get().getSettings().get().getCurrency().getNameSingular();
     }
 
     @Override

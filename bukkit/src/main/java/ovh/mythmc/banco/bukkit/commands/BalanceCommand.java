@@ -30,7 +30,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
             BigDecimal amount = Banco.get().getAccountManager().get(((Player) sender).getUniqueId()).amount();
             MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.balance",
                     text(MessageUtil.format(amount)),
-                    text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
+                    text(Banco.get().getSettings().get().getCurrency().getSymbol()))
             );
             return true;
         }
@@ -47,7 +47,7 @@ public class BalanceCommand implements CommandExecutor, TabCompleter {
         MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.balance.others",
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),
                 text(MessageUtil.format(amount)),
-                text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
+                text(Banco.get().getSettings().get().getCurrency().getSymbol()))
         );
         return true;
     }

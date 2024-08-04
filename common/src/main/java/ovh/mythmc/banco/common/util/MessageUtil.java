@@ -71,7 +71,7 @@ public final class MessageUtil {
     }
 
     public static String format(final @NotNull BigDecimal value) {
-        DecimalFormat format = new DecimalFormat(Banco.get().getConfig().getSettings().getCurrency().format());
+        DecimalFormat format = new DecimalFormat(Banco.get().getSettings().get().getCurrency().getFormat());
         return format.format(value);
     }
 

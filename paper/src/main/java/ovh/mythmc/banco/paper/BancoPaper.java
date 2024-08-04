@@ -23,7 +23,6 @@ import ovh.mythmc.banco.paper.commands.BancoCommand;
 import ovh.mythmc.banco.paper.commands.PayCommand;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +72,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         registerCommands();
         registerListeners();
 
-        if (Banco.get().getConfig().getSettings().getAutoSave().enabled())
+        if (Banco.get().getSettings().get().getAutoSave().isEnabled())
             startAutoSaver();
     }
 
@@ -84,11 +83,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         if (autoSaveTask != null)
             stopAutoSaver();
 
-        try {
-            Banco.get().getStorage().save();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Banco.get().getData().save();
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -99,7 +94,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     private void registerListeners() {
         // Paper listeners
-        if (Banco.get().getConfig().getSettings().getCurrency().removeDrops())
+        if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
@@ -114,21 +109,15 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
             commands.register("banco", "Main command for managing banco accounts", new BancoCommand());
-            if (Banco.get().getConfig().getSettings().getCommands().balanceEnabled())
+            if (Banco.get().getSettings().get().getCommands().getBalance().enabled())
                 commands.register("balance", List.of("bal", "money"), new BalanceCommand());
-            if (Banco.get().getConfig().getSettings().getCommands().payEnabled())
+            if (Banco.get().getSettings().get().getCommands().getPay().enabled())
                 commands.register("pay", new PayCommand());
         });
     }
 
     private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), scheduledTask -> {
-            try {
-                Banco.get().getStorage().save();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, 0, Banco.get().getConfig().getSettings().getAutoSave().frequency(), TimeUnit.SECONDS);
+        this.autoSaveTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), scheduledTask -> Banco.get().getData().save(), 0, Banco.get().getSettings().get().getAutoSave().getFrequency(), TimeUnit.SECONDS);
     }
 
     private void stopAutoSaver() {

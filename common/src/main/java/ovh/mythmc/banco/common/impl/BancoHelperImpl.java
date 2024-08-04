@@ -53,7 +53,7 @@ public class BancoHelperImpl implements BancoHelper {
         if (player == null)
             return BigDecimal.valueOf(0);
 
-        if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
+        if (Banco.get().getSettings().get().getCurrency().isCountEnderChest()) {
             BigDecimal remainingAmount = removeFromInventory(player.getEnderChest().getContents(), uuid, amount);
 
             if (remainingAmount.compareTo(BigDecimal.valueOf(0)) > 0)
@@ -100,7 +100,7 @@ public class BancoHelperImpl implements BancoHelper {
                 value = value.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
         }
 
-        if (Banco.get().getConfig().getSettings().getCurrency().countEnderChest()) {
+        if (Banco.get().getSettings().get().getCurrency().isCountEnderChest()) {
             for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getEnderChest()) {
                 if (item != null)
                     value = value.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));

@@ -61,7 +61,7 @@ public class PayCommand implements BasicCommand {
 
         MessageUtil.success(stack.getSender(), translatable("banco.commands.pay.success",
                 text(MessageUtil.format(amount)),
-                text(Banco.get().getConfig().getSettings().getCurrency().symbol()),
+                text(Banco.get().getSettings().get().getCurrency().getSymbol()),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
 
@@ -69,7 +69,7 @@ public class PayCommand implements BasicCommand {
             MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
                     text(MessageUtil.format(amount)),
-                    text(Banco.get().getConfig().getSettings().getCurrency().symbol())
+                    text(Banco.get().getSettings().get().getCurrency().getSymbol())
             ));
         }
     }

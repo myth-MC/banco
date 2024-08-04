@@ -62,7 +62,7 @@ public final class BancoLocalization {
         translator.registerAll(Locale.forLanguageTag("es-ES"), override(overrides, es_ES), true);
         translator.registerAll(Locale.forLanguageTag("zh-CN"), override(overrides, zh_CN), true);
 
-        translator.defaultLocale(Locale.forLanguageTag(Banco.get().getConfig().getSettings().getDefaultLanguageTag()));
+        translator.defaultLocale(Locale.forLanguageTag(Banco.get().getSettings().get().getDefaultLanguageTag()));
         GlobalTranslator.translator().addSource(translator);
     }
 

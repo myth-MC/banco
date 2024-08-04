@@ -38,8 +38,8 @@
                 <configuration>
                     <relocations>
                         <relocation>
-                            <pattern>org.simpleyaml</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.org.simpleyaml</shadedPattern>
+                            <pattern>de.exlll</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.de.exlll</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

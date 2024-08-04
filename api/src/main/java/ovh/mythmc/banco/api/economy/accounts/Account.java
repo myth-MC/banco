@@ -1,15 +1,15 @@
 package ovh.mythmc.banco.api.economy.accounts;
 
+import de.exlll.configlib.SerializeWith;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import ovh.mythmc.banco.api.Banco;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 
+@SerializeWith(serializer = AccountSerializer.class)
 @Getter(AccessLevel.PROTECTED)
 public class Account {
 
@@ -35,13 +35,6 @@ public class Account {
     
     protected void setAmount(BigDecimal amount) {
         this.amount = BigDecimal.valueOf(0).max(amount);
-    }
-
-    public final Map<String, Object> serialize() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("amount", amount.doubleValue());
-        map.put("transactions", transactions.doubleValue());
-        return map;
     }
 
 }

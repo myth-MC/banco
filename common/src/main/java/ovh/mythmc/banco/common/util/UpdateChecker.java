@@ -48,12 +48,12 @@ public class UpdateChecker {
                 String url = "https://raw.githubusercontent.com/myth-MC/banco/main/VERSION";
                 connection = new URL(url).openConnection();
             } catch (IOException e) {
-                if (Banco.get().getConfig().getSettings().isDebug())
+                if (Banco.get().getSettings().get().isDebug())
                     logger.warn(e.getMessage());
             }
 
             try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
-                if (Banco.get().getConfig().getSettings().isDebug())
+                if (Banco.get().getSettings().get().isDebug())
                     logger.info("Checking for updates...");
 
                 String latest = scanner.next();
@@ -65,10 +65,10 @@ public class UpdateChecker {
                     return;
                 }
 
-                if (Banco.get().getConfig().getSettings().isDebug())
+                if (Banco.get().getSettings().get().isDebug())
                     logger.info("No updates have been found.");
             } catch (IOException e) {
-                if (Banco.get().getConfig().getSettings().isDebug())
+                if (Banco.get().getSettings().get().isDebug())
                     logger.warn(e.getMessage());
             }
         });
