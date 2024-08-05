@@ -19,6 +19,9 @@ dependencies:
     Essentials:
       load: AFTER
       required: false
+    CMI:
+      load: AFTER
+      required: false
     Towny:
       load: AFTER
       required: false
