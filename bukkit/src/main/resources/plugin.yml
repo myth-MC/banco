@@ -4,19 +4,11 @@ version: '${project.version}'
 api-version: 1.20
 
 main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
-load: STARTUP
 softdepend: [ PlaceholderAPI ]
 loadbefore:
   - Essentials
+  - CMI
   - Towny
-  - LiteDelivery
-  - LiteFarm
-  - LiteFish
-  - LiteDungeon
-  - LiteBase
-  - LiteMatter
-  - LiteGuilds
-  - LiteSleep
 depend: [ Vault ]
 
 commands:

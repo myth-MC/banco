@@ -90,7 +90,7 @@ When you run banco for the very first time it will automatically generate two fi
 * 'config.yml' contains general settings
 * 'data.yml' is where the data is stored
 
-banco comes with a very simple gold-based economy setup that can be expanded by modifying '[config.yml](https://github.com/myth-MC/banco/blob/main/src/main/resources/config.yml)'
+banco comes with a very simple gold-based economy setup that can be expanded by modifying '[config.yml](https://github.com/myth-MC/banco/blob/main/common/src/main/resources/config.yml)'
 
 #### Other supported plugins
 
