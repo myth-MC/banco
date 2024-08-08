@@ -41,7 +41,7 @@ public final class BancoDataProvider {
     }
 
     public void load() {
-        clearCache();
+        Banco.get().getAccountManager().clear();
 
         if (Banco.get().getSettings().get().isDebug())
             logger.info("Loading accounts from accounts.yml...");
@@ -73,13 +73,6 @@ public final class BancoDataProvider {
 
         if (Banco.get().getSettings().get().isDebug())
             logger.info("Done!");
-    }
-
-    private void clearCache() {
-        for (int i = 0; i < Banco.get().getAccountManager().get().size(); i++) {
-            Account account = Banco.get().getAccountManager().get().get(i);
-            Banco.get().getAccountManager().remove(account);
-        }
     }
 
     public BancoData get() { return data; }
