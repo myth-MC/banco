@@ -2,12 +2,12 @@ package ovh.mythmc.banco.api.economy;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.simpleyaml.configuration.ConfigurationSection;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -34,17 +34,15 @@ public final class EconomyManager {
     public static final EconomyManager instance = new EconomyManager();
     private static final Map<String, BigDecimal> valuesMap = new HashMap<>();
 
-    public void registerAll(ConfigurationSection configurationSection) {
+    public void registerAll(List<BancoItem> items) {
         values().clear();
 
-        for (String materialName : configurationSection.getKeys(false)) {
-            double value = configurationSection.getDouble(materialName);
+        items.forEach(item -> {
+            register(item.name(), item.value());
 
-            if (Banco.get().getConfig().getSettings().isDebug())
-                logger.info(materialName + ": " + value);
-
-            register(materialName, BigDecimal.valueOf(value));
-        }
+            if (Banco.get().getSettings().get().isDebug())
+                logger.info(item.name() + ": " + item.value());
+        });
     }
 
     public void register(String materialName, BigDecimal value) { valuesMap.put(materialName, value); }

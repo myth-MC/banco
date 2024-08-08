@@ -39,7 +39,7 @@ public class SetSubcommand implements BiConsumer<CommandSender, String[]> {
         MessageUtil.success(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.set.success",
                 text(args[0]),
                 text(MessageUtil.format(amount)),
-                text(Banco.get().getConfig().getSettings().getCurrency().symbol()))
+                text(Banco.get().getSettings().get().getCurrency().getSymbol()))
         );
     }
 

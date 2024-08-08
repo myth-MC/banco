@@ -5,7 +5,6 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.bukkit.BancoBukkit;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-import java.io.IOException;
 import java.util.function.BiConsumer;
 
 public class SaveSubcommand implements BiConsumer<CommandSender, String[]> {
@@ -13,11 +12,7 @@ public class SaveSubcommand implements BiConsumer<CommandSender, String[]> {
     @Override
     public void accept(CommandSender sender, String[] args) {
         MessageUtil.info(BancoBukkit.adventure().sender(sender), "banco.commands.banco.save");
-        try {
-            Banco.get().getStorage().save();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Banco.get().getData().save();
         MessageUtil.success(BancoBukkit.adventure().sender(sender), "banco.commands.banco.save.success");
     }
 

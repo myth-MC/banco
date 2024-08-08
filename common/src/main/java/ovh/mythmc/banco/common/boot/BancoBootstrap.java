@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
-import ovh.mythmc.banco.api.storage.BancoConfig;
-import ovh.mythmc.banco.api.storage.BancoStorage;
+import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
+import ovh.mythmc.banco.api.data.BancoDataProvider;
+import ovh.mythmc.banco.common.util.MigrationUtil;
 import ovh.mythmc.banco.common.util.UpdateChecker;
 
 import java.io.File;
@@ -16,35 +17,38 @@ import java.io.File;
 public abstract class BancoBootstrap<T> implements Banco {
 
     private T plugin;
-    private BancoConfig config;
-    private BancoStorage storage;
+    private BancoSettingsProvider settings;
+    private BancoDataProvider data;
+
+    private MigrationUtil migrationUtil;
 
     public BancoBootstrap(final @NotNull T plugin,
                           final File dataDirectory) {
         // Set the Banco API
         BancoSupplier.set(this);
 
+        this.migrationUtil = new MigrationUtil(dataDirectory);
+
         this.plugin = plugin;
-        this.config = new BancoConfig(dataDirectory);
-        this.storage = new BancoStorage(dataDirectory);
+        this.settings = new BancoSettingsProvider(dataDirectory);
+        this.data = new BancoDataProvider(dataDirectory);
     }
 
     public final void initialize() {
-        getLogger().info("Enabling all tasks and features...");
+        getSettings().load();
+        getData().load();
 
-        reload();
+        migrationUtil.data();
 
         try {
             enable();
-
-            getLogger().info("Done!");
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing banco: {}", throwable);
             throwable.printStackTrace(System.err);
             return;
         }
 
-        if (Banco.get().getConfig().getSettings().getUpdateTracker().enabled())
+        if (Banco.get().getSettings().get().getUpdateTracker().isEnabled())
             UpdateChecker.check();
     }
 
@@ -53,9 +57,9 @@ public abstract class BancoBootstrap<T> implements Banco {
     public abstract void shutdown();
 
     public final void reload() {
-        getStorage().clear();
-        getStorage().load();
-        getConfig().load();
+        getSettings().load();
+        getData().save();
+        getData().load();
     }
 
     public abstract String version();

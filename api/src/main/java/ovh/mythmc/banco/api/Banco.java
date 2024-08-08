@@ -1,12 +1,12 @@
 package ovh.mythmc.banco.api;
 
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
+import ovh.mythmc.banco.api.data.BancoDataProvider;
 import ovh.mythmc.banco.api.event.BancoEventManager;
-import ovh.mythmc.banco.api.storage.BancoConfig;
 import ovh.mythmc.banco.api.economy.accounts.AccountManager;
 import ovh.mythmc.banco.api.economy.EconomyManager;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
-import ovh.mythmc.banco.api.storage.BancoStorage;
 
 public interface Banco {
 
@@ -18,9 +18,9 @@ public interface Banco {
 
     @NotNull LoggerWrapper getLogger();
 
-    @NotNull BancoConfig getConfig();
+    @NotNull BancoSettingsProvider getSettings();
 
-    @NotNull BancoStorage getStorage();
+    @NotNull BancoDataProvider getData();
 
     @NotNull default AccountManager getAccountManager() { return AccountManager.instance; }
 

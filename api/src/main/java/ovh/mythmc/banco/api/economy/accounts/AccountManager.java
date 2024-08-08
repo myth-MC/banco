@@ -24,6 +24,8 @@ public final class AccountManager {
 
     public void remove(final @NotNull Account account) { accountsList.remove(account); }
 
+    public void clear() { accountsList.clear(); }
+
     public List<Account> get() { return accountsList; }
 
     public Account get(UUID uuid) {

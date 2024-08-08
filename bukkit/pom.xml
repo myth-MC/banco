@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.4.5</version>
+        <version>0.5.0</version>
     </parent>
 
     <artifactId>banco-bukkit</artifactId>
@@ -15,9 +15,11 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <target.version>1.20+</target.version>
     </properties>
 
     <build>
+        <finalName>${project.name}-${parent.version} (${target.version})</finalName>
         <defaultGoal>clean package</defaultGoal>
         <resources>
             <resource>
@@ -36,10 +38,6 @@
                         <relocation>
                             <pattern>net.kyori</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.net.kyori</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.simpleyaml</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.org.simpleyaml</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
