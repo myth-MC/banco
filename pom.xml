@@ -41,6 +41,10 @@
                             <pattern>de.exlll</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.de.exlll</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.snakeyaml</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.org.snakeyaml</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
