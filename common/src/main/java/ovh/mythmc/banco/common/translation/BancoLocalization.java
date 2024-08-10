@@ -41,6 +41,9 @@ public final class BancoLocalization {
 
         if (!Files.exists(overrides)) {
             try {
+                if (!Files.isDirectory(overrides.getParent()))
+                    Files.createDirectories(overrides.getParent());
+
                 logger.info("Creating lang/overrides.properties...");
                 Files.copy(Objects.requireNonNull(Banco.class.getResourceAsStream("/overrides.properties")),
                         overrides);
