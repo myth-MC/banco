@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common;
+package ovh.mythmc.banco.common.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -38,11 +38,11 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
         if (params.equalsIgnoreCase("balance")) {
             return MessageUtil.format(BancoHelper.get().getInventoryValue(player.getUniqueId()));
         } else if (params.equalsIgnoreCase("symbol")) {
-            return Banco.get().getConfig().getSettings().getCurrency().symbol();
+            return Banco.get().getSettings().get().getCurrency().getSymbol();
         } else if (params.equalsIgnoreCase("name_plural")) {
-            return Banco.get().getConfig().getSettings().getCurrency().namePlural();
+            return Banco.get().getSettings().get().getCurrency().getNamePlural();
         } else if (params.equalsIgnoreCase("name_singular")) {
-            return Banco.get().getConfig().getSettings().getCurrency().nameSingular();
+            return Banco.get().getSettings().get().getCurrency().getNameSingular();
         } else if (params.equalsIgnoreCase("version")) {
             return Banco.get().version();
         }

@@ -47,11 +47,11 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
                         .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
             }
 
-            if (Banco.get().getConfig().getSettings().isDebug()) {
+            if (Banco.get().getSettings().get().isDebug()) {
                 MessageUtil.debug(BancoBukkit.adventure().sender(sender), "banco.commands.banco.debug-mode");
                 MessageUtil.debug(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
-                        text(Banco.get().getEconomyManager().values().size())
+                        text(Banco.get().getEconomyManager().get().size())
                 ));
             }
 

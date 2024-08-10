@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.4.5</version>
+        <version>0.5.0</version>
     </parent>
 
     <artifactId>banco-api</artifactId>
@@ -20,15 +20,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.Carleslc.Simple-YAML</groupId>
-            <artifactId>Simple-Yaml</artifactId>
-            <version>1.8.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.yaml</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>de.exlll</groupId>
+            <artifactId>configlib-yaml</artifactId>
+            <version>4.5.0</version>
         </dependency>
     </dependencies>
 

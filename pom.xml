@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>banco</artifactId>
-    <version>0.4.5</version>
+    <version>0.5.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -38,8 +38,12 @@
                 <configuration>
                     <relocations>
                         <relocation>
-                            <pattern>org.simpleyaml</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.org.simpleyaml</shadedPattern>
+                            <pattern>de.exlll</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.de.exlll</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.snakeyaml</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.org.snakeyaml</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
 import ovh.mythmc.banco.bukkit.commands.BancoCommand;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
-import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
+import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.impl.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
@@ -19,10 +19,9 @@ import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
-import ovh.mythmc.banco.common.util.TranslationUtil;
+import ovh.mythmc.banco.common.translation.BancoLocalization;
 import ovh.mythmc.banco.bukkit.commands.PayCommand;
 
-import java.io.IOException;
 import java.util.*;
 
 @Getter
@@ -60,21 +59,22 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     @Override
     public void enable() {
-        TranslationUtil.register();
+        new BancoLocalization().load(getPlugin().getDataFolder());
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
-        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+        new BancoHelperImpl(); // BancoHelper.get()
 
         adventure = BukkitAudiences.create(getPlugin());
 
         registerListeners();
         registerCommands();
 
-        if (Banco.get().getConfig().getSettings().getAutoSave().enabled())
+        if (Banco.get().getSettings().get().getAutoSave().isEnabled())
             startAutoSaver();
     }
 
@@ -85,11 +85,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         if (autoSaveTask != null)
             stopAutoSaver();
 
-        try {
-            Banco.get().getStorage().save();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Banco.get().getData().save();
     }
 
     @Override
@@ -99,7 +95,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     private void registerListeners() {
         // Bukkit listeners
-        if (Banco.get().getConfig().getSettings().getCurrency().removeDrops())
+        if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
@@ -117,21 +113,15 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         Objects.requireNonNull(balance).setExecutor(new BalanceCommand());
         Objects.requireNonNull(pay).setExecutor(new PayCommand());
 
-        if (!Banco.get().getConfig().getSettings().getCommands().balanceEnabled())
+        if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
             balance.setPermission("banco.admin");
 
-        if (!Banco.get().getConfig().getSettings().getCommands().payEnabled())
+        if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
             pay.setPermission("banco.admin");
     }
 
     private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> {
-            try {
-                Banco.get().getStorage().save();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, 0, Banco.get().getConfig().getSettings().getAutoSave().frequency() * 20L);
+        this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> Banco.get().getData().save(), 0, Banco.get().getSettings().get().getAutoSave().getFrequency() * 20L);
     }
 
     private void stopAutoSaver() {

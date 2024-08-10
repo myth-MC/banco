@@ -44,11 +44,11 @@ public final class BancoCommand implements BasicCommand {
                         .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
             }
 
-            if (Banco.get().getConfig().getSettings().isDebug()) {
+            if (Banco.get().getSettings().get().isDebug()) {
                 MessageUtil.debug(stack.getSender(), "banco.commands.banco.debug-mode");
                 MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
-                        text(Banco.get().getEconomyManager().values().size())
+                        text(Banco.get().getEconomyManager().get().size())
                 ));
             }
 
