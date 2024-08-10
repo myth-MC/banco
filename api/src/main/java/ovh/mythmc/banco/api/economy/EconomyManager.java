@@ -34,7 +34,6 @@ public final class EconomyManager {
 
     public static final EconomyManager instance = new EconomyManager();
     private static final List<BancoItem> itemsList = new ArrayList<>();
-    //private static final Map<String, BigDecimal> valuesMap = new HashMap<>();
 
     public void registerAll(List<BancoItem> items) {
         itemsList.clear();
@@ -62,7 +61,7 @@ public final class EconomyManager {
 
     public BancoItem get(final @NotNull String materialName,
                          final @NotNull String displayName,
-                         final int customModelData) {
+                         final Integer customModelData) {
         for (BancoItem item : get()) {
             if (Objects.equals(materialName, item.name())
                     && Objects.equals(displayName, item.displayName())

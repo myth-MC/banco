@@ -17,7 +17,7 @@ public class EntityDeathListener implements Listener {
         event.getDrops().removeIf(item -> {
             String materialName = item.getType().name();
             String displayName = null;
-            int customModelData = 0;
+            Integer customModelData = null;
 
             if (item.hasItemMeta()) {
                 displayName = item.getItemMeta().getDisplayName();

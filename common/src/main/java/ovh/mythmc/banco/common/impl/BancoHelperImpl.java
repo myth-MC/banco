@@ -36,7 +36,7 @@ public class BancoHelperImpl implements BancoHelper {
         for (ItemStack item : convertAmountToItems(amount)) {
             String materialName = item.getType().name();
             String displayName = null;
-            int customModelData = 0;
+            Integer customModelData = null;
 
             if (item.hasItemMeta()) {
                 displayName = item.getItemMeta().getDisplayName();
@@ -81,7 +81,7 @@ public class BancoHelperImpl implements BancoHelper {
 
             String materialName = item.getType().name();
             String displayName = null;
-            int customModelData = 0;
+            Integer customModelData = null;
 
             if (item.hasItemMeta()) {
                 displayName = item.getItemMeta().getDisplayName();
@@ -122,7 +122,7 @@ public class BancoHelperImpl implements BancoHelper {
             if (item != null) {
                 String materialName = item.getType().name();
                 String displayName = null;
-                int customModelData = 0;
+                Integer customModelData = null;
 
                 if (item.hasItemMeta()) {
                     displayName = item.getItemMeta().getDisplayName();
@@ -141,7 +141,7 @@ public class BancoHelperImpl implements BancoHelper {
                 if (item != null) {
                     String materialName = item.getType().name();
                     String displayName = null;
-                    int customModelData = 0;
+                    Integer customModelData = null;
 
                     if (item.hasItemMeta()) {
                         displayName = item.getItemMeta().getDisplayName();
@@ -175,7 +175,7 @@ public class BancoHelperImpl implements BancoHelper {
                     itemMeta.setDisplayName(bancoItem.displayName());
                 if (bancoItem.lore() != null)
                     itemMeta.setLore(bancoItem.lore().stream().map(string -> ChatColor.RESET + string).toList());
-                if (bancoItem.customModelData() != 0)
+                if (bancoItem.customModelData() != null)
                     itemMeta.setCustomModelData(bancoItem.customModelData());
                 itemStack.setItemMeta(itemMeta);
                 items.add(itemStack);
