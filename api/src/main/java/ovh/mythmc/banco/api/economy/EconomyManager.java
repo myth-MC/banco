@@ -2,13 +2,14 @@ package ovh.mythmc.banco.api.economy;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -32,36 +33,48 @@ public final class EconomyManager {
     };
 
     public static final EconomyManager instance = new EconomyManager();
-    private static final Map<String, BigDecimal> valuesMap = new HashMap<>();
+    private static final List<BancoItem> itemsList = new ArrayList<>();
 
     public void registerAll(List<BancoItem> items) {
-        values().clear();
+        itemsList.clear();
 
-        items.forEach(item -> {
-            register(item.name(), item.value());
-
-            if (Banco.get().getSettings().get().isDebug())
-                logger.info(item.name() + ": " + item.value());
-        });
+        items.forEach(this::register);
     }
 
-    public void register(String materialName, BigDecimal value) { valuesMap.put(materialName, value); }
+    public void register(BancoItem item) {
+        itemsList.add(item);
 
-    public void unregister(String materialName) { valuesMap.remove(materialName); }
+        if (Banco.get().getSettings().get().isDebug())
+            logger.info("Registered material {} with displayName {} and customModelData {}: {}",
+                    item.name(),
+                    item.displayName(),
+                    item.customModelData(),
+                    item.value()
+            );
+    }
 
-    public void clear() { valuesMap.clear(); }
+    public void unregister(BancoItem item) { itemsList.remove(item); }
 
-    public Map<String, BigDecimal> values() { return valuesMap; }
+    public void clear() { itemsList.clear(); }
 
-    public BigDecimal value(String materialName) { return value(materialName, 1); }
+    public List<BancoItem> get() { return List.copyOf(itemsList); }
 
-    public BigDecimal value(String materialName, int amount) {
-        for (Map.Entry<String, BigDecimal> entry : valuesMap.entrySet()) {
-            if (!materialName.equals(entry.getKey())) continue;
-            return entry.getValue().multiply(BigDecimal.valueOf(amount));
+    public BancoItem get(final @NotNull String materialName,
+                         final @NotNull String displayName,
+                         final Integer customModelData) {
+        for (BancoItem item : get()) {
+            if (Objects.equals(materialName, item.name())
+                    && Objects.equals(displayName, item.displayName())
+                    && Objects.equals(customModelData, item.customModelData()))
+
+                return item;
         }
 
-        return BigDecimal.valueOf(0);
+        return null;
+    }
+
+    public BigDecimal value(BancoItem item, int amount) {
+        return item.value().multiply(BigDecimal.valueOf(amount));
     }
 
 }

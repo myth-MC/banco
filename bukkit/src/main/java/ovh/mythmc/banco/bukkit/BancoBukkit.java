@@ -6,7 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
 import ovh.mythmc.banco.bukkit.commands.BancoCommand;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
-import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
+import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.impl.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
@@ -67,7 +67,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
-        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+        new BancoHelperImpl(); // BancoHelper.get()
 
         adventure = BukkitAudiences.create(getPlugin());
 
