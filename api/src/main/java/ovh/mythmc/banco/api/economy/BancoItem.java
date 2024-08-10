@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record BancoItem(@NotNull String name,
-                    String displayName,
-                    List<String> lore,
-                    int customModelData,
-                    BigDecimal value) { }
+                        String displayName,
+                        List<String> lore,
+                        Integer customModelData,
+                        BigDecimal value) { }

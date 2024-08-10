@@ -1,16 +1,16 @@
 package ovh.mythmc.banco.common.impl;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.inventory.meta.ItemMeta;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
+import ovh.mythmc.banco.api.economy.BancoItem;
 import ovh.mythmc.banco.api.economy.accounts.Account;
-import ovh.mythmc.banco.common.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,10 +21,7 @@ import java.util.UUID;
 
 public class BancoHelperImpl implements BancoHelper {
 
-    private final @NotNull Plugin plugin;
-
-    public BancoHelperImpl(final @NotNull Plugin plugin) {
-        this.plugin = plugin;
+    public BancoHelperImpl() {
         BancoHelperSupplier.set(this);
     }
 
@@ -37,7 +34,19 @@ public class BancoHelperImpl implements BancoHelper {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : convertAmountToItems(amount)) {
-            amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
+            String materialName = item.getType().name();
+            String displayName = null;
+            int customModelData = 0;
+
+            if (item.hasItemMeta()) {
+                displayName = item.getItemMeta().getDisplayName();
+                if (item.getItemMeta().hasCustomModelData())
+                    customModelData = item.getItemMeta().getCustomModelData();
+            }
+
+            BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+            if (bancoItem != null)
+                amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
 
             if (!player.getInventory().addItem(item).isEmpty())
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
@@ -68,7 +77,21 @@ public class BancoHelperImpl implements BancoHelper {
             if (item == null) continue;
             if (amount.compareTo(BigDecimal.valueOf(0)) < 0.01) continue;
 
-            BigDecimal value = Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount());
+            BigDecimal value = BigDecimal.valueOf(0);
+
+            String materialName = item.getType().name();
+            String displayName = null;
+            int customModelData = 0;
+
+            if (item.hasItemMeta()) {
+                displayName = item.getItemMeta().getDisplayName();
+                if (item.getItemMeta().hasCustomModelData())
+                    customModelData = item.getItemMeta().getCustomModelData();
+            }
+
+            BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+            if (bancoItem != null)
+                value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
 
             if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
                 item.setAmount(0);
@@ -96,14 +119,40 @@ public class BancoHelperImpl implements BancoHelper {
         BigDecimal value = BigDecimal.valueOf(0);
 
         for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getInventory()) {
-            if (item != null)
-                value = value.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
+            if (item != null) {
+                String materialName = item.getType().name();
+                String displayName = null;
+                int customModelData = 0;
+
+                if (item.hasItemMeta()) {
+                    displayName = item.getItemMeta().getDisplayName();
+                    if (item.getItemMeta().hasCustomModelData())
+                        customModelData = item.getItemMeta().getCustomModelData();
+                }
+
+                BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+                if (bancoItem != null)
+                    value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+            }
         }
 
         if (Banco.get().getSettings().get().getCurrency().isCountEnderChest()) {
             for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getEnderChest()) {
-                if (item != null)
-                    value = value.add(Banco.get().getEconomyManager().value(item.getType().name(), item.getAmount()));
+                if (item != null) {
+                    String materialName = item.getType().name();
+                    String displayName = null;
+                    int customModelData = 0;
+
+                    if (item.hasItemMeta()) {
+                        displayName = item.getItemMeta().getDisplayName();
+                        if (item.getItemMeta().hasCustomModelData())
+                            customModelData = item.getItemMeta().getCustomModelData();
+                    }
+
+                    BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+                    if (bancoItem != null)
+                        value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+                }
             }
         }
 
@@ -113,19 +162,26 @@ public class BancoHelperImpl implements BancoHelper {
     public List<ItemStack> convertAmountToItems(BigDecimal amount) {
         List<ItemStack> items = new ArrayList<>();
 
-        for (String materialName : MathUtil.sortByValue(Banco.get().getEconomyManager().values()).keySet()) {
-            BigDecimal itemValue = Banco.get().getEconomyManager().value(materialName);
-
-            if (itemValue.compareTo(amount) > 0)
+        for (BancoItem bancoItem : Banco.get().getEconomyManager().get().reversed()) {
+            if(bancoItem.value().compareTo(amount) > 0)
                 continue;
 
-            int itemAmount = (amount.divide(itemValue, RoundingMode.FLOOR)).intValue();
+            int itemAmount = (amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue();
 
             if (itemAmount > 0) {
-                items.add(new ItemStack(Objects.requireNonNull(Material.getMaterial(materialName)), itemAmount));
-            }
+                ItemStack itemStack = new ItemStack(Material.getMaterial(bancoItem.name()), itemAmount);
+                ItemMeta itemMeta = itemStack.getItemMeta();
+                if (bancoItem.displayName() != null)
+                    itemMeta.setDisplayName(bancoItem.displayName());
+                if (bancoItem.lore() != null)
+                    itemMeta.setLore(bancoItem.lore().stream().map(string -> ChatColor.RESET + string).toList());
+                if (bancoItem.customModelData() != 0)
+                    itemMeta.setCustomModelData(bancoItem.customModelData());
+                itemStack.setItemMeta(itemMeta);
+                items.add(itemStack);
 
-            amount = amount.subtract(Banco.get().getEconomyManager().value(materialName, itemAmount));
+                amount = amount.subtract(Banco.get().getEconomyManager().value(bancoItem, itemAmount));
+            }
         }
 
         return items;

@@ -64,7 +64,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
-        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+        new BancoHelperImpl(); // BancoHelper.get()
 
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());

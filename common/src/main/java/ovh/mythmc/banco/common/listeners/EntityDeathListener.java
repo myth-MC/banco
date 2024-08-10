@@ -5,8 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import ovh.mythmc.banco.api.Banco;
-
-import java.math.BigDecimal;
+import ovh.mythmc.banco.api.economy.BancoItem;
 
 public class EntityDeathListener implements Listener {
 
@@ -15,7 +14,20 @@ public class EntityDeathListener implements Listener {
         if (event.getEntityType().equals(EntityType.PLAYER))
             return;
 
-        event.getDrops().removeIf(item -> Banco.get().getEconomyManager().value(item.getType().name()).compareTo(BigDecimal.valueOf(0)) > 0);
+        event.getDrops().removeIf(item -> {
+            String materialName = item.getType().name();
+            String displayName = null;
+            int customModelData = 0;
+
+            if (item.hasItemMeta()) {
+                displayName = item.getItemMeta().getDisplayName();
+                if (item.getItemMeta().hasCustomModelData())
+                    customModelData = item.getItemMeta().getCustomModelData();
+            }
+
+            BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+            return bancoItem != null;
+        });
     }
 
 }

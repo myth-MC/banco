@@ -67,7 +67,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         vaultImpl = new BancoVaultImpl();
         vaultImpl.hook(getPlugin());
 
-        new BancoHelperImpl(getPlugin()); // BancoHelper.get()
+        new BancoHelperImpl(); // BancoHelper.get()
 
         adventure = BukkitAudiences.create(getPlugin());
 
