@@ -5,7 +5,7 @@ import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.plugin.Plugin;
-import ovh.mythmc.banco.common.BancoPlaceholderExpansion;
+import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.impl.BancoVaultImpl;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;

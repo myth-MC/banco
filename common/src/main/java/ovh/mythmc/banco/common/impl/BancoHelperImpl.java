@@ -1,16 +1,14 @@
 package ovh.mythmc.banco.common.impl;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
 import ovh.mythmc.banco.api.economy.BancoItem;
 import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.common.util.ItemUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,17 +32,7 @@ public class BancoHelperImpl implements BancoHelper {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : convertAmountToItems(amount)) {
-            String materialName = item.getType().name();
-            String displayName = null;
-            Integer customModelData = null;
-
-            if (item.hasItemMeta()) {
-                displayName = item.getItemMeta().getDisplayName();
-                if (item.getItemMeta().hasCustomModelData())
-                    customModelData = item.getItemMeta().getCustomModelData();
-            }
-
-            BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+            BancoItem bancoItem = ItemUtil.getBancoItem(item);
             if (bancoItem != null)
                 amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
 
@@ -79,17 +67,7 @@ public class BancoHelperImpl implements BancoHelper {
 
             BigDecimal value = BigDecimal.valueOf(0);
 
-            String materialName = item.getType().name();
-            String displayName = null;
-            Integer customModelData = null;
-
-            if (item.hasItemMeta()) {
-                displayName = item.getItemMeta().getDisplayName();
-                if (item.getItemMeta().hasCustomModelData())
-                    customModelData = item.getItemMeta().getCustomModelData();
-            }
-
-            BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+            BancoItem bancoItem = ItemUtil.getBancoItem(item);
             if (bancoItem != null)
                 value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
 
@@ -99,7 +77,8 @@ public class BancoHelperImpl implements BancoHelper {
                 if (value.compareTo(amount) > 0) {
                     added = value.subtract(amount);
                     Account account = Banco.get().getAccountManager().get(uuid);
-                    Banco.get().getAccountManager().set(account, account.amount().add(added));
+                    if (account != null)
+                        Banco.get().getAccountManager().set(account, account.amount().add(added));
                 }
 
                 amount = amount.subtract(value.subtract(added));
@@ -120,17 +99,7 @@ public class BancoHelperImpl implements BancoHelper {
 
         for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getInventory()) {
             if (item != null) {
-                String materialName = item.getType().name();
-                String displayName = null;
-                Integer customModelData = null;
-
-                if (item.hasItemMeta()) {
-                    displayName = item.getItemMeta().getDisplayName();
-                    if (item.getItemMeta().hasCustomModelData())
-                        customModelData = item.getItemMeta().getCustomModelData();
-                }
-
-                BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+                BancoItem bancoItem = ItemUtil.getBancoItem(item);
                 if (bancoItem != null)
                     value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
             }
@@ -139,17 +108,7 @@ public class BancoHelperImpl implements BancoHelper {
         if (Banco.get().getSettings().get().getCurrency().isCountEnderChest()) {
             for (ItemStack item : Objects.requireNonNull(Bukkit.getPlayer(uuid)).getEnderChest()) {
                 if (item != null) {
-                    String materialName = item.getType().name();
-                    String displayName = null;
-                    Integer customModelData = null;
-
-                    if (item.hasItemMeta()) {
-                        displayName = item.getItemMeta().getDisplayName();
-                        if (item.getItemMeta().hasCustomModelData())
-                            customModelData = item.getItemMeta().getCustomModelData();
-                    }
-
-                    BancoItem bancoItem = Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+                    BancoItem bancoItem = ItemUtil.getBancoItem(item);
                     if (bancoItem != null)
                         value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
                 }
@@ -169,16 +128,7 @@ public class BancoHelperImpl implements BancoHelper {
             int itemAmount = (amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue();
 
             if (itemAmount > 0) {
-                ItemStack itemStack = new ItemStack(Material.getMaterial(bancoItem.name()), itemAmount);
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                if (bancoItem.displayName() != null)
-                    itemMeta.setDisplayName(bancoItem.displayName());
-                if (bancoItem.lore() != null)
-                    itemMeta.setLore(bancoItem.lore().stream().map(string -> ChatColor.RESET + string).toList());
-                if (bancoItem.customModelData() != null)
-                    itemMeta.setCustomModelData(bancoItem.customModelData());
-                itemStack.setItemMeta(itemMeta);
-                items.add(itemStack);
+                items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
 
                 amount = amount.subtract(Banco.get().getEconomyManager().value(bancoItem, itemAmount));
             }
@@ -186,4 +136,5 @@ public class BancoHelperImpl implements BancoHelper {
 
         return items;
     }
+
 }

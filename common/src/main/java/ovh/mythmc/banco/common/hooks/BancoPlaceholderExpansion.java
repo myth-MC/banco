@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common;
+package ovh.mythmc.banco.common.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
