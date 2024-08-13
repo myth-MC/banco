@@ -301,22 +301,26 @@ public class BancoVaultImpl implements Economy {
     }
 
     @Override
-    public boolean createPlayerAccount(String s) {
-        return false;
+    public boolean createPlayerAccount(String s) { // FAKE PLAYER ACCOUNT
+        if (hasAccount(s))
+            return false;
+
+        Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+        return true;
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
-        return false;
+        return createPlayerAccount(offlinePlayer.getName());
     }
 
     @Override
     public boolean createPlayerAccount(String s, String s1) {
-        return false;
+        return createPlayerAccount(s);
     }
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer, String s) {
-        return false;
+        return createPlayerAccount(offlinePlayer.getName());
     }
 }
