@@ -30,22 +30,34 @@ public final class BancoCommand implements BasicCommand {
         subCommands.put("reload", new ReloadSubcommand());
         subCommands.put("save", new SaveSubcommand());
     }
+
     @Override
     public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
         if (args.length == 0) {
             String version = Banco.get().version();
             String latest = UpdateChecker.getLatest();
 
-            MessageUtil.info(stack.getSender(), translatable("banco.commands.banco", text(version)));
-            if (version.equals(latest)) {
-                MessageUtil.info(stack.getSender(), translatable("banco.commands.banco.up-to-date"));
-            } else {
+            MessageUtil.info(stack.getSender(), translatable("banco.commands.banco", text(version), text("paper")));
+            if (!version.equals(latest)) {
                 MessageUtil.info(stack.getSender(), translatable("banco.commands.banco.new-version", text(latest))
                         .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
             }
 
+            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.1",
+                    text(org.bukkit.Bukkit.getVersionMessage().substring(23))
+            ));
+
+            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.2",
+                    text(Bukkit.getServer().getOnlineMode())
+            ));
+
+            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.3",
+                    text(Banco.get().getEconomyManager().get().size()),
+                    text("PLACEHOLDER"),
+                    text(Banco.get().getAccountManager().get().size())
+            ));
+
             if (Banco.get().getSettings().get().isDebug()) {
-                MessageUtil.debug(stack.getSender(), "banco.commands.banco.debug-mode");
                 MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
                         text(Banco.get().getEconomyManager().get().size())
