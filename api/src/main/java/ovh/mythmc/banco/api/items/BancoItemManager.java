@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.economy;
+package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class EconomyManager {
+public final class BancoItemManager {
 
     static final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -32,7 +32,7 @@ public final class EconomyManager {
         }
     };
 
-    public static final EconomyManager instance = new EconomyManager();
+    public static final BancoItemManager instance = new BancoItemManager();
     private static final List<BancoItem> itemsList = new ArrayList<>();
 
     public void registerAll(List<BancoItem> items) {

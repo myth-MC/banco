@@ -4,8 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
-import ovh.mythmc.banco.api.economy.accounts.AccountManager;
+import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.accounts.AccountManager;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;

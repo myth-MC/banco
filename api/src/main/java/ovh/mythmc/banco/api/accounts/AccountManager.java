@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.economy.accounts;
+package ovh.mythmc.banco.api.accounts;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -6,7 +6,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.accounts.Account;
 
 import java.io.File;
 import java.io.IOException;

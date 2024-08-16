@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.event.BancoEvent;
 
 import java.math.BigDecimal;

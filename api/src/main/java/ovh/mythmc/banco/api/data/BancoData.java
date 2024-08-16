@@ -2,7 +2,7 @@ package ovh.mythmc.banco.api.data;
 
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
-import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.accounts.Account;
 
 import java.util.ArrayList;
 import java.util.List;

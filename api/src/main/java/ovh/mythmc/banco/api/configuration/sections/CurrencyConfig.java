@@ -4,7 +4,7 @@ import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.economy.BancoItem;
+import ovh.mythmc.banco.api.items.BancoItem;
 
 import java.math.BigDecimal;
 import java.util.List;

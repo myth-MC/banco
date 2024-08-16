@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.economy.accounts.AccountManager;
+import ovh.mythmc.banco.api.accounts.AccountManager;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.util.UUID;

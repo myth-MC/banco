@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.economy;
+package ovh.mythmc.banco.api.items;
 
 import org.jetbrains.annotations.NotNull;
 
