@@ -1,5 +1,6 @@
 package ovh.mythmc.banco.bukkit.commands;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,18 +39,30 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             String version = Banco.get().version();
             String latest = UpdateChecker.getLatest();
+            Audience audience = BancoBukkit.adventure().sender(sender);
 
-            MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco", text(version)));
-            if (version.equals(latest)) {
-                MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.up-to-date"));
-            } else {
-                MessageUtil.info(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.new-version", text(latest))
+            MessageUtil.info(audience, translatable("banco.commands.banco", text(version), text("bukkit")));
+            if (!version.equals(latest)) {
+                MessageUtil.info(audience, translatable("banco.commands.banco.new-version", text(latest))
                         .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
             }
 
+            MessageUtil.debug(audience, translatable("banco.commands.banco.debug.1",
+                    text(org.bukkit.Bukkit.getBukkitVersion())
+            ));
+
+            MessageUtil.debug(audience, translatable("banco.commands.banco.debug.2",
+                    text(Bukkit.getServer().getOnlineMode())
+            ));
+
+            MessageUtil.debug(audience, translatable("banco.commands.banco.debug.3",
+                    text(Banco.get().getEconomyManager().get().size()),
+                    text("PLACEHOLDER"),
+                    text(Banco.get().getAccountManager().get().size())
+            ));
+
             if (Banco.get().getSettings().get().isDebug()) {
-                MessageUtil.debug(BancoBukkit.adventure().sender(sender), "banco.commands.banco.debug-mode");
-                MessageUtil.debug(BancoBukkit.adventure().sender(sender), translatable("banco.commands.banco.debug-info",
+                MessageUtil.debug(audience, translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
                         text(Banco.get().getEconomyManager().get().size())
                 ));
