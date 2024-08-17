@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+
 public final class ItemUtil {
 
     public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
@@ -39,6 +44,25 @@ public final class ItemUtil {
 
     public static boolean isBancoItem(ItemStack item) {
         return getBancoItem(item) != null;
+    }
+
+    public static List<ItemStack> convertAmountToItems(BigDecimal amount) {
+        List<ItemStack> items = new ArrayList<>();
+
+        for (BancoItem bancoItem : Banco.get().getEconomyManager().get().reversed()) {
+            if(bancoItem.value().compareTo(amount) > 0)
+                continue;
+
+            int itemAmount = (amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue();
+
+            if (itemAmount > 0) {
+                items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
+
+                amount = amount.subtract(Banco.get().getEconomyManager().value(bancoItem, itemAmount));
+            }
+        }
+
+        return items;
     }
 
 }

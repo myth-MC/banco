@@ -49,7 +49,7 @@ public final class AccountManager {
         if (account.amount().compareTo(amount) == 0)
             return;
 
-        if (account.amount().compareTo(amount) < 0) {
+        if (account.amount().compareTo(amount) < 0) { // add
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
 
@@ -61,7 +61,7 @@ public final class AccountManager {
             }
 
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
-        } else {
+        } else { // remove
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);

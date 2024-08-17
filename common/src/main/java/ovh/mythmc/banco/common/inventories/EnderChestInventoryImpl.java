@@ -6,14 +6,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.inventories.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.common.util.ItemUtil;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
-import static ovh.mythmc.banco.common.impl.BancoHelperImpl.convertAmountToItems;
 
 public final class EnderChestInventoryImpl implements BancoInventory<Inventory> {
 
@@ -26,7 +25,7 @@ public final class EnderChestInventoryImpl implements BancoInventory<Inventory> 
     public BigDecimal add(UUID uuid, BigDecimal amount) {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
-        for (ItemStack item : convertAmountToItems(amount)) {
+        for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
             BancoItem bancoItem = ItemUtil.getBancoItem(item);
             if (bancoItem != null)
                 amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
@@ -41,7 +40,31 @@ public final class EnderChestInventoryImpl implements BancoInventory<Inventory> 
 
     @Override
     public BigDecimal remove(UUID uuid, BigDecimal amount) {
-        return null;
+        for (ItemStack item : Bukkit.getPlayer(uuid).getEnderChest().getContents()) {
+            if (item == null) continue;
+            if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) continue;
+
+            BigDecimal value = BigDecimal.valueOf(0);
+
+            BancoItem bancoItem = ItemUtil.getBancoItem(item);
+            if (bancoItem != null)
+                value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+
+            if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
+                item.setAmount(0);
+                BigDecimal added = BigDecimal.valueOf(0);
+                if (value.compareTo(amount) > 0) {
+                    added = value.subtract(amount);
+                    Account account = Banco.get().getAccountManager().get(uuid);
+                    if (account != null)
+                        Banco.get().getAccountManager().set(account, account.amount().add(added));
+                }
+
+                amount = amount.subtract(value.subtract(added));
+            }
+        }
+
+        return amount;
     }
 
 }
