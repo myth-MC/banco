@@ -10,6 +10,7 @@ import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
 import ovh.mythmc.banco.api.inventories.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.common.inventories.EnderChestInventoryImpl;
 import ovh.mythmc.banco.common.inventories.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.util.ItemUtil;
 
@@ -17,33 +18,30 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class BancoHelperImpl implements BancoHelper {
 
+    private final PlayerInventoryImpl playerInventory;
+    private final EnderChestInventoryImpl enderChestInventory;
+
     public BancoHelperImpl() {
         BancoHelperSupplier.set(this);
+
+        // Banco inventories
+        this.playerInventory = new PlayerInventoryImpl();
+        this.enderChestInventory = new EnderChestInventoryImpl();
+        Banco.get().getInventoryManager().registerInventory(playerInventory, enderChestInventory);
     }
 
+    // Todo: unnecessary?
     @Override
     public final BigDecimal add(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
         if (player == null)
             return BigDecimal.valueOf(0);
 
-        BigDecimal amountGiven = BigDecimal.valueOf(0);
-
-        for (ItemStack item : convertAmountToItems(amount)) {
-            BancoItem bancoItem = ItemUtil.getBancoItem(item);
-            if (bancoItem != null)
-                amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
-
-            if (!player.getInventory().addItem(item).isEmpty())
-                player.getWorld().dropItemNaturally(player.getLocation(), item);
-           }
-        
-        return amount.subtract(amountGiven);
+        return playerInventory.add(uuid, amount);
     }
 
     // Todo: look for less valuable items first
