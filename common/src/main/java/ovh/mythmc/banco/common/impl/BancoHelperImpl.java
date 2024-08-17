@@ -18,18 +18,13 @@ import java.util.UUID;
 
 public class BancoHelperImpl implements BancoHelper {
 
-    private final PlayerInventoryImpl playerInventory;
-    private final EnderChestInventoryImpl enderChestInventory;
-
     public BancoHelperImpl() {
         BancoHelperSupplier.set(this);
-        this.playerInventory = new PlayerInventoryImpl();
-        this.enderChestInventory = new EnderChestInventoryImpl();
 
         // Register banco inventories
-        Banco.get().getInventoryManager().registerInventory(playerInventory);
+        Banco.get().getInventoryManager().registerInventory(new PlayerInventoryImpl());
         if (Banco.get().getSettings().get().getCurrency().isCountEnderChest())
-            Banco.get().getInventoryManager().registerInventory(enderChestInventory);
+            Banco.get().getInventoryManager().registerInventory(new EnderChestInventoryImpl());
     }
 
     // Todo: unnecessary?
@@ -39,7 +34,11 @@ public class BancoHelperImpl implements BancoHelper {
         if (player == null)
             return BigDecimal.valueOf(0);
 
-        return amount.subtract(playerInventory.add(uuid, amount));
+        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+            if (amount.compareTo(BigDecimal.valueOf(0)) > 0)
+                amount = amount.subtract(inventory.add(uuid, amount));
+
+        return amount;
     }
 
     // Todo: unnecessary?
@@ -50,10 +49,9 @@ public class BancoHelperImpl implements BancoHelper {
         if (player == null)
             return BigDecimal.valueOf(0);
 
-        for (BancoInventory<Inventory> inventory : Banco.get().getInventoryManager().get()) {
+        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
             if (amount.compareTo(BigDecimal.valueOf(0)) > 0)
                 amount = inventory.remove(uuid, amount);
-        }
 
         return amount;
     }
@@ -67,8 +65,8 @@ public class BancoHelperImpl implements BancoHelper {
     public BigDecimal getInventoryValue(UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
-        for (BancoInventory<Inventory> inventory : Banco.get().getInventoryManager().get()) {
-            for (ItemStack item : inventory.get(uuid)) {
+        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get()) {
+            for (ItemStack item : (Inventory) inventory.get(uuid)) {
                 if (item != null) {
                     BancoItem bancoItem = ItemUtil.getBancoItem(item);
                     if (bancoItem != null)
