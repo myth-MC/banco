@@ -1,4 +1,4 @@
 jdk:
   - openjdk21
-maven:
-  version: 3.6.3
+before_install:
+  - sdk install maven 3.9.1
