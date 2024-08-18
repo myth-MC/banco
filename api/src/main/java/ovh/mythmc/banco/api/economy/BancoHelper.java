@@ -11,6 +11,6 @@ public interface BancoHelper {
 
     boolean isOnline(UUID uuid);
 
-    BigDecimal getInventoryValue(UUID uuid);
+    BigDecimal getValue(UUID uuid);
 
 }

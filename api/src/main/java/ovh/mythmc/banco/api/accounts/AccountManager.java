@@ -99,7 +99,7 @@ public final class AccountManager {
 
     public @NotNull BigDecimal amount(final @NotNull Account account) {
         if (BancoHelper.get().isOnline(account.getUuid()))
-            account.setAmount(BancoHelper.get().getInventoryValue(account.getUuid()));
+            account.setAmount(BancoHelper.get().getValue(account.getUuid()));
 
         return account.getAmount().add(account.getTransactions());
     }

@@ -32,18 +32,16 @@ public class BancoHelperImpl implements BancoHelper {
     }
 
     @Override
-    public BigDecimal getInventoryValue(UUID uuid) {
+    public BigDecimal getValue(UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
-        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get()) {
-            for (ItemStack item : (Inventory) inventory.get(uuid)) {
+        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+            for (ItemStack item : (Inventory) inventory.get(uuid))
                 if (item != null) {
                     BancoItem bancoItem = ItemUtil.getBancoItem(item);
                     if (bancoItem != null)
                         value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
                 }
-            }
-        }
 
         return value;
     }
