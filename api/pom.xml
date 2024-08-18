@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>banco-api</artifactId>
-    <name>api</name>
     <version>1.0.1</version>
 
     <properties>
