@@ -35,13 +35,13 @@ public final class BancoItemManager {
     public static final BancoItemManager instance = new BancoItemManager();
     private static final List<BancoItem> itemsList = new ArrayList<>();
 
-    public void registerAll(List<BancoItem> items) {
+    public void registerAll(final @NotNull List<BancoItem> items) {
         itemsList.clear();
 
         items.forEach(this::register);
     }
 
-    public void register(BancoItem item) {
+    public void register(final @NotNull BancoItem item) {
         itemsList.add(item);
 
         if (Banco.get().getSettings().get().isDebug())
@@ -53,7 +53,7 @@ public final class BancoItemManager {
             );
     }
 
-    public void unregister(BancoItem item) { itemsList.remove(item); }
+    public void unregister(final @NotNull BancoItem item) { itemsList.remove(item); }
 
     public void clear() { itemsList.clear(); }
 
@@ -73,7 +73,7 @@ public final class BancoItemManager {
         return null;
     }
 
-    public BigDecimal value(BancoItem item, int amount) {
+    public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
     }
 

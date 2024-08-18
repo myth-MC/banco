@@ -9,4 +9,4 @@ public record BancoItem(@NotNull String name,
                         String displayName,
                         List<String> lore,
                         Integer customModelData,
-                        BigDecimal value) { }
+                        @NotNull BigDecimal value) { }

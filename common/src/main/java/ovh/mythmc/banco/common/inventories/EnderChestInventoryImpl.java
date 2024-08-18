@@ -28,7 +28,7 @@ public final class EnderChestInventoryImpl implements BancoInventory<Inventory> 
         for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
             BancoItem bancoItem = ItemUtil.getBancoItem(item);
             if (bancoItem != null)
-                amountGiven = amountGiven.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+                amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
             Player player = Bukkit.getPlayer(uuid);
             if (!player.getEnderChest().addItem(item).isEmpty())
@@ -48,7 +48,7 @@ public final class EnderChestInventoryImpl implements BancoInventory<Inventory> 
 
             BancoItem bancoItem = ItemUtil.getBancoItem(item);
             if (bancoItem != null)
-                value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+                value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
             if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
                 item.setAmount(0);

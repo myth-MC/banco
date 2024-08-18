@@ -48,7 +48,7 @@ public final class BancoCommand implements BasicCommand {
                 MessageUtil.debug(stack.getSender(), "banco.commands.banco.debug-mode");
                 MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
-                        text(Banco.get().getEconomyManager().get().size())
+                        text(Banco.get().getItemManager().get().size())
                 ));
             }
 

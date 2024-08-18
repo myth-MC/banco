@@ -40,7 +40,7 @@ public class BancoHelperImpl implements BancoHelper {
                 if (item != null) {
                     BancoItem bancoItem = ItemUtil.getBancoItem(item);
                     if (bancoItem != null)
-                        value = value.add(Banco.get().getEconomyManager().value(bancoItem, item.getAmount()));
+                        value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
                 }
             }
         }

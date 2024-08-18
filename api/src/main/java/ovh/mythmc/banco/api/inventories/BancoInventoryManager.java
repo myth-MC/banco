@@ -13,16 +13,16 @@ import java.util.Vector;
 public final class BancoInventoryManager {
 
     public static final BancoInventoryManager instance = new BancoInventoryManager();
-    private static final Collection<BancoInventory> inventories = new Vector<>(0);
+    private static final Collection<BancoInventory<?>> inventories = new Vector<>(0);
 
     @ApiStatus.Internal
-    public Collection<BancoInventory> get() { return inventories; }
+    public Collection<BancoInventory<?>> get() { return inventories; }
 
-    public void registerInventory(final @NotNull BancoInventory... bancoInventories) {
+    public void registerInventory(final @NotNull BancoInventory<?>... bancoInventories) {
         inventories.addAll(Arrays.asList(bancoInventories));
     }
 
-    public void unregisterInventory(final @NotNull BancoInventory... bancoInventories) {
+    public void unregisterInventory(final @NotNull BancoInventory<?>... bancoInventories) {
         inventories.removeAll(Arrays.asList(bancoInventories));
     }
 

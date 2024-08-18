@@ -25,7 +25,7 @@ public interface Banco {
 
     @NotNull default AccountManager getAccountManager() { return AccountManager.instance; }
 
-    @NotNull default BancoItemManager getEconomyManager() { return BancoItemManager.instance; }
+    @NotNull default BancoItemManager getItemManager() { return BancoItemManager.instance; }
 
     @NotNull default BancoEventManager getEventManager() { return BancoEventManager.instance; }
 

@@ -27,9 +27,9 @@ public final class AccountManager {
 
     public void clear() { accountsList.clear(); }
 
-    public List<Account> get() { return accountsList; }
+    public @NotNull List<Account> get() { return accountsList; }
 
-    public Account get(UUID uuid) {
+    public Account get(final @NotNull UUID uuid) {
         for (Account account : accountsList) {
             if (account.getUuid().equals(uuid))
                 return account;
@@ -38,19 +38,19 @@ public final class AccountManager {
         return null;
     }
 
-    public void deposit(final @NotNull Account account, BigDecimal amount) {
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
         set(account, account.amount().add(amount));
     }
 
-    public void withdraw(final @NotNull Account account, BigDecimal amount) {
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
         set(account, account.amount().subtract(amount));
     }
 
-    public void set(final @NotNull Account account, @NotNull BigDecimal amount) {
+    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
         if (account.amount().compareTo(amount) == 0)
             return;
 
-        if (account.amount().compareTo(amount) < 0) { // Add to account
+        if (account.amount().compareTo(amount) < 0) { // Add amount to account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toAdd = amount.subtract(account.amount());
@@ -70,7 +70,7 @@ public final class AccountManager {
 
             // Register transaction if player is not online
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
-        } else { // Remove from account
+        } else { // Remove amount from account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);
@@ -93,11 +93,11 @@ public final class AccountManager {
         }
     }
 
-    public boolean has(final @NotNull Account account, BigDecimal amount) {
+    public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
         return account.amount().compareTo(amount) >= 0;
     }
 
-    public BigDecimal amount(final @NotNull Account account) {
+    public @NotNull BigDecimal amount(final @NotNull Account account) {
         if (BancoHelper.get().isOnline(account.getUuid()))
             account.setAmount(BancoHelper.get().getInventoryValue(account.getUuid()));
 

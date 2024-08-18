@@ -39,7 +39,7 @@ public final class ItemUtil {
                 customModelData = item.getItemMeta().getCustomModelData();
         }
 
-        return Banco.get().getEconomyManager().get(materialName, displayName, customModelData);
+        return Banco.get().getItemManager().get(materialName, displayName, customModelData);
     }
 
     public static boolean isBancoItem(ItemStack item) {
@@ -49,7 +49,7 @@ public final class ItemUtil {
     public static List<ItemStack> convertAmountToItems(BigDecimal amount) {
         List<ItemStack> items = new ArrayList<>();
 
-        for (BancoItem bancoItem : Banco.get().getEconomyManager().get().reversed()) {
+        for (BancoItem bancoItem : Banco.get().getItemManager().get().reversed()) {
             if(bancoItem.value().compareTo(amount) > 0)
                 continue;
 
@@ -58,7 +58,7 @@ public final class ItemUtil {
             if (itemAmount > 0) {
                 items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
 
-                amount = amount.subtract(Banco.get().getEconomyManager().value(bancoItem, itemAmount));
+                amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
             }
         }
 

@@ -11,6 +11,6 @@ import java.util.List;
 @Getter
 public class BancoData {
 
-    protected List<Account> accounts = new ArrayList<>();
+    protected final List<Account> accounts = new ArrayList<>();
 
 }
