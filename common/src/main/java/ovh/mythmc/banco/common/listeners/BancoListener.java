@@ -1,5 +1,6 @@
 package ovh.mythmc.banco.common.listeners;
 
+import org.bukkit.Bukkit;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.event.BancoEvent;
 import ovh.mythmc.banco.api.event.BancoEventListener;
@@ -14,7 +15,11 @@ public final class BancoListener implements BancoEventListener {
             return;
 
         if (event instanceof BancoTransactionEvent transactionEvent) {
-            Banco.get().getLogger().info("Transaction (" + transactionEvent.account().getUuid() + "): " + transactionEvent.amount());
+            Banco.get().getLogger().info("Transaction ({}|{}): {}",
+                    transactionEvent.account().getUuid(),
+                    Bukkit.getOfflinePlayer(transactionEvent.account().getUuid()).getName(),
+                    transactionEvent.amount()
+            );
         } else if (event instanceof BancoItemRegisterEvent itemRegisterEvent) {
             Banco.get().getLogger().info("Registered material {} with displayName {} and customModelData {}: {}",
                     itemRegisterEvent.bancoItem().name(),
