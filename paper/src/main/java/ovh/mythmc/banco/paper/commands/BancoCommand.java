@@ -60,7 +60,7 @@ public final class BancoCommand implements BasicCommand {
             if (Banco.get().getSettings().get().isDebug()) {
                 MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
-                        text(Banco.get().getEconomyManager().get().size())
+                        text(Banco.get().getItemManager().get().size())
                 ));
             }
 

@@ -9,12 +9,8 @@ public interface BancoHelper {
 
     @NotNull static BancoHelper get() { return BancoHelperSupplier.get(); }
 
-    BigDecimal add(UUID uuid, BigDecimal amount);
-
-    BigDecimal remove(UUID uuid, BigDecimal amount);
-
     boolean isOnline(UUID uuid);
 
-    BigDecimal getInventoryValue(UUID uuid);
+    BigDecimal getValue(UUID uuid);
 
 }

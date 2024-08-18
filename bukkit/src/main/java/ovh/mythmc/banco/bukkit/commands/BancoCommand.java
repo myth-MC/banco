@@ -64,7 +64,7 @@ public class BancoCommand implements CommandExecutor, TabCompleter {
             if (Banco.get().getSettings().get().isDebug()) {
                 MessageUtil.debug(audience, translatable("banco.commands.banco.debug-info",
                         text(Banco.get().getAccountManager().get().size()),
-                        text(Banco.get().getEconomyManager().get().size())
+                        text(Banco.get().getItemManager().get().size())
                 ));
             }
 

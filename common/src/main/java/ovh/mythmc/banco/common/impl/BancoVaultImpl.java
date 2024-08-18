@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;

@@ -36,7 +36,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("balance")) {
-            return MessageUtil.format(BancoHelper.get().getInventoryValue(player.getUniqueId()));
+            return MessageUtil.format(BancoHelper.get().getValue(player.getUniqueId()));
         } else if (params.equalsIgnoreCase("symbol")) {
             return Banco.get().getSettings().get().getCurrency().getSymbol();
         } else if (params.equalsIgnoreCase("name_plural")) {

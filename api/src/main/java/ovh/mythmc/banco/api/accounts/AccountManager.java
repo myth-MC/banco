@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.economy.accounts;
+package ovh.mythmc.banco.api.accounts;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
+import ovh.mythmc.banco.api.inventories.BancoInventory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,9 +27,9 @@ public final class AccountManager {
 
     public void clear() { accountsList.clear(); }
 
-    public List<Account> get() { return accountsList; }
+    public @NotNull List<Account> get() { return accountsList; }
 
-    public Account get(UUID uuid) {
+    public Account get(final @NotNull UUID uuid) {
         for (Account account : accountsList) {
             if (account.getUuid().equals(uuid))
                 return account;
@@ -37,53 +38,68 @@ public final class AccountManager {
         return null;
     }
 
-    public void deposit(final @NotNull Account account, BigDecimal amount) {
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
         set(account, account.amount().add(amount));
     }
 
-    public void withdraw(final @NotNull Account account, BigDecimal amount) {
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
         set(account, account.amount().subtract(amount));
     }
 
-    public void set(final @NotNull Account account, BigDecimal amount) {
+    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
         if (account.amount().compareTo(amount) == 0)
             return;
 
-        if (account.amount().compareTo(amount) < 0) {
+        if (account.amount().compareTo(amount) < 0) { // Add amount to account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
+                BigDecimal toAdd = amount.subtract(account.amount());
 
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, amount.subtract(account.amount())));
+                // Call BancoTransactionEvent
+                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
 
-                BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
-                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.HALF_UP)));
+                // Add to all BancoInventories
+                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
+                        toAdd = toAdd.subtract(inventory.add(account.getUuid(), toAdd));
+
+                // Set transactions to remaining amount
+                account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 
+            // Register transaction if player is not online
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
-        } else {
+        } else { // Remove amount from account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);
-                BigDecimal remainder = BancoHelper.get().remove(account.getUuid(), toRemove);
 
+                // Call BancoTransactionEvent
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
 
-                account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.HALF_UP)));
+                // Remove from all BancoInventories
+                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                    if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
+                        toRemove = inventory.remove(account.getUuid(), toRemove);
+
+                // Set transactions to remaining amount
+                account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 
+            // Register transaction if player is not online
             account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
         }
     }
 
-    public boolean has(final @NotNull Account account, BigDecimal amount) {
+    public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
         return account.amount().compareTo(amount) >= 0;
     }
 
-    public BigDecimal amount(final @NotNull Account account) {
+    public @NotNull BigDecimal amount(final @NotNull Account account) {
         if (BancoHelper.get().isOnline(account.getUuid()))
-            account.setAmount(BancoHelper.get().getInventoryValue(account.getUuid()));
+            account.setAmount(BancoHelper.get().getValue(account.getUuid()));
 
         return account.getAmount().add(account.getTransactions());
     }

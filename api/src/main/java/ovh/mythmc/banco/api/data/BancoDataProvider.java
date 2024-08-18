@@ -4,8 +4,8 @@ import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
-import ovh.mythmc.banco.api.economy.accounts.AccountSerializer;
+import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.accounts.AccountSerializer;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 import java.io.File;

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.bukkit.BancoBukkit;
 import ovh.mythmc.banco.common.util.MathUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
