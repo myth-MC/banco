@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
+import ovh.mythmc.banco.api.inventories.BancoInventory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,34 +46,49 @@ public final class AccountManager {
         set(account, account.amount().subtract(amount));
     }
 
-    public void set(final @NotNull Account account, BigDecimal amount) {
+    public void set(final @NotNull Account account, @NotNull BigDecimal amount) {
         if (account.amount().compareTo(amount) == 0)
             return;
 
-        if (account.amount().compareTo(amount) < 0) { // add
+        if (account.amount().compareTo(amount) < 0) { // Add to account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
+                BigDecimal toAdd = amount.subtract(account.amount());
 
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, amount.subtract(account.amount())));
+                // Call BancoTransactionEvent
+                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
 
-                BigDecimal remainder = BancoHelper.get().add(account.getUuid(), amount.subtract(account.amount()));
-                account.setTransactions(account.getTransactions().add(remainder.setScale(2, RoundingMode.HALF_UP)));
+                // Add to all BancoInventories
+                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
+                        toAdd = toAdd.subtract(inventory.add(account.getUuid(), toAdd));
+
+                // Set transactions to remaining amount
+                account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 
+            // Register transaction if player is not online
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
-        } else { // remove
+        } else { // Remove from account
             if (BancoHelper.get().isOnline(account.getUuid())) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);
-                BigDecimal remainder = BancoHelper.get().remove(account.getUuid(), toRemove);
 
+                // Call BancoTransactionEvent
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
 
-                account.setTransactions(account.getTransactions().subtract(remainder.setScale(2, RoundingMode.HALF_UP)));
+                // Remove from all BancoInventories
+                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                    if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
+                        toRemove = inventory.remove(account.getUuid(), toRemove);
+
+                // Set transactions to remaining amount
+                account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
                 return;
             }
 
+            // Register transaction if player is not online
             account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
         }
     }

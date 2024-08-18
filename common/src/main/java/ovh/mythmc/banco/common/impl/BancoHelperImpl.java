@@ -1,7 +1,6 @@
 package ovh.mythmc.banco.common.impl;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ovh.mythmc.banco.api.Banco;
@@ -25,35 +24,6 @@ public class BancoHelperImpl implements BancoHelper {
         Banco.get().getInventoryManager().registerInventory(new PlayerInventoryImpl());
         if (Banco.get().getSettings().get().getCurrency().isCountEnderChest())
             Banco.get().getInventoryManager().registerInventory(new EnderChestInventoryImpl());
-    }
-
-    // Todo: unnecessary?
-    @Override
-    public final BigDecimal add(UUID uuid, BigDecimal amount) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-        if (player == null)
-            return BigDecimal.valueOf(0);
-
-        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
-            if (amount.compareTo(BigDecimal.valueOf(0)) > 0)
-                amount = amount.subtract(inventory.add(uuid, amount));
-
-        return amount;
-    }
-
-    // Todo: unnecessary?
-    // Todo: look for less valuable items first
-    @Override
-    public BigDecimal remove(UUID uuid, BigDecimal amount) {
-        Player player = Bukkit.getOfflinePlayer(uuid).getPlayer();
-        if (player == null)
-            return BigDecimal.valueOf(0);
-
-        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
-            if (amount.compareTo(BigDecimal.valueOf(0)) > 0)
-                amount = inventory.remove(uuid, amount);
-
-        return amount;
     }
 
     @Override
