@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
+import ovh.mythmc.banco.api.event.impl.BancoAccountRegisterEvent;
+import ovh.mythmc.banco.api.event.impl.BancoAccountUnregisterEvent;
 import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
 import ovh.mythmc.banco.api.inventories.BancoInventory;
 
@@ -21,9 +23,19 @@ public final class AccountManager {
     public static final AccountManager instance = new AccountManager();
     private static final List<Account> accountsList = new ArrayList<>();
 
-    public void add(final @NotNull Account account) { accountsList.add(account); }
+    public void add(final @NotNull Account account) {
+        accountsList.add(account);
 
-    public void remove(final @NotNull Account account) { accountsList.remove(account); }
+        // Call BancoAccountRegisterEvent
+        Banco.get().getEventManager().publish(new BancoAccountRegisterEvent(account));
+    }
+
+    public void remove(final @NotNull Account account) {
+        accountsList.remove(account);
+
+        // Call BancoAccountUnregisterEvent
+        Banco.get().getEventManager().publish(new BancoAccountUnregisterEvent(account));
+    }
 
     public void clear() { accountsList.clear(); }
 
