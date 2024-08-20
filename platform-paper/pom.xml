@@ -9,7 +9,7 @@
         <version>0.6.0</version>
     </parent>
 
-    <artifactId>banco-paper</artifactId>
+    <artifactId>banco-platform-paper</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>banco-common</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>

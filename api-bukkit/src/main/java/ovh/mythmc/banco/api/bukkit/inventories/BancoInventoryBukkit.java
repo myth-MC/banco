@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.inventories;
+package ovh.mythmc.banco.api.bukkit.inventories;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -7,22 +7,17 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.bukkit.util.ItemUtil;
 import ovh.mythmc.banco.api.inventories.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
-import ovh.mythmc.banco.common.util.ItemUtil;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public final class PlayerInventoryImpl implements BancoInventory<Inventory> {
+public abstract class BancoInventoryBukkit implements BancoInventory<Inventory> {
 
     @Override
-    public @NotNull Inventory get(UUID uuid) {
-        return Bukkit.getPlayer(uuid).getInventory();
-    }
-
-    @Override
-    public BigDecimal add(UUID uuid, BigDecimal amount) {
+    public @NotNull BigDecimal add(UUID uuid, BigDecimal amount) {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
@@ -31,7 +26,7 @@ public final class PlayerInventoryImpl implements BancoInventory<Inventory> {
                 amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
             Player player = Bukkit.getPlayer(uuid);
-            if (!player.getInventory().addItem(item).isEmpty())
+            if (!get(uuid).addItem(item).isEmpty())
                 player.getWorld().dropItemNaturally(player.getLocation(), item);
         }
 
@@ -39,8 +34,8 @@ public final class PlayerInventoryImpl implements BancoInventory<Inventory> {
     }
 
     @Override
-    public BigDecimal remove(UUID uuid, BigDecimal amount) {
-        for (ItemStack item : Bukkit.getPlayer(uuid).getInventory()) {
+    public @NotNull BigDecimal remove(UUID uuid, BigDecimal amount) {
+        for (ItemStack item : get(uuid)) {
             if (item == null) continue;
             if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) continue;
 
