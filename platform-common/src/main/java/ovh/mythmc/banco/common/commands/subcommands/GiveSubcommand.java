@@ -1,6 +1,6 @@
-package ovh.mythmc.banco.paper.commands.banco;
+package ovh.mythmc.banco.common.commands.subcommands;
 
-import org.bukkit.command.CommandSender;
+import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MathUtil;
@@ -13,10 +13,10 @@ import java.util.function.BiConsumer;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
-public class GiveSubcommand implements BiConsumer<CommandSender, String[]> {
+public class GiveSubcommand implements BiConsumer<Audience, String[]> {
 
     @Override
-    public void accept(CommandSender sender, String[] args) {
+    public void accept(Audience sender, String[] args) {
         if (args.length < 2) {
             MessageUtil.error(sender, "banco.errors.not-enough-arguments");
             return;

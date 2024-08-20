@@ -18,9 +18,9 @@ import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
 import ovh.mythmc.banco.common.translation.BancoLocalization;
-import ovh.mythmc.banco.paper.commands.BalanceCommand;
-import ovh.mythmc.banco.paper.commands.BancoCommand;
-import ovh.mythmc.banco.paper.commands.PayCommand;
+import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
+import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
+import ovh.mythmc.banco.paper.commands.PayCommandImpl;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
 import java.util.*;
@@ -108,11 +108,11 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         LifecycleEventManager<Plugin> manager = getPlugin().getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            commands.register("banco", "Main command for managing banco accounts", new BancoCommand());
+            commands.register("banco", "Main command for managing banco accounts", new BancoCommandImpl());
             if (Banco.get().getSettings().get().getCommands().getBalance().enabled())
-                commands.register("balance", List.of("bal", "money"), new BalanceCommand());
+                commands.register("balance", List.of("bal", "money"), new BalanceCommandImpl());
             if (Banco.get().getSettings().get().getCommands().getPay().enabled())
-                commands.register("pay", new PayCommand());
+                commands.register("pay", new PayCommandImpl());
         });
     }
 
