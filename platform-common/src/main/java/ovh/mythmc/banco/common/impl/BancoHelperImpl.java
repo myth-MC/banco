@@ -4,13 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.bukkit.util.ItemUtil;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
 import ovh.mythmc.banco.api.inventories.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
-import ovh.mythmc.banco.common.inventories.EnderChestInventoryImpl;
-import ovh.mythmc.banco.common.inventories.PlayerInventoryImpl;
-import ovh.mythmc.banco.common.util.ItemUtil;
+import ovh.mythmc.banco.common.impl.inventories.EnderChestInventoryImpl;
+import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 
 import java.math.BigDecimal;
 import java.util.UUID;

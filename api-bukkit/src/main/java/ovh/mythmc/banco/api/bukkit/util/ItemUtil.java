@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.util;
+package ovh.mythmc.banco.api.bukkit.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

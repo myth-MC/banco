@@ -11,9 +11,10 @@
 
     <modules>
         <module>api</module>
-        <module>common</module>
-        <module>paper</module>
-        <module>bukkit</module>
+        <module>platform-common</module>
+        <module>platform-paper</module>
+        <module>platform-bukkit</module>
+        <module>api-bukkit</module>
     </modules>
 
     <properties>
