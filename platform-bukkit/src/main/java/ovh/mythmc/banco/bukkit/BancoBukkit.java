@@ -3,8 +3,8 @@ package ovh.mythmc.banco.bukkit;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.PluginCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import ovh.mythmc.banco.bukkit.commands.BalanceCommand;
-import ovh.mythmc.banco.bukkit.commands.BancoCommand;
+import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
+import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.impl.BancoVaultImpl;
@@ -20,7 +20,7 @@ import ovh.mythmc.banco.common.listeners.EntityDeathListener;
 import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
 import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
 import ovh.mythmc.banco.common.translation.BancoLocalization;
-import ovh.mythmc.banco.bukkit.commands.PayCommand;
+import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
 
 import java.util.*;
 
@@ -109,9 +109,9 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         PluginCommand balance = getPlugin().getCommand("balance");
         PluginCommand pay = getPlugin().getCommand("pay");
 
-        Objects.requireNonNull(banco).setExecutor(new BancoCommand());
-        Objects.requireNonNull(balance).setExecutor(new BalanceCommand());
-        Objects.requireNonNull(pay).setExecutor(new PayCommand());
+        Objects.requireNonNull(banco).setExecutor(new BancoCommandImpl());
+        Objects.requireNonNull(balance).setExecutor(new BalanceCommandImpl());
+        Objects.requireNonNull(pay).setExecutor(new PayCommandImpl());
 
         if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
             balance.setPermission("banco.admin");

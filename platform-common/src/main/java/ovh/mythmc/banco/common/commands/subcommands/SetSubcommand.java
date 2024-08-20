@@ -1,6 +1,6 @@
-package ovh.mythmc.banco.paper.commands.banco;
+package ovh.mythmc.banco.common.commands.subcommands;
 
-import org.bukkit.command.CommandSender;
+import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MathUtil;
@@ -13,10 +13,10 @@ import java.util.function.BiConsumer;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
-public class TakeSubcommand implements BiConsumer<CommandSender, String[]> {
+public class SetSubcommand implements BiConsumer<Audience, String[]> {
 
     @Override
-    public void accept(CommandSender sender, String[] args) {
+    public void accept(Audience sender, String[] args) {
         if (args.length < 2) {
             MessageUtil.error(sender, "banco.errors.not-enough-arguments");
             return;
@@ -34,8 +34,8 @@ public class TakeSubcommand implements BiConsumer<CommandSender, String[]> {
         }
 
         BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(args[1]));
-        Banco.get().getAccountManager().withdraw(target, amount);
-        MessageUtil.success(sender, translatable("banco.commands.banco.take.success",
+        Banco.get().getAccountManager().set(target, amount);
+        MessageUtil.success(sender, translatable("banco.commands.banco.set.success",
                 text(args[0]),
                 text(MessageUtil.format(amount)),
                 text(Banco.get().getSettings().get().getCurrency().getSymbol()))

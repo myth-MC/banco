@@ -1,15 +1,13 @@
-package ovh.mythmc.banco.paper.commands;
+package ovh.mythmc.banco.common.commands;
 
-import io.papermc.paper.command.brigadier.BasicCommand;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.common.commands.subcommands.*;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.UpdateChecker;
-import ovh.mythmc.banco.paper.commands.banco.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -17,10 +15,9 @@ import java.util.function.BiConsumer;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 
-@SuppressWarnings("UnstableApiUsage")
-public final class BancoCommand implements BasicCommand {
+public abstract class BancoCommand {
 
-    private final Map<String, BiConsumer<CommandSender, String[]>> subCommands;
+    private final Map<String, BiConsumer<Audience, String[]>> subCommands;
 
     public BancoCommand() {
         this.subCommands = new HashMap<>();
@@ -31,27 +28,26 @@ public final class BancoCommand implements BasicCommand {
         subCommands.put("save", new SaveSubcommand());
     }
 
-    @Override
-    public void execute(@NotNull CommandSourceStack stack, @NotNull String[] args) {
+    public void run(@NotNull Audience sender, @NotNull String[] args) {
         if (args.length == 0) {
             String version = Banco.get().version();
             String latest = UpdateChecker.getLatest();
 
-            MessageUtil.info(stack.getSender(), translatable("banco.commands.banco", text(version), text("paper")));
+            MessageUtil.info(sender, translatable("banco.commands.banco", text(version), text(getBancoBuildSoftware())));
             if (!version.equals(latest)) {
-                MessageUtil.info(stack.getSender(), translatable("banco.commands.banco.new-version", text(latest))
+                MessageUtil.info(sender, translatable("banco.commands.banco.new-version", text(latest))
                         .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
             }
 
-            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.1",
-                    text(org.bukkit.Bukkit.getVersionMessage().substring(23))
+            MessageUtil.debug(sender, translatable("banco.commands.banco.debug.1",
+                    text(org.bukkit.Bukkit.getBukkitVersion())
             ));
 
-            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.2",
+            MessageUtil.debug(sender, translatable("banco.commands.banco.debug.2",
                     text(Bukkit.getServer().getOnlineMode())
             ));
 
-            MessageUtil.debug(stack.getSender(), translatable("banco.commands.banco.debug.3",
+            MessageUtil.debug(sender, translatable("banco.commands.banco.debug.3",
                     text(Banco.get().getItemManager().get().size()),
                     text(Banco.get().getInventoryManager().get().size()),
                     text(Banco.get().getAccountManager().get().size())
@@ -62,15 +58,14 @@ public final class BancoCommand implements BasicCommand {
 
         var command = subCommands.get(args[0]);
         if (command == null) {
-            MessageUtil.error(stack.getSender(), "banco.errors.invalid-command");
+            MessageUtil.error(sender, "banco.errors.invalid-command");
             return;
         }
 
-        command.accept(stack.getSender(), Arrays.copyOfRange(args, 1, args.length));
+        command.accept(sender, Arrays.copyOfRange(args, 1, args.length));
     }
 
-    @Override
-    public @NotNull Collection<String> suggest(@NotNull CommandSourceStack commandSourceStack, @NotNull String[] args) {
+    public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
         if (args.length == 1) {
             switch (args[0]) {
                 case "give", "take", "set":
@@ -86,9 +81,14 @@ public final class BancoCommand implements BasicCommand {
         return List.copyOf(subCommands.keySet());
     }
 
-    @Override
-    public String permission() {
-        return "banco.admin";
+    private String getBancoBuildSoftware() {
+        try {
+            Class.forName("ovh.mythmc.banco.paper.BancoPaperPlugin");
+            return "paper";
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        return "bukkit";
     }
 
 }
