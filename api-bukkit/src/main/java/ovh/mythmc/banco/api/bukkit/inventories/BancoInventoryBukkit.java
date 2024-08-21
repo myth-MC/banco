@@ -52,7 +52,7 @@ public abstract class BancoInventoryBukkit implements BancoInventory<Inventory> 
                     added = value.subtract(amount);
                     Account account = Banco.get().getAccountManager().get(uuid);
                     if (account != null)
-                        Banco.get().getAccountManager().set(account, account.amount().add(added));
+                        add(uuid, added);
                 }
 
                 amount = amount.subtract(value.subtract(added));
