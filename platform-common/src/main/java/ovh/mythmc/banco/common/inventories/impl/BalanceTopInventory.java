@@ -12,6 +12,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.inventories.BasicInventory;
 import ovh.mythmc.banco.common.inventories.InventoryButton;
+import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public final class BalanceTopInventory extends BasicInventory {
 
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(null, 9, " ");
+        return Bukkit.createInventory(null, 9, "ʙᴀɴᴄᴏ");
     }
 
     @Override
@@ -36,12 +37,13 @@ public final class BalanceTopInventory extends BasicInventory {
         int slot = 0;
         for (Map.Entry<String, BigDecimal> entry : getTopNine(values).entrySet()) {
             OfflinePlayer player = Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey()));
+            String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
 
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
             if (player.hasPlayedBefore())
                 skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey())));
-            skullMeta.setItemName(ChatColor.YELLOW + "" + ChatColor.BOLD + (slot + 1) + " " + ChatColor.GREEN + entry.getKey() + ChatColor.GRAY + " - " + ChatColor.GREEN + entry.getValue() + "$");
+            skullMeta.setItemName(ChatColor.YELLOW + "" + ChatColor.BOLD + (slot + 1) + " " + ChatColor.GREEN + entry.getKey() + ChatColor.GRAY + " - " + ChatColor.GREEN + balance);
             itemStack.setItemMeta(skullMeta);
 
             InventoryButton button = new InventoryButton(itemStack) {
