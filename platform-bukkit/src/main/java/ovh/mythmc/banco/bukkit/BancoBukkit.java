@@ -4,6 +4,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.PluginCommand;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
+import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
@@ -15,10 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
-import ovh.mythmc.banco.common.listeners.BancoListener;
-import ovh.mythmc.banco.common.listeners.EntityDeathListener;
-import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
-import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
+import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.common.translation.BancoLocalization;
 import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
 
@@ -99,6 +97,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
@@ -107,10 +106,12 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     private void registerCommands() {
         PluginCommand banco = getPlugin().getCommand("banco");
         PluginCommand balance = getPlugin().getCommand("balance");
+        PluginCommand balanceTop = getPlugin().getCommand("balancetop");
         PluginCommand pay = getPlugin().getCommand("pay");
 
         Objects.requireNonNull(banco).setExecutor(new BancoCommandImpl());
         Objects.requireNonNull(balance).setExecutor(new BalanceCommandImpl());
+        Objects.requireNonNull(balanceTop).setExecutor(new BalanceTopCommandImpl());
         Objects.requireNonNull(pay).setExecutor(new PayCommandImpl());
 
         if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
