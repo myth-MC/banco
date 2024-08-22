@@ -1,6 +1,5 @@
 package ovh.mythmc.banco.api.configuration.sections;
 
-import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 
@@ -8,8 +7,12 @@ import lombok.Getter;
 @Getter
 public class InventoriesConfig {
 
-    private SimpleInventory balanceTop = new SimpleInventory("ʙᴀɴᴄᴏ", "§e§l%s §a%s §7- §a%s");
+    private InfoInventory info = new InfoInventory("ʙᴀɴᴄᴏ", "§e§l%s", "§7%s");
 
-    public record SimpleInventory(String title, String format) { }
+    private BalanceTopInventory balanceTop = new BalanceTopInventory("ʙᴀɴᴄᴏ", "§e§l%s §a%s §7- §a%s");
+
+    public record InfoInventory(String title, String keyFormat, String valueFormat) { }
+
+    public record BalanceTopInventory(String title, String format) { }
 
 }
