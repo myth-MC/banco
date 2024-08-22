@@ -1,7 +1,6 @@
 package ovh.mythmc.banco.common.inventories.impl;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,7 +22,7 @@ public final class BalanceTopInventory extends BasicInventory {
 
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(null, 9, "ʙᴀɴᴄᴏ");
+        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getInventories().getBalanceTop().title());
     }
 
     @Override
@@ -39,11 +38,17 @@ public final class BalanceTopInventory extends BasicInventory {
             OfflinePlayer player = Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey()));
             String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
 
+            String itemName = String.format(Banco.get().getSettings().get().getInventories().getBalanceTop().format(),
+                    slot+1,
+                    entry.getKey(),
+                    balance
+            );
+
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
             if (player.hasPlayedBefore())
                 skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey())));
-            skullMeta.setItemName(ChatColor.YELLOW + "" + ChatColor.BOLD + (slot + 1) + " " + ChatColor.GREEN + entry.getKey() + ChatColor.GRAY + " - " + ChatColor.GREEN + balance);
+            skullMeta.setItemName(itemName);
             itemStack.setItemMeta(skullMeta);
 
             InventoryButton button = new InventoryButton(itemStack) {

@@ -2,7 +2,6 @@ package ovh.mythmc.banco.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.PluginCommand;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
@@ -113,12 +112,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         Objects.requireNonNull(balance).setExecutor(new BalanceCommandImpl());
         Objects.requireNonNull(balanceTop).setExecutor(new BalanceTopCommandImpl());
         Objects.requireNonNull(pay).setExecutor(new PayCommandImpl());
-
-        if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
-            balance.setPermission("banco.admin");
-
-        if (!Banco.get().getSettings().get().getCommands().getBalance().enabled())
-            pay.setPermission("banco.admin");
     }
 
     private void startAutoSaver() {
@@ -129,7 +122,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         this.autoSaveTask.cancel();
     }
 
-    public static @NonNull BukkitAudiences adventure() {
+    public static @NotNull BukkitAudiences adventure() {
         if(adventure == null) {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         }

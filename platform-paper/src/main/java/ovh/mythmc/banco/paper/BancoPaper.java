@@ -108,9 +108,12 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
             commands.register("banco", "Main command for managing banco accounts", new BancoCommandImpl());
+
+            // Optional commands
             if (Banco.get().getSettings().get().getCommands().getBalance().enabled())
                 commands.register("balance", List.of("bal", "money"), new BalanceCommandImpl());
-            commands.register("balancetop", List.of("baltop"), new BalanceTopCommandImpl());
+            if (Banco.get().getSettings().get().getCommands().getBalanceTop().enabled())
+                commands.register("balancetop", List.of("baltop"), new BalanceTopCommandImpl());
             if (Banco.get().getSettings().get().getCommands().getPay().enabled())
                 commands.register("pay", new PayCommandImpl());
         });

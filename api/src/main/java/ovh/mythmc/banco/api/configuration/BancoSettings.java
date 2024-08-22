@@ -3,10 +3,7 @@ package ovh.mythmc.banco.api.configuration;
 import de.exlll.configlib.*;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.configuration.sections.AutoSaveConfig;
-import ovh.mythmc.banco.api.configuration.sections.CommandsConfig;
-import ovh.mythmc.banco.api.configuration.sections.CurrencyConfig;
-import ovh.mythmc.banco.api.configuration.sections.UpdateTrackerConfig;
+import ovh.mythmc.banco.api.configuration.sections.*;
 
 @Configuration
 @Getter
@@ -29,5 +26,8 @@ public class BancoSettings {
 
     @Comment({"", "Configuration for commands"})
     private CommandsConfig commands = new CommandsConfig();
+
+    @Comment({"", "Configuration for inventories/GUIs"})
+    private InventoriesConfig inventories = new InventoriesConfig();
 
 }
