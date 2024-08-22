@@ -8,6 +8,10 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.UUID;
+
 public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
     public BancoPlaceholderExpansion() {
@@ -48,7 +52,10 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
             return Banco.get().version();
         } else if (params.startsWith("top_")) {
             int pos = Integer.parseInt(params.substring(4));
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(Banco.get().getAccountManager().getTopPosition(pos).getKey());
+            Map.Entry<UUID, BigDecimal> entry = Banco.get().getAccountManager().getTopPosition(pos);
+            if (entry == null)
+                return null;
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(entry.getKey());
             return offlinePlayer.getName();
         }
 
