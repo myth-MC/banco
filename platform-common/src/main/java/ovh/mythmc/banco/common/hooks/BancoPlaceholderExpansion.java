@@ -1,6 +1,7 @@
 package ovh.mythmc.banco.common.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
@@ -45,6 +46,10 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
             return Banco.get().getSettings().get().getCurrency().getNameSingular();
         } else if (params.equalsIgnoreCase("version")) {
             return Banco.get().version();
+        } else if (params.startsWith("top_")) {
+            int pos = Integer.parseInt(params.substring(4));
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(Banco.get().getAccountManager().getTopPosition(pos).getKey());
+            return offlinePlayer.getName();
         }
 
         return null;

@@ -12,9 +12,8 @@ import ovh.mythmc.banco.api.inventories.BancoInventory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -121,6 +120,42 @@ public final class AccountManager {
         account.setTransactions(BigDecimal.valueOf(0));
 
         set(account, amount);
+    }
+
+    public LinkedHashMap<UUID, BigDecimal> getTop(int limit) {
+        Map<UUID, BigDecimal> values = new LinkedHashMap<>();
+        for (Account account : Banco.get().getAccountManager().get()) {
+            values.put(account.getUuid(), account.amount());
+        }
+
+        return values.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(limit)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new
+                ));
+    }
+
+    public Map.Entry<UUID, BigDecimal> getTopPosition(int pos) {
+        return getTop(pos).lastEntry();
+    }
+
+    public static <K, V extends Comparable<? super V>> Map<K, V> getTopNine(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            if (entry.getKey() == null)
+                continue;
+            result.put(entry.getKey(), entry.getValue());
+        }
+
+        return result.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(9)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
 }

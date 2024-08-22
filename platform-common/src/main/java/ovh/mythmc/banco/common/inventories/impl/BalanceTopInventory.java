@@ -8,15 +8,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.inventories.BasicInventory;
 import ovh.mythmc.banco.common.inventories.InventoryButton;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class BalanceTopInventory extends BasicInventory {
 
@@ -27,27 +24,23 @@ public final class BalanceTopInventory extends BasicInventory {
 
     @Override
     public void decorate() {
-        Map<String, BigDecimal> values = new LinkedHashMap<>();
-        for (Account account : Banco.get().getAccountManager().get()) {
-            String username = Bukkit.getOfflinePlayer(account.getUuid()).getName();
-            values.put(username, account.amount());
-        }
-
         int slot = 0;
-        for (Map.Entry<String, BigDecimal> entry : getTopNine(values).entrySet()) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey()));
+
+        for (Map.Entry<UUID, BigDecimal> entry : Banco.get().getAccountManager().getTop(9).entrySet()) {
+            OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
+            if (!player.hasPlayedBefore())
+                continue;
             String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
 
             String itemName = String.format(Banco.get().getSettings().get().getInventories().getBalanceTop().format(),
                     slot+1,
-                    entry.getKey(),
+                    player.getName(),
                     balance
             );
 
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-            if (player.hasPlayedBefore())
-                skullMeta.setOwningPlayer(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(entry.getKey())));
+            skullMeta.setOwningPlayer(player);
             skullMeta.setItemName(itemName);
             itemStack.setItemMeta(skullMeta);
 
@@ -65,23 +58,5 @@ public final class BalanceTopInventory extends BasicInventory {
 
 
         super.decorate();
-    }
-
-    public static <K, V extends Comparable<? super V>> Map<K, V> getTopNine(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
-        list.sort(Map.Entry.comparingByValue());
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            if (entry.getKey() == null)
-                continue;
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(9)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 }
