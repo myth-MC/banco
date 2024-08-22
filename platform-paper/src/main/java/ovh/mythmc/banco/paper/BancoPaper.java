@@ -13,12 +13,10 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
-import ovh.mythmc.banco.common.listeners.BancoListener;
-import ovh.mythmc.banco.common.listeners.EntityDeathListener;
-import ovh.mythmc.banco.common.listeners.PlayerJoinListener;
-import ovh.mythmc.banco.common.listeners.PlayerQuitListener;
+import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.common.translation.BancoLocalization;
 import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
+import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
 import ovh.mythmc.banco.paper.commands.PayCommandImpl;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
@@ -98,6 +96,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
@@ -109,8 +108,12 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
             commands.register("banco", "Main command for managing banco accounts", new BancoCommandImpl());
+
+            // Optional commands
             if (Banco.get().getSettings().get().getCommands().getBalance().enabled())
                 commands.register("balance", List.of("bal", "money"), new BalanceCommandImpl());
+            if (Banco.get().getSettings().get().getCommands().getBalanceTop().enabled())
+                commands.register("balancetop", List.of("baltop"), new BalanceTopCommandImpl());
             if (Banco.get().getSettings().get().getCommands().getPay().enabled())
                 commands.register("pay", new PayCommandImpl());
         });

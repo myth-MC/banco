@@ -9,11 +9,12 @@ import lombok.Getter;
 public class CommandsConfig {
 
     @Comment("Disabling commands will only work in PaperMC and its forks")
-    private Command balance = new Command(true);
+    private SimpleCommand balance = new SimpleCommand(true);
 
-    @Comment("Disabling commands will only work in PaperMC and its forks")
-    private Command pay = new Command(true);
+    private SimpleCommand pay = new SimpleCommand(true);
 
-    public record Command(boolean enabled) { }
+    private SimpleCommand balanceTop = new SimpleCommand(true);
+
+    public record SimpleCommand(boolean enabled) { }
 
 }
