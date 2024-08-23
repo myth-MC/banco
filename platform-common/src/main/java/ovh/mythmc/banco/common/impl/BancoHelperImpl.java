@@ -5,15 +5,17 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.bukkit.util.ItemUtil;
+import ovh.mythmc.banco.api.containers.BancoContainer;
+import ovh.mythmc.banco.api.containers.BancoStorage;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
-import ovh.mythmc.banco.api.inventories.BancoInventory;
+import ovh.mythmc.banco.api.containers.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.common.impl.inventories.EnderChestInventoryImpl;
 import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.*;
 
 public class BancoHelperImpl implements BancoHelper {
 
@@ -21,9 +23,9 @@ public class BancoHelperImpl implements BancoHelper {
         BancoHelperSupplier.set(this);
 
         // Register banco inventories
-        Banco.get().getInventoryManager().registerInventory(new PlayerInventoryImpl());
+        Banco.get().getStorageManager().registerStorage(new PlayerInventoryImpl());
         if (Banco.get().getSettings().get().getCurrency().isCountEnderChest())
-            Banco.get().getInventoryManager().registerInventory(new EnderChestInventoryImpl());
+            Banco.get().getStorageManager().registerStorage(new EnderChestInventoryImpl());
     }
 
     @Override
@@ -35,13 +37,22 @@ public class BancoHelperImpl implements BancoHelper {
     public BigDecimal getValue(UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
-        for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
-            for (ItemStack item : (Inventory) inventory.get(uuid))
-                if (item != null) {
-                    BancoItem bancoItem = ItemUtil.getBancoItem(item);
-                    if (bancoItem != null)
-                        value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
-                }
+        for (BancoStorage storage : Banco.get().getStorageManager().get())
+            if (storage instanceof BancoInventory<?> inventory) {
+                for (ItemStack item : (Inventory) inventory.get(uuid))
+                    if (item != null) {
+                        BancoItem bancoItem = ItemUtil.getBancoItem(item);
+                        if (bancoItem != null)
+                            value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+                    }
+            } else if (storage instanceof BancoContainer<?> container) {
+                for (ItemStack item : (List<ItemStack>) container.get(uuid))
+                    if (item != null) {
+                        BancoItem bancoItem = ItemUtil.getBancoItem(item);
+                        if (bancoItem != null)
+                            value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+                    }
+            }
 
         return value;
     }

@@ -56,7 +56,7 @@ public final class BancoDataProvider {
 
         this.data = YamlConfigurations.update(dataFilePath, BancoData.class, properties);
 
-        data.accounts.forEach(account -> Banco.get().getAccountManager().add(account));
+        data.accounts.forEach(account -> Banco.get().getAccountManager().registerAccount(account));
 
         if (Banco.get().getSettings().get().isDebug())
             logger.info("Done! (" + Banco.get().getAccountManager().get().size() + " accounts loaded)");

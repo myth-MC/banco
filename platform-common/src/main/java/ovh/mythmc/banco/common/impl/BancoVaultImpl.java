@@ -150,7 +150,7 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
         Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
@@ -180,7 +180,7 @@ public class BancoVaultImpl implements Economy {
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
         Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
@@ -305,7 +305,7 @@ public class BancoVaultImpl implements Economy {
         if (hasAccount(s))
             return false;
 
-        Banco.get().getAccountManager().add(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+        Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         return true;
     }
 

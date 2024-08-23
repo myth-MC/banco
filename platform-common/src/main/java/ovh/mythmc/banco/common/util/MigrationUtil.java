@@ -44,7 +44,7 @@ public final class MigrationUtil {
             BigDecimal amount = BigDecimal.valueOf(account.getDouble("amount"));
             BigDecimal transactions = BigDecimal.valueOf(account.getDouble("transactions"));
 
-            Banco.get().getAccountManager().add(new Account(uuid, amount, transactions));
+            Banco.get().getAccountManager().registerAccount(new Account(uuid, amount, transactions));
         });
 
         Banco.get().getLogger().warn("{} accounts have been migrated!", Banco.get().getAccountManager().get().size());

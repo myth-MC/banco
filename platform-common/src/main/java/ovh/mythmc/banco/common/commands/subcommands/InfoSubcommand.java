@@ -48,7 +48,7 @@ public class InfoSubcommand implements BiConsumer<Audience, String[]> {
 
             MessageUtil.debug(sender, translatable("banco.commands.banco.debug.3",
                     text(Banco.get().getItemManager().get().size()),
-                    text(Banco.get().getInventoryManager().get().size()),
+                    text(Banco.get().getStorageManager().get().size()),
                     text(Banco.get().getAccountManager().get().size())
             ));
         }

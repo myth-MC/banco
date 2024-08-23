@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.containers.BancoStorage;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.event.impl.BancoAccountRegisterEvent;
 import ovh.mythmc.banco.api.event.impl.BancoAccountUnregisterEvent;
 import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
-import ovh.mythmc.banco.api.inventories.BancoInventory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,14 +22,14 @@ public final class AccountManager {
     public static final AccountManager instance = new AccountManager();
     private static final List<Account> accountsList = new ArrayList<>();
 
-    public void add(final @NotNull Account account) {
+    public void registerAccount(final @NotNull Account account) {
         accountsList.add(account);
 
         // Call BancoAccountRegisterEvent
         Banco.get().getEventManager().publish(new BancoAccountRegisterEvent(account));
     }
 
-    public void remove(final @NotNull Account account) {
+    public void unregisterAccount(final @NotNull Account account) {
         accountsList.remove(account);
 
         // Call BancoAccountUnregisterEvent
@@ -69,10 +69,10 @@ public final class AccountManager {
                 // Call BancoTransactionEvent
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
 
-                // Add to all BancoInventories
-                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                // Add to all BancoStorage instances
+                for (BancoStorage storage : Banco.get().getStorageManager().get())
                     if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toAdd = toAdd.subtract(inventory.add(account.getUuid(), toAdd));
+                        toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
 
                 // Set transactions to remaining amount
                 account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
@@ -89,10 +89,10 @@ public final class AccountManager {
                 // Call BancoTransactionEvent
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
 
-                // Remove from all BancoInventories
-                for (BancoInventory<?> inventory : Banco.get().getInventoryManager().get())
+                // Remove from all BancoStorage instances
+                for (BancoStorage storage : Banco.get().getStorageManager().get())
                     if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toRemove = inventory.remove(account.getUuid(), toRemove);
+                        toRemove = storage.remove(account.getUuid(), toRemove);
 
                 // Set transactions to remaining amount
                 account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
