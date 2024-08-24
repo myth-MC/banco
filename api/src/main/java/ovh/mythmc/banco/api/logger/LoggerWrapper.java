@@ -1,9 +1,11 @@
 package ovh.mythmc.banco.api.logger;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
 
+@ApiStatus.Internal
 public interface LoggerWrapper {
     // Taken from
     // https://github.com/j256/ormlite-core/blob/master/src/main/java/com/j256/ormlite/logger/Logger.java

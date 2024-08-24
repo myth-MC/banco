@@ -1,0 +1,33 @@
+name: banco
+authors: [myth-MC, U8092]
+version: '${project.version}'
+api-version: 1.20
+
+main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
+softdepend: [ PlaceholderAPI ]
+loadbefore:
+  - Essentials
+  - CMI
+  - Towny
+depend: [ Vault ]
+
+commands:
+  banco:
+    permission: banco.admin
+  balance:
+    permission: banco.user
+    aliases:
+      - bal
+      - money
+  balancetop:
+    permission: banco.user
+    aliases:
+      - baltop
+  pay:
+    permission: banco.user
+
+permissions:
+  banco.user:
+    default: true
+  banco.admin:
+    default: op
