@@ -53,7 +53,7 @@
 * ~~Custom Model Data support~~ ✅ (0.5+)
 * MySQL support
 * ~~Update tracker~~ ✅ (0.2+)
-* Baltop
+* ~~Baltop~~ ✅ (0.6+)
 * ~~Count Ender Chest items~~ ✅ (0.4+)
 
 ### Compatibility chart
