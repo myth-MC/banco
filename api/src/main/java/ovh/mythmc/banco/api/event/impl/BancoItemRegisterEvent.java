@@ -9,14 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.event.BancoEvent;
 import ovh.mythmc.banco.api.items.BancoItem;
 
+/**
+ * Called when a BancoItem is registered
+ */
 @Getter
 @Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-/**
- * Called when a BancoItem is registered
- */
 public final class BancoItemRegisterEvent implements BancoEvent {
     private final @NotNull BancoItem bancoItem;
 }
