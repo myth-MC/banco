@@ -15,6 +15,12 @@ import java.util.List;
 
 public final class ItemUtil {
 
+    /**
+     * Gets an ItemStack matching BancoItem's parameters
+     * @param bancoItem BancoItem to get parameters from
+     * @param amount amount of items
+     * @return An ItemStack matching BancoItem's parameters
+     */
     public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
         ItemStack itemStack = new ItemStack(Material.getMaterial(bancoItem.name()), amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
@@ -28,6 +34,11 @@ public final class ItemUtil {
         return itemStack;
     }
 
+    /**
+     * Gets a BancoItem matching an ItemStack's parameters
+     * @param item an ItemStack to get parameters from
+     * @return a BancoItem matching item's parameters
+     */
     public static BancoItem getBancoItem(final @NotNull ItemStack item) {
         String materialName = item.getType().name();
         String displayName = null;
@@ -42,10 +53,20 @@ public final class ItemUtil {
         return Banco.get().getItemManager().get(materialName, displayName, customModelData);
     }
 
+    /**
+     * Checks whether an ItemStack is a valid BancoItem or not
+     * @param item an ItemStack to get parameters from
+     * @return true if a BancoItem matching item's parameters exists
+     */
     public static boolean isBancoItem(ItemStack item) {
         return getBancoItem(item) != null;
     }
 
+    /**
+     * Gets a list of ItemStack valued at a specified amount
+     * @param amount amount of money
+     * @return A list of ItemStack valued at a specified amount
+     */
     public static List<ItemStack> convertAmountToItems(BigDecimal amount) {
         List<ItemStack> items = new ArrayList<>();
 

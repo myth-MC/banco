@@ -22,7 +22,7 @@ public class PlayerJoinListener implements Listener {
 
         if (account == null) {
             account = new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0));
-            accountManager.add(account);
+            accountManager.registerAccount(account);
         }
 
         accountManager.updateTransactions(account);

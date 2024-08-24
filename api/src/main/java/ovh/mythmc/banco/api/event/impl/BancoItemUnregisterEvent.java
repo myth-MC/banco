@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.event.BancoEvent;
 import ovh.mythmc.banco.api.items.BancoItem;
 
+/**
+ * Called when a BancoItem is unregistered
+ */
 @Getter
 @Accessors(fluent = true)
 @ToString

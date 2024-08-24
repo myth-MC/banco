@@ -6,14 +6,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.api.event.BancoEvent;
-import ovh.mythmc.banco.api.inventories.BancoInventory;
 
+/**
+ * Called when a BancoStorage is registered
+ */
 @Getter
 @Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public final class BancoInventoryUnregisterEvent implements BancoEvent {
-    private final @NotNull BancoInventory<?> bancoInventory;
+public final class BancoStorageRegisterEvent implements BancoEvent {
+    private final @NotNull BancoStorage bancoStorage;
 }

@@ -1,11 +1,13 @@
 package ovh.mythmc.banco.api.economy;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.AlreadyInitializedException;
 
 import java.util.Objects;
 
+@ApiStatus.Internal
 @UtilityClass
 public class BancoHelperSupplier {
 

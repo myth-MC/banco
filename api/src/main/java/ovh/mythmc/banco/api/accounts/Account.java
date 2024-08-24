@@ -29,6 +29,10 @@ public class Account {
         this.transactions = transactions;
     }
 
+    /**
+     * Returns this account's balance
+     * @return This account's balance
+     */
     public BigDecimal amount() {
         return Banco.get().getAccountManager().amount(this);
     }

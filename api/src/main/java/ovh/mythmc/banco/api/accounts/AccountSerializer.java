@@ -1,12 +1,14 @@
 package ovh.mythmc.banco.api.accounts;
 
 import de.exlll.configlib.Serializer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@ApiStatus.Internal
 public final class AccountSerializer implements Serializer<Account, Map<String, Object>> {
 
     @Override

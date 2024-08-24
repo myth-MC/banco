@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.event.BancoEvent;
 
+/**
+ * Called when an account is registered
+ */
 @Getter
 @Accessors(fluent = true)
 @ToString

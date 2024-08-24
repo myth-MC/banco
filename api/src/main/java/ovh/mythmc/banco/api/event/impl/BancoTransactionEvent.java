@@ -11,6 +11,9 @@ import ovh.mythmc.banco.api.event.BancoEvent;
 
 import java.math.BigDecimal;
 
+/**
+ * Called when a transaction is made
+ */
 @Getter
 @Accessors(fluent = true)
 @ToString
