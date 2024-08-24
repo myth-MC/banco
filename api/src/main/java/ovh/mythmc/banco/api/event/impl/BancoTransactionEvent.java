@@ -16,6 +16,9 @@ import java.math.BigDecimal;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
+/**
+ * Called when a transaction is made
+ */
 public final class BancoTransactionEvent implements BancoEvent {
     private final @NotNull Account account;
     private final @NotNull BigDecimal amount;

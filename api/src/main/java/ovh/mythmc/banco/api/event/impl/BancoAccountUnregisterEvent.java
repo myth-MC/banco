@@ -14,6 +14,9 @@ import ovh.mythmc.banco.api.event.BancoEvent;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
+/**
+ * Called when an account is unregistered
+ */
 public final class BancoAccountUnregisterEvent implements BancoEvent {
     private final @NotNull Account account;
 }

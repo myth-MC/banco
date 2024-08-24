@@ -14,6 +14,9 @@ import ovh.mythmc.banco.api.items.BancoItem;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
+/**
+ * Called when a BancoItem is unregistered
+ */
 public final class BancoItemUnregisterEvent implements BancoEvent {
     private final @NotNull BancoItem bancoItem;
 }

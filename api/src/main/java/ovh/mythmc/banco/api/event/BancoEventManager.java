@@ -37,10 +37,18 @@ public final class BancoEventManager {
         });
     }
 
+    /**
+     * Registers a BancoEventListener where events will be called
+     * @param listeners listeners to register
+     */
     public synchronized void registerListener(final @NotNull BancoEventListener... listeners) {
         eventListeners.addAll(Arrays.asList(listeners));
     }
 
+    /**
+     * Unregisters a BancoEventListener
+     * @param listeners listeners to unregister
+     */
     public synchronized void unregisterListener(final @NotNull BancoEventListener... listeners) {
         eventListeners.removeAll(Arrays.asList(listeners));
     }

@@ -2,6 +2,7 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.event.impl.BancoItemRegisterEvent;
@@ -20,13 +21,11 @@ public final class BancoItemManager {
     public static final BancoItemManager instance = new BancoItemManager();
     private static final List<BancoItem> itemsList = new ArrayList<>();
 
-    public void registerAll(final @NotNull List<BancoItem> items) {
-        itemsList.clear();
-
-        items.forEach(this::register);
-    }
-
-    public void register(final @NotNull BancoItem... items) {
+    /**
+     * Registers a BancoItem
+     * @param items item to register
+     */
+    public void registerItems(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             itemsList.add(bancoItem);
 
@@ -35,7 +34,11 @@ public final class BancoItemManager {
         });
     }
 
-    public void unregister(final @NotNull BancoItem... items) {
+    /**
+     * Unregisters a BancoItem
+     * @param items item to unregister
+     */
+    public void unregisterItems(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             itemsList.remove(bancoItem);
 
@@ -44,10 +47,22 @@ public final class BancoItemManager {
         });
     }
 
+    @ApiStatus.Internal
     public void clear() { itemsList.clear(); }
 
+    /**
+     * Returns a list of registered items
+     * @return A list with every registered items
+     */
     public List<BancoItem> get() { return List.copyOf(itemsList); }
 
+    /**
+     * Gets a specific BancoItem
+     * @param materialName material name of an item
+     * @param displayName display name of an item
+     * @param customModelData custom model data of an item
+     * @return A BancoItem matching parameters or null
+     */
     public BancoItem get(final @NotNull String materialName,
                          final @NotNull String displayName,
                          final Integer customModelData) {
@@ -61,6 +76,12 @@ public final class BancoItemManager {
         return null;
     }
 
+    /**
+     * Gets the value of an item
+     * @param item a BancoItem
+     * @param amount amount of items
+     * @return Value of BancoItem multiplied by the amount
+     */
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
     }

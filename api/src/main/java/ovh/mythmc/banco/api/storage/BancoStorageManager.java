@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.containers;
+package ovh.mythmc.banco.api.storage;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,9 +19,17 @@ public final class BancoStorageManager {
     public static final BancoStorageManager instance = new BancoStorageManager();
     private static final Collection<BancoStorage> storages = new Vector<>(0);
 
+    /**
+     *
+     * @return A Collection of registered BancoStorages
+     */
     @ApiStatus.Internal
     public Collection<BancoStorage> get() { return storages; }
 
+    /**
+     * Registers this BancoStorage
+     * @param bancoStorages BancoStorages to register
+     */
     public void registerStorage(final @NotNull BancoStorage... bancoStorages) {
         List<BancoStorage> bancoStorageList = Arrays.asList(bancoStorages);
         storages.addAll(bancoStorageList);
@@ -30,6 +38,10 @@ public final class BancoStorageManager {
         bancoStorageList.forEach(bancoInventory -> Banco.get().getEventManager().publish(new BancoStorageRegisterEvent(bancoInventory)));
     }
 
+    /**
+     * Unregisters this BancoStorage
+     * @param bancoStorages BancoStorages to unregister
+     */
     public void unregisterStorage(final @NotNull BancoStorage... bancoStorages) {
         List<BancoStorage> bancoStorageList = Arrays.asList(bancoStorages);
         storages.removeAll(bancoStorageList);
