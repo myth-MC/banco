@@ -2,16 +2,18 @@ package ovh.mythmc.banco.api.data;
 
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.accounts.Account;
-import ovh.mythmc.banco.api.economy.accounts.AccountSerializer;
+import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.accounts.AccountSerializer;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+@ApiStatus.Internal
 public final class BancoDataProvider {
 
     static final LoggerWrapper logger = new LoggerWrapper() {
@@ -56,7 +58,7 @@ public final class BancoDataProvider {
 
         this.data = YamlConfigurations.update(dataFilePath, BancoData.class, properties);
 
-        data.accounts.forEach(account -> Banco.get().getAccountManager().add(account));
+        data.accounts.forEach(account -> Banco.get().getAccountManager().registerAccount(account));
 
         if (Banco.get().getSettings().get().isDebug())
             logger.info("Done! (" + Banco.get().getAccountManager().get().size() + " accounts loaded)");
