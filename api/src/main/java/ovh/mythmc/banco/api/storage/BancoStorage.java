@@ -1,11 +1,8 @@
 package ovh.mythmc.banco.api.storage;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@ApiStatus.Internal
 public interface BancoStorage {
 
     /**
