@@ -13,6 +13,8 @@ public interface BancoHelper {
 
     boolean isOnline(UUID uuid);
 
+    boolean isInBlacklistedWorld(UUID uuid);
+
     BigDecimal getValue(UUID uuid);
 
 }
