@@ -6,7 +6,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.impl.BancoVaultImpl;
+import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -29,7 +29,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     public static BancoPaper instance;
 
-    private BancoVaultImpl vaultImpl;
+    private BancoVaultHook vaultImpl;
 
     private ScheduledTask autoSaveTask;
 
@@ -64,7 +64,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
         new BancoHelperImpl(); // BancoHelper.get()
 
-        vaultImpl = new BancoVaultImpl();
+        vaultImpl = new BancoVaultHook();
         vaultImpl.hook(getPlugin());
 
         registerCommands();

@@ -7,7 +7,7 @@ import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.impl.BancoVaultImpl;
+import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     private static BukkitAudiences adventure;
 
-    private BancoVaultImpl vaultImpl;
+    private BancoVaultHook vaultImpl;
 
     private BukkitTask autoSaveTask;
 
@@ -61,7 +61,7 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
-        vaultImpl = new BancoVaultImpl();
+        vaultImpl = new BancoVaultHook();
         vaultImpl.hook(getPlugin());
 
         new BancoHelperImpl(); // BancoHelper.get()
