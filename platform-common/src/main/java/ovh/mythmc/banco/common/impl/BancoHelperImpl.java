@@ -34,6 +34,15 @@ public class BancoHelperImpl implements BancoHelper {
     }
 
     @Override
+    public boolean isInBlacklistedWorld(UUID uuid) {
+        if (!isOnline(uuid))
+            return false;
+
+        String worldName = Bukkit.getPlayer(uuid).getWorld().getName();
+        return Banco.get().getSettings().get().getCurrency().getBlacklistedWorlds().contains(worldName);
+    }
+
+    @Override
     public BigDecimal getValue(UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 

@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.impl;
+package ovh.mythmc.banco.common.hooks;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
@@ -15,8 +16,9 @@ import ovh.mythmc.banco.common.util.PlayerUtil;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-public class BancoVaultImpl implements Economy {
+public class BancoVaultHook implements Economy {
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -109,7 +111,12 @@ public class BancoVaultImpl implements Economy {
         if (!hasAccount(s))
             return 0;
 
-        return Banco.get().getAccountManager().amount(Banco.get().getAccountManager().get(PlayerUtil.getUuid(s))).doubleValue();
+        UUID uuid = PlayerUtil.getUuid(s);
+
+        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+            return 0;
+
+        return Banco.get().getAccountManager().amount(Banco.get().getAccountManager().get(uuid)).doubleValue();
     }
 
     @Override
@@ -149,15 +156,23 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
+        UUID uuid = PlayerUtil.getUuid(s);
+
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().registerAccount(new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
-        Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
+        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+            return new EconomyResponse(0,
+                    getBalance(Bukkit.getOfflinePlayer(uuid)),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Player is in blacklisted world");
+
+        Account account = Banco.get().getAccountManager().get(uuid);
         Banco.get().getAccountManager().withdraw(account, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
-                getBalance(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(s))),
+                getBalance(Bukkit.getOfflinePlayer(uuid)),
                 EconomyResponse.ResponseType.SUCCESS,
                 "");
     }
@@ -179,15 +194,23 @@ public class BancoVaultImpl implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
+        UUID uuid = PlayerUtil.getUuid(s);
+
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().registerAccount(new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
         }
 
-        Account account = Banco.get().getAccountManager().get(PlayerUtil.getUuid(s));
+        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+            return new EconomyResponse(0,
+                    getBalance(Bukkit.getOfflinePlayer(uuid)),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Player is in blacklisted world");
+
+        Account account = Banco.get().getAccountManager().get(uuid);
         Banco.get().getAccountManager().deposit(account, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
-                getBalance(Bukkit.getOfflinePlayer(PlayerUtil.getUuid(s))),
+                getBalance(Bukkit.getOfflinePlayer(uuid)),
                 EconomyResponse.ResponseType.SUCCESS,
                 "");
     }
