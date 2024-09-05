@@ -27,6 +27,7 @@ public final class BancoSettingsProvider {
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
 
+        get().getCurrency().getItems().clear();
         get().getCurrency().getItems().forEach(bancoItem -> Banco.get().getItemManager().registerItems(bancoItem));
     }
 
