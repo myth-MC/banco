@@ -19,7 +19,7 @@
     </properties>
 
     <build>
-        <finalName>${project.name}-${parent.version} (${target.version})</finalName>
+        <finalName>${project.name}-${project.parent.version} (${target.version})</finalName>
     </build>
 
     <repositories>
