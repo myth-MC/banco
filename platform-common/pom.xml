@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.3</version>
     </parent>
 
     <artifactId>banco-common</artifactId>
@@ -22,6 +22,11 @@
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
@@ -44,6 +49,13 @@
             <artifactId>banco-api-bukkit</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth-MC.social</groupId>
+            <artifactId>social-api</artifactId>
+            <version>8383416ccc</version> <!-- pre-release build, migrate once 0.1 releases -->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -1,10 +1,12 @@
 package ovh.mythmc.banco.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
+import ovh.mythmc.banco.common.hooks.BancoSocialHook;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.hooks.BancoVaultHook;
@@ -56,6 +58,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     @Override
     public void enable() {
+        Metrics metrics = new Metrics(getPlugin(), 23496);
+
         new BancoLocalization().load(getPlugin().getDataFolder());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
@@ -100,6 +104,10 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
+
+        // 3rd party hooks
+        if (Bukkit.getPluginManager().isPluginEnabled("social"))
+            Bukkit.getPluginManager().registerEvents(new BancoSocialHook(), getPlugin());
     }
 
     private void registerCommands() {
