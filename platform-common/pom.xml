@@ -23,6 +23,11 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -44,6 +49,13 @@
             <artifactId>banco-api-bukkit</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth-MC.social</groupId>
+            <artifactId>social-api</artifactId>
+            <version>8383416ccc</version> <!-- pre-release build, migrate once 0.1 releases -->
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

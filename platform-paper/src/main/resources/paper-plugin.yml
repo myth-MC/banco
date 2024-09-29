@@ -16,6 +16,9 @@ dependencies:
     PlaceholderAPI:
       load: BEFORE
       required: false
+    social:
+      load: BEFORE
+      required: false
     Essentials:
       load: AFTER
       required: false

@@ -6,6 +6,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
+import ovh.mythmc.banco.common.hooks.BancoSocialHook;
 import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
@@ -100,6 +101,10 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
+
+        // 3rd party hooks
+        if (Bukkit.getPluginManager().isPluginEnabled("social"))
+            Bukkit.getPluginManager().registerEvents(new BancoSocialHook(), getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")
