@@ -1,6 +1,7 @@
 package ovh.mythmc.banco.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
@@ -57,6 +58,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     @Override
     public void enable() {
+        Metrics metrics = new Metrics(getPlugin(), 23496);
+
         new BancoLocalization().load(getPlugin().getDataFolder());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))

@@ -4,6 +4,7 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
 import ovh.mythmc.banco.common.hooks.BancoSocialHook;
@@ -58,6 +59,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     @Override
     public void enable() {
+        Metrics metrics = new Metrics(getPlugin(), 23496);
+
         new BancoLocalization().load(getPlugin().getDataFolder());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))

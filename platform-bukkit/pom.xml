@@ -36,6 +36,18 @@
                 <configuration>
                     <relocations>
                         <relocation>
+                            <pattern>de.exlll</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.de.exlll</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.snakeyaml</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.org.snakeyaml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.org.bstats</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>net.kyori</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.net.kyori</shadedPattern>
                         </relocation>
