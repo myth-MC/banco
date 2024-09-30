@@ -69,7 +69,6 @@ public final class BancoItemManager {
                          final Boolean glowEffect,
                          final Integer customModelData) {
         for (BancoItem item : get()) {
-            Banco.get().getLogger().info(item + " |||||| " + "M" + materialName + "D" + displayName + "G" + glowEffect + "C" + customModelData);
             if (Objects.equals(materialName, item.name())
                     && Objects.equals(displayName, item.displayName())
                     && Objects.equals(glowEffect, item.glowEffect())
