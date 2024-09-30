@@ -31,6 +31,9 @@ public class CurrencyConfig {
     @Comment("Whether to count items stored in a player's ender chest or not")
     private boolean countEnderChest = true;
 
+    @Comment("Enable this if you want to give players the chance of changing lower value items for higher value ones by using /balance change")
+    private boolean changeMoney = false;
+
     @Comment("Worlds where banco's economy should be disabled")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
 

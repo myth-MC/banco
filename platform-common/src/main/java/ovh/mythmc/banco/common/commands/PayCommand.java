@@ -70,7 +70,7 @@ public abstract class PayCommand {
     }
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
-        if (args.length > 0)
+        if (args.length > 1)
             return List.of();
 
         List<String> onlinePlayers = new ArrayList<>();

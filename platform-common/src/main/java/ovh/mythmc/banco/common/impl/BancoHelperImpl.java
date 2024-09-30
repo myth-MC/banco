@@ -43,10 +43,10 @@ public class BancoHelperImpl implements BancoHelper {
     }
 
     @Override
-    public BigDecimal getValue(UUID uuid) {
+    public BigDecimal getValue(UUID uuid, Collection<BancoStorage> bancoStorages) {
         BigDecimal value = BigDecimal.valueOf(0);
 
-        for (BancoStorage storage : Banco.get().getStorageManager().get())
+        for (BancoStorage storage : bancoStorages)
             if (storage instanceof BancoInventory<?> inventory) {
                 for (ItemStack item : (Inventory) inventory.get(uuid))
                     if (item != null) {
@@ -64,6 +64,11 @@ public class BancoHelperImpl implements BancoHelper {
             }
 
         return value;
+    }
+
+    @Override
+    public BigDecimal getValue(UUID uuid) {
+        return getValue(uuid, Banco.get().getStorageManager().get());
     }
 
 }
