@@ -80,16 +80,15 @@ public final class ItemUtil {
         List<ItemStack> items = new ArrayList<>();
 
         for (BancoItem bancoItem : Banco.get().getItemManager().get().reversed()) {
-            if(bancoItem.value().compareTo(amount) > 0)
-                continue;
+            do {
+                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
 
-            int itemAmount = (amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue();
+                if (itemAmount > 0) {
+                    items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
 
-            if (itemAmount > 0) {
-                items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
-
-                amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
-            }
+                    amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
+                }
+            } while (bancoItem.value().compareTo(amount) < 0);
         }
 
         return items;
