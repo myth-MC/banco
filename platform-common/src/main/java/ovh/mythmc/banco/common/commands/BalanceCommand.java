@@ -3,9 +3,14 @@ package ovh.mythmc.banco.common.commands;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.economy.BancoHelper;
+import ovh.mythmc.banco.api.storage.BancoStorage;
+import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
@@ -32,6 +37,30 @@ public abstract class BalanceCommand {
             return;
         }
 
+        if (args[0].equalsIgnoreCase("change")) {
+            if (uuid.isEmpty()) return;
+            if (!Banco.get().getSettings().get().getCurrency().isChangeMoney())
+                return;
+
+            Account account = Banco.get().getAccountManager().get(uuid.get());
+            if (account == null)
+                return;
+
+            BigDecimal toRemove = BigDecimal.valueOf(0);
+            for (BancoStorage bancoStorage : Banco.get().getStorageManager().get()) {
+                if (bancoStorage instanceof PlayerInventoryImpl) {
+                    toRemove = BancoHelper.get().getValue(uuid.get(), List.of(bancoStorage));
+                }
+            }
+
+            Player player = Bukkit.getPlayer(uuid.get());
+            player.playSound(player, Sound.ITEM_ARMOR_EQUIP_IRON, 0.95F, 1.50F);
+
+            Banco.get().getAccountManager().withdraw(account, toRemove);
+            Banco.get().getAccountManager().deposit(account, toRemove);
+            return;
+        }
+
         Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
 
         if (target == null) {
@@ -49,11 +78,12 @@ public abstract class BalanceCommand {
     }
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
-        if (args.length > 0)
+        if (args.length > 1)
             return List.of();
 
         List<String> onlinePlayers = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
+        onlinePlayers.add("change");
         return List.copyOf(onlinePlayers);
     }
 

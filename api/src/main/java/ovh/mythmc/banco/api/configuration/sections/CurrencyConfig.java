@@ -31,14 +31,17 @@ public class CurrencyConfig {
     @Comment("Whether to count items stored in a player's ender chest or not")
     private boolean countEnderChest = true;
 
+    @Comment("Enable this if you want to give players the chance of changing lower value items for higher value ones by using /balance change")
+    private boolean changeMoney = false;
+
     @Comment("Worlds where banco's economy should be disabled")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
 
     @Comment({"Configure items and their respective value", "Please, put less valuable items first. You can use '§' to format text"})
     private List<BancoItem> items = List.of(
-            new BancoItem("COPPER_INGOT", "§eCent", List.of("This is a simple setup example!", "You can use §bcolours §rto format text", " ", "§dCustom model data §ris also supported!"), 1009, BigDecimal.valueOf(0.1)),
-            new BancoItem("GOLD_INGOT", null, null, null, BigDecimal.valueOf(1)),
-            new BancoItem("GOLD_BLOCK", null, null, null, BigDecimal.valueOf(9))
+            new BancoItem("COPPER_INGOT", "§eCent", List.of("This is a simple setup example!", "You can use §bcolours §rto format text", " ", "§dCustom model data §ris also supported!"), 1009, true, BigDecimal.valueOf(0.1)),
+            new BancoItem("GOLD_INGOT", null, null, null, null, BigDecimal.valueOf(1)),
+            new BancoItem("GOLD_BLOCK", null, null, null, null, BigDecimal.valueOf(9))
     );
 
 }

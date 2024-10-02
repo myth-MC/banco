@@ -60,18 +60,23 @@ public final class BancoItemManager {
      * Gets a specific BancoItem
      * @param materialName material name of an item
      * @param displayName display name of an item
+     * @param glowEffect whether an item has glow effect or not
      * @param customModelData custom model data of an item
      * @return A BancoItem matching parameters or null
      */
     public BancoItem get(final @NotNull String materialName,
                          final @NotNull String displayName,
+                         final Boolean glowEffect,
                          final Integer customModelData) {
-        for (BancoItem item : get())
+        for (BancoItem item : get()) {
             if (Objects.equals(materialName, item.name())
                     && Objects.equals(displayName, item.displayName())
-                    && Objects.equals(customModelData, item.customModelData()))
+                    && Objects.equals(glowEffect, item.glowEffect())
+                    && Objects.equals(customModelData, item.customModelData())) {
 
                 return item;
+            }
+        }
 
         return null;
     }

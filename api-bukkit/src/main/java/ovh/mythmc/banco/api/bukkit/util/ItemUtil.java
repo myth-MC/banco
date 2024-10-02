@@ -2,6 +2,8 @@ package ovh.mythmc.banco.api.bukkit.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +32,9 @@ public final class ItemUtil {
             itemMeta.setLore(bancoItem.lore().stream().map(string -> ChatColor.RESET + string).toList());
         if (bancoItem.customModelData() != null)
             itemMeta.setCustomModelData(bancoItem.customModelData());
+        if (bancoItem.glowEffect() != null && bancoItem.glowEffect())
+            itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -43,14 +48,18 @@ public final class ItemUtil {
         String materialName = item.getType().name();
         String displayName = null;
         Integer customModelData = null;
+        Boolean glowEffect = null;
 
         if (item.hasItemMeta()) {
-            displayName = item.getItemMeta().getDisplayName();
+            if (item.getItemMeta().hasDisplayName())
+                displayName = item.getItemMeta().getDisplayName();
             if (item.getItemMeta().hasCustomModelData())
                 customModelData = item.getItemMeta().getCustomModelData();
+            if (item.getItemMeta().hasEnchant(Enchantment.LOYALTY))
+                glowEffect = true;
         }
 
-        return Banco.get().getItemManager().get(materialName, displayName, customModelData);
+        return Banco.get().getItemManager().get(materialName, displayName, glowEffect, customModelData);
     }
 
     /**
@@ -71,16 +80,15 @@ public final class ItemUtil {
         List<ItemStack> items = new ArrayList<>();
 
         for (BancoItem bancoItem : Banco.get().getItemManager().get().reversed()) {
-            if(bancoItem.value().compareTo(amount) > 0)
-                continue;
+            do {
+                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
 
-            int itemAmount = (amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue();
+                if (itemAmount > 0) {
+                    items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
 
-            if (itemAmount > 0) {
-                items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
-
-                amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
-            }
+                    amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
+                }
+            } while (bancoItem.value().compareTo(amount) < 0);
         }
 
         return items;

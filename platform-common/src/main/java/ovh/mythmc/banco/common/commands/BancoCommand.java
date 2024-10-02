@@ -45,6 +45,10 @@ public abstract class BancoCommand {
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
         if (args.length == 1) {
+            return List.copyOf(subCommands.keySet());
+        }
+
+        if (args.length == 2) {
             switch (args[0]) {
                 case "give", "take", "set":
                     List<String> onlinePlayers = new ArrayList<>();
@@ -55,10 +59,7 @@ public abstract class BancoCommand {
             }
         }
 
-        if (args.length > 1)
-            return List.of();
-
-        return List.copyOf(subCommands.keySet());
+        return List.of();
     }
 
 }

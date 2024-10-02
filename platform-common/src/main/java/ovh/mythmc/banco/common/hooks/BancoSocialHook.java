@@ -50,7 +50,11 @@ public final class BancoSocialHook implements Listener {
                 if (account == null)
                     return null;
 
-                return "<light_purple><click:run_command:/balance " + socialPlayer.getPlayer().getName() + ">" + MessageUtil.format(account.amount()) + "$</click></light_purple>";
+                String playerName = socialPlayer.getPlayer().getName();
+                String formattedAmount = MessageUtil.format(account.amount());
+                String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
+
+                return "<light_purple><click:run_command:/balance " + playerName + ">" + formattedAmount + currencySymbol + "</click></light_purple>";
             }
         });
     }

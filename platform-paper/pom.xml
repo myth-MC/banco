@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.6.3</version>
+        <version>0.6.4</version>
     </parent>
 
     <artifactId>banco-platform-paper</artifactId>
@@ -15,11 +15,10 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <target.version>1.20.6+</target.version>
     </properties>
 
     <build>
-        <finalName>${project.name}-${project.parent.version} (${target.version})</finalName>
+        <finalName>${project.parent.name}-${project.parent.version}</finalName>
     </build>
 
     <repositories>

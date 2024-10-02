@@ -41,7 +41,7 @@ public final class BalanceTopInventory extends BasicInventory {
             ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
             skullMeta.setOwningPlayer(player);
-            skullMeta.setItemName(itemName);
+            skullMeta.setDisplayName(itemName);
             itemStack.setItemMeta(skullMeta);
 
             InventoryButton button = new InventoryButton(itemStack) {
