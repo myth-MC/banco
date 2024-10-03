@@ -18,7 +18,7 @@
     </properties>
 
     <build>
-        <finalName>${project.parent.name}-${project.parent.version}</finalName>
+        <finalName>${project.parent.name}-modern-${project.parent.version}</finalName>
     </build>
 
     <repositories>
