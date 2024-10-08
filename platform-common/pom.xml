@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.myth-MC.social</groupId>
             <artifactId>social-api</artifactId>
-            <version>8383416ccc</version> <!-- pre-release build, migrate once 0.1 releases -->
+            <version>v0.1.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
