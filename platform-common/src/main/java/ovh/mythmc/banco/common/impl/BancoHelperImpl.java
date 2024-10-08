@@ -5,6 +5,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.bukkit.util.ItemUtil;
+import ovh.mythmc.banco.api.configuration.sections.CurrencyConfig;
 import ovh.mythmc.banco.api.storage.BancoContainer;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.api.economy.BancoHelper;
@@ -23,9 +24,18 @@ public class BancoHelperImpl implements BancoHelper {
         BancoHelperSupplier.set(this);
 
         // Register banco inventories
-        Banco.get().getStorageManager().registerStorage(new PlayerInventoryImpl());
-        if (Banco.get().getSettings().get().getCurrency().isCountEnderChest())
-            Banco.get().getStorageManager().registerStorage(new EnderChestInventoryImpl());
+        CurrencyConfig.InventoryPriority inventoryPriority = Banco.get().getSettings().get().getCurrency().getInventoryPriority();
+        boolean countEnderChest = Banco.get().getSettings().get().getCurrency().isCountEnderChest();
+
+        switch (inventoryPriority) {
+            case PLAYER_INVENTORY -> {
+                Banco.get().getStorageManager().registerStorage(new PlayerInventoryImpl());
+                if (countEnderChest)
+                    Banco.get().getStorageManager().registerStorage(new EnderChestInventoryImpl());
+            }
+            case ENDER_CHEST -> Banco.get().getStorageManager().registerStorage(new EnderChestInventoryImpl(),
+                    new PlayerInventoryImpl());
+        }
     }
 
     @Override

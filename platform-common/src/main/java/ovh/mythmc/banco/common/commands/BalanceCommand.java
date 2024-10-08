@@ -71,7 +71,7 @@ public abstract class BalanceCommand {
         BigDecimal amount = target.amount();
 
         MessageUtil.info(sender, translatable("banco.commands.balance.others",
-                text(Bukkit.getOfflinePlayer(target.getUuid()).getName()),
+                text(args[0]),
                 text(MessageUtil.format(amount)),
                 text(Banco.get().getSettings().get().getCurrency().getSymbol()))
         );

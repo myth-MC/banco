@@ -26,7 +26,10 @@ public final class BalanceTopInventory extends BasicInventory {
     public void decorate() {
         int slot = 0;
 
-        for (Map.Entry<UUID, BigDecimal> entry : Banco.get().getAccountManager().getTop(9).entrySet()) {
+        for (Map.Entry<UUID, BigDecimal> entry : Banco.get().getAccountManager().getTop(18).entrySet()) {
+            if (slot >= 8)
+                break;
+
             OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
             if (!player.hasPlayedBefore())
                 continue;

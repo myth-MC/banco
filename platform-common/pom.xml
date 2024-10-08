@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.6.4</version>
+        <version>0.6.5</version>
     </parent>
 
     <artifactId>banco-common</artifactId>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.myth-MC.social</groupId>
             <artifactId>social-api</artifactId>
-            <version>8383416ccc</version> <!-- pre-release build, migrate once 0.1 releases -->
+            <version>v0.1.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

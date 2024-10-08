@@ -34,6 +34,9 @@ public class CurrencyConfig {
     @Comment("Enable this if you want to give players the chance of changing lower value items for higher value ones by using /balance change")
     private boolean changeMoney = false;
 
+    @Comment("Options: PLAYER_INVENTORY or ENDER_CHEST")
+    private InventoryPriority inventoryPriority = InventoryPriority.PLAYER_INVENTORY;
+
     @Comment("Worlds where banco's economy should be disabled")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
 
@@ -43,5 +46,10 @@ public class CurrencyConfig {
             new BancoItem("GOLD_INGOT", null, null, null, null, BigDecimal.valueOf(1)),
             new BancoItem("GOLD_BLOCK", null, null, null, null, BigDecimal.valueOf(9))
     );
+
+    public enum InventoryPriority {
+        PLAYER_INVENTORY,
+        ENDER_CHEST
+    }
 
 }
