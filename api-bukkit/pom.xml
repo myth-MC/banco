@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.6.5</version>
+        <version>0.6.6</version>
     </parent>
 
     <artifactId>banco-api-bukkit</artifactId>
