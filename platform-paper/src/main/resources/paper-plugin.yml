@@ -19,9 +19,6 @@ dependencies:
     social:
       load: BEFORE
       required: false
-    Essentials:
-      load: AFTER
-      required: false
     CMI:
       load: AFTER
       required: false
