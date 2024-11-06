@@ -7,7 +7,6 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.hooks.BancoSocialHook;
 import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
@@ -58,8 +57,14 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     @Override
-    public void enable() {
-        Metrics metrics = new Metrics(getPlugin(), 23496);
+    public void load() {
+        vaultImpl = new BancoVaultHook();
+        vaultImpl.hook(getPlugin());
+    }
+
+    @Override
+    public void enable() {        
+        new Metrics(getPlugin(), 23496);
 
         new BancoLocalization().load(getPlugin().getDataFolder());
 
@@ -67,9 +72,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
             new BancoPlaceholderExpansion();
 
         new BancoHelperImpl(); // BancoHelper.get()
-
-        vaultImpl = new BancoVaultHook();
-        vaultImpl.hook(getPlugin());
 
         registerCommands();
         registerListeners();
@@ -104,10 +106,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
-
-        // 3rd party hooks
-        if (Bukkit.getPluginManager().isPluginEnabled("social"))
-            Bukkit.getPluginManager().registerEvents(new BancoSocialHook(), getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

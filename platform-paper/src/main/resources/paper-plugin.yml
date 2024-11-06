@@ -5,6 +5,7 @@ authors:
 version: '${project.version}'
 api-version: '1.21'
 
+#loader: ovh.mythmc.gestalt.loader.PaperGestaltLibraryLoader
 main: ovh.mythmc.banco.paper.BancoPaperPlugin
 folia-supported: true
 
@@ -13,11 +14,17 @@ dependencies:
     Vault:
       load: BEFORE
       required: true
+      join-classpath: true
     PlaceholderAPI:
       load: BEFORE
       required: false
-    social:
-      load: BEFORE
+      join-classpath: true
+    gestalt:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Essentials:
+      load: AFTER
       required: false
     CMI:
       load: AFTER

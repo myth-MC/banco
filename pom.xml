@@ -121,5 +121,19 @@
             <version>3.0.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.myth-MC.gestalt</groupId>
+            <artifactId>gestalt-api</artifactId>
+            <version>e170839</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth-MC.gestalt</groupId>
+            <artifactId>gestalt-loader</artifactId>
+            <version>e170839</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

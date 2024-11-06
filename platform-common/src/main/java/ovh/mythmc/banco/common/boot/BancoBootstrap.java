@@ -2,13 +2,18 @@ package ovh.mythmc.banco.common.boot;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
 import ovh.mythmc.banco.api.data.BancoDataProvider;
+import ovh.mythmc.banco.common.listeners.GestaltListener;
 import ovh.mythmc.banco.common.util.MigrationUtil;
 import ovh.mythmc.banco.common.util.UpdateChecker;
+import ovh.mythmc.gestalt.Gestalt;
+import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 
 import java.io.File;
 
@@ -35,6 +40,19 @@ public abstract class BancoBootstrap<T> implements Banco {
     }
 
     public final void initialize() {
+        /*
+        // Initialize Gestalt
+        BukkitGestaltLoader gestalt = BukkitGestaltLoader.builder()
+            .initializer((JavaPlugin) getPlugin())
+            .build();
+
+        gestalt.initialize();
+
+        // Register Gestalt feature listener
+        Gestalt.get().getListenerRegistry().register(new GestaltListener());
+        
+        Banco.get().getLogger().info(Gestalt.get().toString());
+*/
         getSettings().load();
         getData().load();
 
@@ -51,6 +69,8 @@ public abstract class BancoBootstrap<T> implements Banco {
         if (Banco.get().getSettings().get().getUpdateTracker().isEnabled())
             UpdateChecker.check();
     }
+
+    public abstract void load();
 
     public abstract void enable();
 

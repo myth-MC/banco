@@ -7,8 +7,13 @@ public class BancoPaperPlugin extends JavaPlugin {
     private BancoPaper bootstrap;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         bootstrap = new BancoPaper(this);
+        bootstrap.load();
+    }
+
+    @Override
+    public void onEnable() {
         bootstrap.initialize();
     }
 
