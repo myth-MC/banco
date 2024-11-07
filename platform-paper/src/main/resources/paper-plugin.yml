@@ -23,6 +23,10 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    social:
+      load: OMIT
+      required: false
+      join-classpath: true
     Essentials:
       load: AFTER
       required: false

@@ -123,16 +123,16 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth-MC.gestalt</groupId>
+            <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>e170839</version>
+            <version>0.1.7b</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth-MC.gestalt</groupId>
+            <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-loader</artifactId>
-            <version>e170839</version>
+            <version>0.1.7b</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

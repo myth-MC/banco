@@ -7,13 +7,8 @@ public class BancoBukkitPlugin extends JavaPlugin {
     private BancoBukkit bootstrap;
 
     @Override
-    public void onLoad() {
-        bootstrap = new BancoBukkit(this);
-        bootstrap.load();
-    }
-
-    @Override
     public void onEnable() {
+        bootstrap = new BancoBukkit(this);
         bootstrap.initialize();
     }
 

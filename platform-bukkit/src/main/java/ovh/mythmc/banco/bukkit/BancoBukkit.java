@@ -19,6 +19,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.common.translation.BancoLocalization;
+import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
 
 import java.util.*;
@@ -33,6 +34,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     private BancoVaultHook vaultImpl;
 
     private BukkitTask autoSaveTask;
+
+    private BukkitGestaltLoader gestalt;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -57,13 +60,17 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     }
 
     @Override
-    public void load() {
+    public void enable() {
+        // Gestalt
+        gestalt = BukkitGestaltLoader.builder()
+            .initializer(getPlugin())
+            .build();
+
+        gestalt.initialize();
+
         vaultImpl = new BancoVaultHook();
         vaultImpl.hook(getPlugin());
-    }
 
-    @Override
-    public void enable() {
         new Metrics(getPlugin(), 23496);
 
         new BancoLocalization().load(getPlugin().getDataFolder());
@@ -87,6 +94,8 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
     @Override
     public void shutdown() {
+        gestalt.terminate();
+
         vaultImpl.unhook();
 
         if (autoSaveTask != null)

@@ -20,6 +20,7 @@ import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
 import ovh.mythmc.banco.paper.commands.PayCommandImpl;
+import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
 import java.util.*;
@@ -33,6 +34,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     private BancoVaultHook vaultImpl;
 
     private ScheduledTask autoSaveTask;
+
+    private PaperGestaltLoader gestalt;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -57,13 +60,17 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     @Override
-    public void load() {
+    public void enable() {    
+        // Gestalt
+        gestalt = PaperGestaltLoader.builder()
+            .initializer(getPlugin())
+            .build();
+
+        gestalt.initialize();
+
         vaultImpl = new BancoVaultHook();
         vaultImpl.hook(getPlugin());
-    }
 
-    @Override
-    public void enable() {        
         new Metrics(getPlugin(), 23496);
 
         new BancoLocalization().load(getPlugin().getDataFolder());
@@ -82,6 +89,8 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     @Override
     public void shutdown() {
+        gestalt.terminate();
+        
         vaultImpl.unhook();
 
         if (autoSaveTask != null)
