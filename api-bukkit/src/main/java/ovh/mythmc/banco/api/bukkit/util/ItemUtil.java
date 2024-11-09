@@ -48,7 +48,7 @@ public final class ItemUtil {
         String materialName = item.getType().name();
         String displayName = null;
         Integer customModelData = null;
-        Boolean glowEffect = null;
+        boolean glowEffect = false;
 
         if (item.hasItemMeta()) {
             if (item.getItemMeta().hasDisplayName())

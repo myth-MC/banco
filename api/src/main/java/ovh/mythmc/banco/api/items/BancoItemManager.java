@@ -25,8 +25,9 @@ public final class BancoItemManager {
      * Registers a BancoItem
      * @param items item to register
      */
-    public void registerItems(final @NotNull BancoItem... items) {
+    public void registerItems(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
+            bancoItem = validate(bancoItem);
             itemsList.add(bancoItem);
 
             // Call BancoItemRegisterEvent
@@ -66,7 +67,7 @@ public final class BancoItemManager {
      */
     public BancoItem get(final @NotNull String materialName,
                          final @NotNull String displayName,
-                         final Boolean glowEffect,
+                         final boolean glowEffect,
                          final Integer customModelData) {
         for (BancoItem item : get()) {
             if (Objects.equals(materialName, item.name())
@@ -89,6 +90,13 @@ public final class BancoItemManager {
      */
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
+    }
+
+    private BancoItem validate(@NotNull BancoItem item) {
+        if (item.glowEffect() == null)
+            item = item.withGlowEffect(false);
+
+        return item;
     }
 
 }
