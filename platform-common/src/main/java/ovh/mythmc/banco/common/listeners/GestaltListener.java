@@ -8,7 +8,7 @@ public final class GestaltListener {
 
     private BancoSocialHook hook;
 
-    @FeatureListener(group = "social", identifier = "REACTIONS", events = { FeatureEvent.ENABLE })
+    @FeatureListener(group = "social", identifier = "REACTIONS", events = { FeatureEvent.ENABLE } )
     public void onSocialReactionsEnable() {
         hook = new BancoSocialHook();
         hook.registerKeyword();

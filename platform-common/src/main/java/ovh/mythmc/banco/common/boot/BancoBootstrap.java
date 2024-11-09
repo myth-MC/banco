@@ -52,7 +52,7 @@ public abstract class BancoBootstrap<T> implements Banco {
         }
 
         // Register Gestalt feature listener
-        Gestalt.get().getListenerRegistry().register(new GestaltListener());
+        //Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
         if (Banco.get().getSettings().get().getUpdateTracker().isEnabled())
             UpdateChecker.check();

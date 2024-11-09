@@ -24,25 +24,29 @@ public final class BancoSocialHook {
     }
 
     public void registerKeyword() {
-        Social.get().getTextProcessor().registerParser(new SocialKeyword() {
-            @Override
-            public String keyword() {
-                return "balance";
-            }
+        Social.get().getTextProcessor().registerParser(new BancoKeyword());
+    }
 
-            @Override
-            public String process(SocialPlayer socialPlayer) {
-                Account account = Banco.get().getAccountManager().get(socialPlayer.getUuid());
-                if (account == null)
-                    return null;
+    private static class BancoKeyword extends SocialKeyword {
 
-                String playerName = socialPlayer.getPlayer().getName();
-                String formattedAmount = MessageUtil.format(account.amount());
-                String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
+        @Override
+        public String keyword() {
+            return "balance";
+        }
 
-                return "<light_purple><click:run_command:/balance " + playerName + ">" + formattedAmount + currencySymbol + "</click></light_purple>";
-            }
-        });
+        @Override
+        public String process(SocialPlayer socialPlayer) {
+            Account account = Banco.get().getAccountManager().get(socialPlayer.getUuid());
+            if (account == null)
+                return null;
+
+            String playerName = socialPlayer.getPlayer().getName();
+            String formattedAmount = MessageUtil.format(account.amount());
+            String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
+
+            return "<light_purple><click:run_command:/balance " + playerName + ">" + formattedAmount + currencySymbol + "</click></light_purple>";
+        }
+
     }
 
 }

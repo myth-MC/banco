@@ -125,14 +125,14 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>0.1.7b</version>
+            <version>0.1.8</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-loader</artifactId>
-            <version>0.1.7b</version>
+            <version>0.1.8</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
