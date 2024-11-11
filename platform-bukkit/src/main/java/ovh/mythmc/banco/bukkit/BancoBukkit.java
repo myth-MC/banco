@@ -87,9 +87,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
 
         registerListeners();
         registerCommands();
-
-        if (Banco.get().getSettings().get().getAutoSave().isEnabled())
-            startAutoSaver();
     }
 
     @Override
@@ -97,11 +94,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         gestalt.terminate();
 
         vaultImpl.unhook();
-
-        if (autoSaveTask != null)
-            stopAutoSaver();
-
-        Banco.get().getData().save();
     }
 
     @Override
@@ -131,14 +123,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         Objects.requireNonNull(balance).setExecutor(new BalanceCommandImpl());
         Objects.requireNonNull(balanceTop).setExecutor(new BalanceTopCommandImpl());
         Objects.requireNonNull(pay).setExecutor(new PayCommandImpl());
-    }
-
-    private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), () -> Banco.get().getData().save(), 0, Banco.get().getSettings().get().getAutoSave().getFrequency() * 20L);
-    }
-
-    private void stopAutoSaver() {
-        this.autoSaveTask.cancel();
     }
 
     public static @NotNull BukkitAudiences adventure() {

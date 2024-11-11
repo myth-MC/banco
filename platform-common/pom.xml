@@ -51,10 +51,10 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>ovh.mythmc</groupId>
+        <dependency> <!-- change once 0.3 is released -->
+            <groupId>com.github.myth-MC.social</groupId>
             <artifactId>social-api</artifactId>
-            <version>v0.2.0c</version>
+            <version>c8c2ce2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

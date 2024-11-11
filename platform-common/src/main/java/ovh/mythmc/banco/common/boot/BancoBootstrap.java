@@ -7,13 +7,13 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
-import ovh.mythmc.banco.api.data.BancoDataProvider;
 import ovh.mythmc.banco.common.listeners.GestaltListener;
 import ovh.mythmc.banco.common.util.MigrationUtil;
 import ovh.mythmc.banco.common.util.UpdateChecker;
 import ovh.mythmc.gestalt.Gestalt;
 
 import java.io.File;
+import java.sql.SQLException;
 
 @Getter
 @RequiredArgsConstructor
@@ -21,7 +21,6 @@ public abstract class BancoBootstrap<T> implements Banco {
 
     private T plugin;
     private BancoSettingsProvider settings;
-    private BancoDataProvider data;
 
     private MigrationUtil migrationUtil;
 
@@ -34,12 +33,15 @@ public abstract class BancoBootstrap<T> implements Banco {
 
         this.plugin = plugin;
         this.settings = new BancoSettingsProvider(dataDirectory);
-        this.data = new BancoDataProvider(dataDirectory);
+        try {
+            Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + "/accounts.db");
+        } catch (SQLException e) {
+            Banco.get().getLogger().error("An exception has been produced while loading database: ", e);
+        }
     }
 
     public final void initialize() {
         getSettings().load();
-        getData().load();
 
         migrationUtil.data();
 
@@ -52,7 +54,7 @@ public abstract class BancoBootstrap<T> implements Banco {
         }
 
         // Register Gestalt feature listener
-        //Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
+        Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
         if (Banco.get().getSettings().get().getUpdateTracker().isEnabled())
             UpdateChecker.check();
@@ -64,8 +66,6 @@ public abstract class BancoBootstrap<T> implements Banco {
 
     public final void reload() {
         getSettings().load();
-        getData().save();
-        getData().load();
     }
 
     public abstract String version();

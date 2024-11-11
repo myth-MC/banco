@@ -7,7 +7,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
@@ -119,7 +118,7 @@ public class BancoVaultHook implements Economy {
         if (BancoHelper.get().isInBlacklistedWorld(uuid))
             return 0;
 
-        return Banco.get().getAccountManager().amount(Banco.get().getAccountManager().get(uuid)).doubleValue();
+        return Banco.get().getAccountManager().amount(uuid).doubleValue();
     }
 
     @Override
@@ -162,7 +161,7 @@ public class BancoVaultHook implements Economy {
         UUID uuid = PlayerUtil.getUuid(s);
 
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().registerAccount(new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().create(uuid);
         }
 
         if (BancoHelper.get().isInBlacklistedWorld(uuid))
@@ -171,8 +170,7 @@ public class BancoVaultHook implements Economy {
                     EconomyResponse.ResponseType.FAILURE,
                     "Player is in blacklisted world");
 
-        Account account = Banco.get().getAccountManager().get(uuid);
-        Banco.get().getAccountManager().withdraw(account, BigDecimal.valueOf(v));
+        Banco.get().getAccountManager().withdraw(uuid, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
                 getBalance(Bukkit.getOfflinePlayer(uuid)),
@@ -200,7 +198,7 @@ public class BancoVaultHook implements Economy {
         UUID uuid = PlayerUtil.getUuid(s);
 
         if (!hasAccount(s)) {
-            Banco.get().getAccountManager().registerAccount(new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+            Banco.get().getAccountManager().create(uuid);
         }
 
         if (BancoHelper.get().isInBlacklistedWorld(uuid))
@@ -209,8 +207,7 @@ public class BancoVaultHook implements Economy {
                     EconomyResponse.ResponseType.FAILURE,
                     "Player is in blacklisted world");
 
-        Account account = Banco.get().getAccountManager().get(uuid);
-        Banco.get().getAccountManager().deposit(account, BigDecimal.valueOf(v));
+        Banco.get().getAccountManager().deposit(uuid, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
                 getBalance(Bukkit.getOfflinePlayer(uuid)),
@@ -331,7 +328,7 @@ public class BancoVaultHook implements Economy {
         if (hasAccount(s))
             return false;
 
-        Banco.get().getAccountManager().registerAccount(new Account(PlayerUtil.getUuid(s), BigDecimal.valueOf(0), BigDecimal.valueOf(0)));
+        Banco.get().getAccountManager().create(PlayerUtil.getUuid(s));
         return true;
     }
 

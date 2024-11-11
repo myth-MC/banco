@@ -9,7 +9,6 @@ import ovh.mythmc.banco.api.Banco;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-@SuppressWarnings("unused")
 public final class MessageUtil {
 
     private static final class Icons {

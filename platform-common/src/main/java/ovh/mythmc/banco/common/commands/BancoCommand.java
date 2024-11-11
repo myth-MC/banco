@@ -21,7 +21,6 @@ public abstract class BancoCommand {
         subCommands.put("give", new GiveSubcommand());
         subCommands.put("take", new TakeSubcommand());
         subCommands.put("reload", new ReloadSubcommand());
-        subCommands.put("save", new SaveSubcommand());
     }
 
     public void run(@NotNull Audience sender, @NotNull String[] args) {
@@ -44,7 +43,7 @@ public abstract class BancoCommand {
     }
 
     public @NotNull Collection<String> getSuggestions(@NotNull String[] args) {
-        if (args.length == 1) {
+        if (args.length < 2) {
             return List.copyOf(subCommands.keySet());
         }
 

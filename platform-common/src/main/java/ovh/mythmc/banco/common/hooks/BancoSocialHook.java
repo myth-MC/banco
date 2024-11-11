@@ -1,13 +1,17 @@
 package ovh.mythmc.banco.common.hooks;
 
 import org.bukkit.Sound;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.social.api.Social;
-import ovh.mythmc.social.api.players.SocialPlayer;
+import ovh.mythmc.social.api.context.SocialParserContext;
 import ovh.mythmc.social.api.reactions.Reaction;
-import ovh.mythmc.social.api.text.keywords.SocialKeyword;
+import ovh.mythmc.social.api.text.keywords.SocialContextualKeyword;
 
 import java.util.List;
 
@@ -27,7 +31,7 @@ public final class BancoSocialHook {
         Social.get().getTextProcessor().registerParser(new BancoKeyword());
     }
 
-    private static class BancoKeyword extends SocialKeyword {
+    private static class BancoKeyword extends SocialContextualKeyword {
 
         @Override
         public String keyword() {
@@ -35,16 +39,17 @@ public final class BancoSocialHook {
         }
 
         @Override
-        public String process(SocialPlayer socialPlayer) {
-            Account account = Banco.get().getAccountManager().get(socialPlayer.getUuid());
+        public Component process(SocialParserContext context) {
+            Account account = Banco.get().getAccountManager().get(context.socialPlayer().getUuid());
             if (account == null)
                 return null;
 
-            String playerName = socialPlayer.getPlayer().getName();
+            String playerName = context.socialPlayer().getPlayer().getName();
             String formattedAmount = MessageUtil.format(account.amount());
             String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
 
-            return "<light_purple><click:run_command:/balance " + playerName + ">" + formattedAmount + currencySymbol + "</click></light_purple>";
+            return Component.text(formattedAmount + currencySymbol, NamedTextColor.LIGHT_PURPLE)
+                .clickEvent(ClickEvent.runCommand("/balance " + playerName));
         }
 
     }

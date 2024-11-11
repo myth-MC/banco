@@ -5,7 +5,6 @@ authors:
 version: '${project.version}'
 api-version: '1.21'
 
-#loader: ovh.mythmc.gestalt.loader.PaperGestaltLibraryLoader
 main: ovh.mythmc.banco.paper.BancoPaperPlugin
 folia-supported: true
 
