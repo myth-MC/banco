@@ -3,7 +3,6 @@ package ovh.mythmc.banco.paper;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
@@ -31,8 +30,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     public static BancoPaper instance;
 
     private BancoVaultHook vaultImpl;
-
-    private ScheduledTask autoSaveTask;
 
     private PaperGestaltLoader gestalt;
 

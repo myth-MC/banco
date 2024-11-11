@@ -18,9 +18,6 @@ public class BancoSettings {
     @Comment({"", "Configuration for currency"})
     private CurrencyConfig currency = new CurrencyConfig();
 
-    @Comment({"", "Configuration for the auto-saver"})
-    private AutoSaveConfig autoSave = new AutoSaveConfig();
-
     @Comment({"", "Configuration for the update tracker"})
     private UpdateTrackerConfig updateTracker = new UpdateTrackerConfig();
 

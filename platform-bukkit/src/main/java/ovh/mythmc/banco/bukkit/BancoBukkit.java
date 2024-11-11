@@ -13,7 +13,6 @@ import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
@@ -32,8 +31,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     private static BukkitAudiences adventure;
 
     private BancoVaultHook vaultImpl;
-
-    private BukkitTask autoSaveTask;
 
     private BukkitGestaltLoader gestalt;
 
