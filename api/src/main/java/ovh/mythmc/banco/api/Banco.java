@@ -4,7 +4,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
 import ovh.mythmc.banco.api.storage.BancoStorageManager;
-import ovh.mythmc.banco.api.data.BancoDataProvider;
 import ovh.mythmc.banco.api.event.BancoEventManager;
 import ovh.mythmc.banco.api.accounts.AccountManager;
 import ovh.mythmc.banco.api.items.BancoItemManager;
@@ -26,8 +25,6 @@ public interface Banco {
     @NotNull LoggerWrapper getLogger();
 
     @NotNull BancoSettingsProvider getSettings();
-
-    @NotNull BancoDataProvider getData();
 
     @NotNull default AccountManager getAccountManager() { return AccountManager.instance; }
 

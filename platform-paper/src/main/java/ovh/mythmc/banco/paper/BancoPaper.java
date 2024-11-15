@@ -3,11 +3,9 @@ package ovh.mythmc.banco.paper;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
 import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.hooks.BancoSocialHook;
 import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
@@ -21,10 +19,10 @@ import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
 import ovh.mythmc.banco.paper.commands.PayCommandImpl;
+import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
@@ -33,7 +31,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
     private BancoVaultHook vaultImpl;
 
-    private ScheduledTask autoSaveTask;
+    private PaperGestaltLoader gestalt;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -58,8 +56,18 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     @Override
-    public void enable() {
-        Metrics metrics = new Metrics(getPlugin(), 23496);
+    public void enable() {    
+        // Gestalt
+        gestalt = PaperGestaltLoader.builder()
+            .initializer(getPlugin())
+            .build();
+
+        gestalt.initialize();
+
+        vaultImpl = new BancoVaultHook();
+        vaultImpl.hook(getPlugin());
+
+        new Metrics(getPlugin(), 23496);
 
         new BancoLocalization().load(getPlugin().getDataFolder());
 
@@ -68,24 +76,15 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
         new BancoHelperImpl(); // BancoHelper.get()
 
-        vaultImpl = new BancoVaultHook();
-        vaultImpl.hook(getPlugin());
-
         registerCommands();
         registerListeners();
-
-        if (Banco.get().getSettings().get().getAutoSave().isEnabled())
-            startAutoSaver();
     }
 
     @Override
     public void shutdown() {
+        gestalt.terminate();
+        
         vaultImpl.unhook();
-
-        if (autoSaveTask != null)
-            stopAutoSaver();
-
-        Banco.get().getData().save();
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -104,10 +103,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
 
         // banco listeners
         Banco.get().getEventManager().registerListener(new BancoListener());
-
-        // 3rd party hooks
-        if (Bukkit.getPluginManager().isPluginEnabled("social"))
-            Bukkit.getPluginManager().registerEvents(new BancoSocialHook(), getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -125,14 +120,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
             if (Banco.get().getSettings().get().getCommands().getPay().enabled())
                 commands.register("pay", new PayCommandImpl());
         });
-    }
-
-    private void startAutoSaver() {
-        this.autoSaveTask = Bukkit.getAsyncScheduler().runAtFixedRate(getPlugin(), scheduledTask -> Banco.get().getData().save(), 0, Banco.get().getSettings().get().getAutoSave().getFrequency(), TimeUnit.SECONDS);
-    }
-
-    private void stopAutoSaver() {
-        this.autoSaveTask.cancel();
     }
 
 }

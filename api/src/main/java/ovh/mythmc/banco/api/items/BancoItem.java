@@ -2,6 +2,9 @@ package ovh.mythmc.banco.api.items;
 
 import org.jetbrains.annotations.NotNull;
 
+import lombok.AccessLevel;
+import lombok.With;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -14,6 +17,7 @@ import java.util.List;
  * @param glowEffect whether item should glow or not
  * @param value value of this item
  */
+@With(AccessLevel.PACKAGE)
 public record BancoItem(@NotNull String name,
                         String displayName,
                         List<String> lore,

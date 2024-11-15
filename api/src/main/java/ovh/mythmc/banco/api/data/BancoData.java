@@ -3,7 +3,9 @@ package ovh.mythmc.banco.api.data;
 import de.exlll.configlib.Configuration;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
-import ovh.mythmc.banco.api.accounts.Account;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
+import ovh.mythmc.banco.api.accounts.LegacyAccount;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,10 @@ import java.util.List;
 @ApiStatus.Internal
 @Configuration
 @Getter
-public class BancoData {
+@Deprecated
+@ScheduledForRemoval
+public class BancoData { // used for migration
 
-    protected List<Account> accounts = new ArrayList<>();
+    protected List<LegacyAccount> accounts = new ArrayList<>();
 
 }
