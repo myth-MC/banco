@@ -20,30 +20,34 @@ import java.sql.SQLException;
 public abstract class BancoBootstrap<T> implements Banco {
 
     private T plugin;
-    private BancoSettingsProvider settings;
 
-    private MigrationUtil migrationUtil;
+    private final BancoSettingsProvider settings;
+    private final MigrationUtil migrationUtil;
+    private final File dataDirectory;
 
     public BancoBootstrap(final @NotNull T plugin,
                           final File dataDirectory) {
         // Set the Banco API
         BancoSupplier.set(this);
 
-        this.migrationUtil = new MigrationUtil(dataDirectory);
-
         this.plugin = plugin;
+
+        this.dataDirectory = dataDirectory;
+        this.migrationUtil = new MigrationUtil(dataDirectory);
         this.settings = new BancoSettingsProvider(dataDirectory);
-        try {
-            Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + "/accounts.db");
-        } catch (SQLException e) {
-            Banco.get().getLogger().error("An exception has been produced while loading database: ", e);
-        }
+  
     }
 
     public final void initialize() {
         getSettings().load();
 
         migrationUtil.data();
+
+        try {
+            Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + File.separator + "accounts.db");
+        } catch (SQLException e) {
+            Banco.get().getLogger().error("An exception has been produced while loading database: ", e);
+        }
 
         try {
             enable();

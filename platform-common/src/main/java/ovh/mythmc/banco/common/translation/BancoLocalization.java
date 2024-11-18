@@ -55,12 +55,15 @@ public final class BancoLocalization {
 
         final var translator = TranslationRegistry.create(Key.key("banco", "translation-registry"));
 
+        // TODO: move to loop
         ResourceBundle ca_ES = ResourceBundle.getBundle("i10n_ca_ES", Locale.forLanguageTag("ca-ES"), UTF8ResourceBundleControl.get());
+        ResourceBundle de_DE = ResourceBundle.getBundle("i10n_de_DE", Locale.forLanguageTag("de-DE"), UTF8ResourceBundleControl.get());
         ResourceBundle en_US = ResourceBundle.getBundle("i10n_en_US", Locale.forLanguageTag("en-US"), UTF8ResourceBundleControl.get());
         ResourceBundle es_ES = ResourceBundle.getBundle("i10n_es_ES", Locale.forLanguageTag("es-ES"), UTF8ResourceBundleControl.get());
         ResourceBundle zh_CN = ResourceBundle.getBundle("i10n_zh_CN", Locale.forLanguageTag("zh-CN"), UTF8ResourceBundleControl.get());
 
         translator.registerAll(Locale.forLanguageTag("ca-ES"), override(overrides, ca_ES), true);
+        translator.registerAll(Locale.forLanguageTag("de-DE"), override(overrides, de_DE), true);
         translator.registerAll(Locale.forLanguageTag("en-US"), override(overrides, en_US), true);
         translator.registerAll(Locale.forLanguageTag("es-ES"), override(overrides, es_ES), true);
         translator.registerAll(Locale.forLanguageTag("zh-CN"), override(overrides, zh_CN), true);
