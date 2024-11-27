@@ -1,7 +1,5 @@
 package ovh.mythmc.banco.api.bukkit.inventories;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +10,7 @@ import ovh.mythmc.banco.api.storage.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 public abstract class BancoInventoryBukkit implements BancoInventory<Inventory> {
@@ -31,9 +30,9 @@ public abstract class BancoInventoryBukkit implements BancoInventory<Inventory> 
             if (bancoItem != null)
                 amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
-            Player player = Bukkit.getPlayer(uuid);
-            if (!get(uuid).addItem(item).isEmpty())
-                player.getWorld().dropItemNaturally(player.getLocation(), item);
+            for (Map.Entry<Integer,ItemStack> entry : get(uuid).addItem(item).entrySet()) {
+                amountGiven = amountGiven.subtract(Banco.get().getItemManager().value(bancoItem, entry.getValue().getAmount()));
+            }
         }
 
         return amountGiven;

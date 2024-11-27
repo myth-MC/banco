@@ -13,6 +13,7 @@ import ovh.mythmc.banco.api.economy.BancoHelperSupplier;
 import ovh.mythmc.banco.api.storage.BancoInventory;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.common.impl.inventories.EnderChestInventoryImpl;
+import ovh.mythmc.banco.common.impl.inventories.FallbackInventoryImpl;
 import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 
 import java.math.BigDecimal;
@@ -36,6 +37,8 @@ public class BancoHelperImpl implements BancoHelper {
             case ENDER_CHEST -> Banco.get().getStorageManager().registerStorage(new EnderChestInventoryImpl(),
                     new PlayerInventoryImpl());
         }
+
+        Banco.get().getStorageManager().registerStorage(new FallbackInventoryImpl());
     }
 
     @Override

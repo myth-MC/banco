@@ -171,9 +171,13 @@ public final class AccountManager {
                 Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
 
                 // Add to all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageManager().get())
-                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
+                for (BancoStorage storage : Banco.get().getStorageManager().get()) {
+                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0) {
+                        Banco.get().getLogger().info("toAdd " + toAdd + "(pre)");
                         toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
+                        Banco.get().getLogger().info("toAdd " + toAdd + "(post)");
+                    }
+                }
 
                 // Set transactions to remaining amount
                 account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));

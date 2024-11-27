@@ -81,14 +81,13 @@ public final class ItemUtil {
 
         for (BancoItem bancoItem : Banco.get().getItemManager().get().reversed()) {
             do {
-                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
+                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.HALF_EVEN)).intValue(), 64);
 
                 if (itemAmount > 0) {
                     items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
-
                     amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
                 }
-            } while (bancoItem.value().compareTo(amount) < 0);
+            } while (bancoItem.value().compareTo(amount) <= 0);
         }
 
         return items;
