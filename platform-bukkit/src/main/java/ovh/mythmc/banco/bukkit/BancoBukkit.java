@@ -75,9 +75,6 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
             new BancoPlaceholderExpansion();
 
-        vaultImpl = new BancoVaultHook();
-        vaultImpl.hook(getPlugin());
-
         new BancoHelperImpl(); // BancoHelper.get()
 
         adventure = BukkitAudiences.create(getPlugin());

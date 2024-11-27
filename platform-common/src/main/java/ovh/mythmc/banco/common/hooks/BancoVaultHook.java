@@ -39,14 +39,6 @@ public class BancoVaultHook implements Economy {
     public void hook(Plugin plugin) {
         Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, this, plugin, ServicePriority.Highest);
         logger.info("Hooked with Vault " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
-        /*
-        try {
-            Class.forName("net.milkbowl.vault.economy.Economy");
-            Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, this, plugin, ServicePriority.Highest);
-            logger.info("Hooked with Vault " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
-        } catch (ClassNotFoundException ignored) {
-            logger.error("Vault not found");
-        } */
     }
 
     public void unhook() {
