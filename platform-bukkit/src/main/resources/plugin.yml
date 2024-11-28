@@ -6,10 +6,12 @@ api-version: 1.20
 main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
 softdepend: [ PlaceholderAPI, social ]
 loadbefore:
-  - Essentials
-  - CMI
-  - Towny
-depend: [ Vault ]
+  - Vault
+
+libraries:
+  - net.kyori:adventure-api:4.17.0
+  - net.kyori:adventure-platform-bukkit:4.3.4
+  - net.kyori:adventure-text-minimessage:4.17.0
 
 commands:
   banco:
