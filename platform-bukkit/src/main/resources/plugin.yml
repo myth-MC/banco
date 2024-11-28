@@ -8,6 +8,11 @@ softdepend: [ PlaceholderAPI, social ]
 loadbefore:
   - Vault
 
+libraries:
+  - net.kyori:adventure-api:4.17.0
+  - net.kyori:adventure-platform-bukkit:4.3.4
+  - net.kyori:adventure-text-minimessage:4.17.0
+
 commands:
   banco:
     permission: banco.admin
