@@ -137,8 +137,12 @@ public final class AccountDatabase {
             return cache.get(uuid);
 
         try {
-            cache.put(uuid, accountsDao.queryForId(uuid));
-            return cache.get(uuid);
+            Account account = accountsDao.queryForId(uuid);
+            if (account == null)
+                return null;
+
+            cache.put(uuid, account);
+            return account;
         } catch (SQLException e) {
             logger.error("Exception while getting account {}", e);
         }

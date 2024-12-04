@@ -1,5 +1,6 @@
 package ovh.mythmc.banco.api.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,26 @@ public class BancoEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public void call() {
+        BancoEvent event = this;
+        Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(event);
+            }
+        });
+    }
+
+    public void callAsync() {
+        BancoEvent event = this;
+        Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(event);
+            }
+        });
     }
     
 }

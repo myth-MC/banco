@@ -45,7 +45,7 @@ public final class AccountManager {
      */
     public synchronized void create(final @NotNull Account account) {
         BancoAccountRegisterEvent event = new BancoAccountRegisterEvent(account);
-        Bukkit.getPluginManager().callEvent(event);
+        event.callAsync();
 
         database.create(event.account());
     }
@@ -56,7 +56,7 @@ public final class AccountManager {
      */
     public synchronized void delete(final @NotNull Account account) {
         BancoAccountUnregisterEvent event = new BancoAccountUnregisterEvent(account);
-        Bukkit.getPluginManager().callEvent(event);
+        event.callAsync();
 
         database.delete(event.account());
     }
@@ -138,7 +138,7 @@ public final class AccountManager {
 
                 // Call BancoTransactionEvent
                 BancoTransactionEvent event = new BancoTransactionEvent(account, toAdd);
-                Bukkit.getPluginManager().callEvent(event);
+                event.callAsync();
 
                 // Update values in case they've been changed
                 account = event.account();
@@ -165,7 +165,7 @@ public final class AccountManager {
 
                 // Call BancoTransactionEvent
                 BancoTransactionEvent event = new BancoTransactionEvent(account, toRemove.negate());
-                Bukkit.getPluginManager().callEvent(event);
+                event.callAsync();
 
                 // Update values in case they've been changed
                 account = event.account();
