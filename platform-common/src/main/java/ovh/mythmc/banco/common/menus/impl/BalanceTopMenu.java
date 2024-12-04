@@ -24,42 +24,45 @@ public final class BalanceTopMenu extends BasicMenu {
 
     @Override
     public void decorate() {
-        int slot = 0;
-
-        for (Map.Entry<UUID, BigDecimal> entry : Banco.get().getAccountManager().getTop(18).entrySet()) {
-            if (slot >= 8)
-                break;
-
-            OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
-            if (!player.hasPlayedBefore())
-                continue;
-            String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
-
-            String itemName = String.format(Banco.get().getSettings().get().getInventories().getBalanceTop().format(),
-                    slot+1,
-                    player.getName(),
-                    balance
-            );
-
-            ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-            SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-            skullMeta.setOwningPlayer(player);
-            skullMeta.setDisplayName(itemName);
-            itemStack.setItemMeta(skullMeta);
-
-            MenuButton button = new MenuButton(itemStack) {
-                @Override
-                public void onClick(InventoryClickEvent event) {
-                    // ignored
-                }
-            };
-
-            this.addButton(slot, button);
-
-            slot = slot + 1;
-        }
-
-
-        super.decorate();
+        Banco.get().getAccountManager().getTopAsync(1024000).thenAccept(map -> {
+            int slot = 0;
+            
+            for (Map.Entry<UUID, BigDecimal> entry : map.entrySet()) {
+                if (slot >= 8)
+                    break;
+    
+                OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
+                if (!player.hasPlayedBefore())
+                    continue;
+                    
+                String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
+    
+                String itemName = String.format(Banco.get().getSettings().get().getInventories().getBalanceTop().format(),
+                        slot+1,
+                        player.getName(),
+                        balance
+                );
+    
+                ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+                SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+                skullMeta.setOwningPlayer(player);
+                skullMeta.setDisplayName(itemName);
+                itemStack.setItemMeta(skullMeta);
+    
+                MenuButton button = new MenuButton(itemStack) {
+                    @Override
+                    public void onClick(InventoryClickEvent event) {
+                        // ignored
+                    }
+                };
+    
+                this.addButton(slot, button);
+    
+                slot = slot + 1;
+            }
+        
+            super.decorate();
+            update();
+        });
     }
 }

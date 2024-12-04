@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
+
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
@@ -320,6 +321,7 @@ public class BancoVaultHook implements Economy {
             return false;
 
         Banco.get().getAccountManager().create(PlayerUtil.getUuid(s));
+        
         return true;
     }
 

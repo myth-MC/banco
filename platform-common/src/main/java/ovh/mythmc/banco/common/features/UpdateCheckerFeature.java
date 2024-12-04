@@ -11,7 +11,7 @@ public final class UpdateCheckerFeature {
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
-        return Banco.get().getSettings().get().getUpdateTracker().isEnabled();
+        return Banco.get().getSettings().get().getUpdateChecker().isEnabled();
     }
 
     @FeatureEnable

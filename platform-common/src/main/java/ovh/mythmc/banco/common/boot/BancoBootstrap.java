@@ -78,7 +78,11 @@ public abstract class BancoBootstrap implements Banco {
 
     public abstract void enable();
 
-    public abstract void shutdown();
+    public abstract void disable();
+
+    public final void shutdown() {
+        Banco.get().getAccountManager().getDatabase().shutdown();
+    }
 
     public final void reload() {
         Gestalt.get().disableAllFeatures("banco");

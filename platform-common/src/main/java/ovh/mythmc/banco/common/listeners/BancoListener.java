@@ -8,7 +8,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
 import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
 
-// Debugging
+// Used for debugging
 public final class BancoListener implements Listener {
 
     @EventHandler

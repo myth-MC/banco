@@ -36,7 +36,7 @@ public final class InfoMenu extends BasicMenu {
         addButton(2, getInfoButton(Material.EMERALD, "Online mode", String.valueOf(Bukkit.getOnlineMode())));
         addButton(3, getInfoButton(Material.STICK, "Items", Banco.get().getItemManager().get().size() + ""));
         addButton(4, getInfoButton(Material.CHEST, "Storages", Banco.get().getStorageManager().get().size() + ""));
-        addButton(5, getInfoButton(Material.COMPASS, "Accounts", Banco.get().getAccountManager().get().size() + ""));
+        addButton(5, getInfoButton(Material.COMPASS, "Accounts", Banco.get().getAccountManager().get().size() + " (" + Banco.get().getAccountManager().getDatabase().getCachedAccounts().size() + " cached)"));
         if (!UpdateChecker.getLatest().equals(Banco.get().version()))
             addButton(8, getInfoButton(Material.BELL, "New version available", "v" + UpdateChecker.getLatest()));
 

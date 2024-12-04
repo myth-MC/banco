@@ -17,6 +17,7 @@ import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -25,13 +26,13 @@ public final class AccountManager {
     public static final AccountManager instance = new AccountManager();
 
     @Getter
-    private final AccountController database = new AccountController();
+    private final AccountDatabase database = new AccountDatabase();
 
     /**
      * Creates an account
      * @param uuid uuid of account to create and register
      */
-    public void create(final @NotNull UUID uuid) {
+    public synchronized void create(final @NotNull UUID uuid) {
         Account account = new Account();
         account.setUuid(uuid);
 
@@ -42,7 +43,7 @@ public final class AccountManager {
      * Creates an account
      * @param account account to create and register
      */
-    public void create(final @NotNull Account account) {
+    public synchronized void create(final @NotNull Account account) {
         BancoAccountRegisterEvent event = new BancoAccountRegisterEvent(account);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -53,7 +54,7 @@ public final class AccountManager {
      * Deletes an account
      * @param account account to delete and unregister
      */
-    public void delete(final @NotNull Account account) {
+    public synchronized void delete(final @NotNull Account account) {
         BancoAccountUnregisterEvent event = new BancoAccountUnregisterEvent(account);
         Bukkit.getPluginManager().callEvent(event);
 
@@ -64,7 +65,7 @@ public final class AccountManager {
      * Deletes an account
      * @param uuid uuid of account to delete and unregister
      */
-    public void delete(final @NotNull UUID uuid) {
+    public synchronized void delete(final @NotNull UUID uuid) {
         delete(get(uuid));
     }
 
@@ -88,7 +89,7 @@ public final class AccountManager {
      * @param uuid account uuid that will be modified
      * @param amount amount of money to deposit
      */
-    public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+    public synchronized void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
         set(uuid, get(uuid).amount().add(amount));
     }
 
@@ -97,7 +98,7 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to deposit
      */
-    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
+    public synchronized void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
         deposit(account.getUuid(), amount);
     }
 
@@ -106,7 +107,7 @@ public final class AccountManager {
      * @param account account uuid that will be modified
      * @param amount amount of money to withdraw
      */
-    public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+    public synchronized void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
         set(uuid, get(uuid).amount().subtract(amount));
     }
 
@@ -115,7 +116,7 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to withdraw
      */
-    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
+    public synchronized void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
         withdraw(account.getUuid(), amount);
     }
 
@@ -124,7 +125,7 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to set
      */
-    public void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+    public synchronized void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
         Account account = get(uuid);
 
         if (account.amount().compareTo(amount) == 0)
@@ -192,7 +193,7 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to set
      */
-    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
+    public synchronized void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
         set(account.getUuid(), amount);
     }
 
@@ -240,7 +241,7 @@ public final class AccountManager {
         return amount(account.getUuid());
     }
 
-    private BigDecimal getValueOfOnlinePlayer(final @NotNull UUID uuid) {
+    private synchronized BigDecimal getValueOfOnlinePlayer(final @NotNull UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
         for (BancoStorage storage : Banco.get().getStorageManager().get()) {
@@ -251,7 +252,7 @@ public final class AccountManager {
     }
 
     @ApiStatus.Internal
-    public void updateTransactions(final @NotNull Account account) {
+    public synchronized void updateTransactions(final @NotNull Account account) {
         BigDecimal amount = account.amount();
         account.setTransactions(BigDecimal.valueOf(0));
         database.update(account);
@@ -260,13 +261,24 @@ public final class AccountManager {
     }
 
     /**
+     * Gets a CompletableFuture containing a LinkedHashMap ordered by players with the highest balance
+     * @param limit how many entries should we look before returning the LinkedHashMap
+     * @return A LinkedHashMap ordered by players with the highest balance
+     */
+    public CompletableFuture<LinkedHashMap<UUID, BigDecimal>> getTopAsync(int limit) {
+        return CompletableFuture.supplyAsync(() -> {
+            return getTop(limit);
+        });
+    }
+
+    /**
      * Gets a LinkedHashMap ordered by players with the highest balance
-     * @param limit how many entries should map return
+     * @param limit how many entries should we look before returning the LinkedHashMap
      * @return A LinkedHashMap ordered by players with the highest balance
      */
     public LinkedHashMap<UUID, BigDecimal> getTop(int limit) {
         Map<UUID, BigDecimal> values = new LinkedHashMap<>();
-        for (Account account : Banco.get().getAccountManager().get()) {
+        for (Account account : get()) {
             values.put(account.getUuid(), account.amount());
         }
 
@@ -279,12 +291,12 @@ public final class AccountManager {
     }
 
     /**
-     * Gets an entry with the account's UUID and balance at the specified top position
-     * @param pos position to get
-     * @return An entry with account's UUID and money amount
+     * Gets the player at top position
+     * @param position position at the top ladder
+     * @return A LinkedHashMap ordered by players with the highest balance
      */
-    public Map.Entry<UUID, BigDecimal> getTopPosition(int pos) {
-        return getTop(pos).lastEntry();
+    public Map.Entry<UUID, BigDecimal> getTopPosition(int position) {
+        return getTop(position).lastEntry();
     }
 
 }

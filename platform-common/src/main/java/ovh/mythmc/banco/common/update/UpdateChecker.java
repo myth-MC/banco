@@ -49,7 +49,7 @@ public class UpdateChecker {
     };
 
     private void scheduleTask() {
-        if (!Banco.get().getSettings().get().getUpdateTracker().isEnabled())
+        if (!Banco.get().getSettings().get().getUpdateChecker().isEnabled())
             return;
 
         asyncScheduler.schedule(new TimerTask() {
@@ -57,7 +57,7 @@ public class UpdateChecker {
             public void run() {
                 performTask();
             }
-        }, Banco.get().getSettings().get().getUpdateTracker().getIntervalInHours(), TimeUnit.HOURS);
+        }, Banco.get().getSettings().get().getUpdateChecker().getIntervalInHours(), TimeUnit.HOURS);
     }
 
     private void performTask() {

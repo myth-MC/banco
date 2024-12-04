@@ -64,7 +64,7 @@ public final class BancoPaper extends BancoBootstrap {
     }
 
     @Override
-    public void shutdown() {
+    public void disable() {
         gestalt.terminate();
     }
 
@@ -78,8 +78,8 @@ public final class BancoPaper extends BancoBootstrap {
         // Paper listeners
         if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(getPlugin()), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
         Bukkit.getPluginManager().registerEvents(new BancoListener(), getPlugin());

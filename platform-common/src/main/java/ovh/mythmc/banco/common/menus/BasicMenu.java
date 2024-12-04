@@ -1,6 +1,8 @@
 package ovh.mythmc.banco.common.menus;
 
 import lombok.Getter;
+import ovh.mythmc.banco.api.Banco;
+
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -25,6 +27,14 @@ public abstract class BasicMenu implements MenuHandler {
 
     public void decorate() {
         this.inventoryButtons.forEach((slot, button) -> this.inventory.setItem(slot, button.getIcon()));
+    }
+
+    public void update() {
+        inventory.getViewers().forEach(viewer -> {
+            Banco.get().getLogger().info(viewer + "");
+            viewer.closeInventory();
+            viewer.openInventory(getInventory());
+        });
     }
 
     @Override

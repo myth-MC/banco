@@ -40,6 +40,9 @@ public abstract class BancoContainer implements BancoStorage {
                 continue;
 
             BancoItem bancoItem = ItemUtil.getBancoItem(item);
+            if (bancoItem == null)
+                continue;
+
             value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
         }
 

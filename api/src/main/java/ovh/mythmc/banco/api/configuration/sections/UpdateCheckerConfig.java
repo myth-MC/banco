@@ -6,9 +6,9 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class UpdateTrackerConfig {
+public class UpdateCheckerConfig {
 
-    @Comment("Whether the update tracker should be enabled or not")
+    @Comment("Whether the update checker should be enabled")
     private boolean enabled = true;
 
     @Comment("Interval of hours between each check")

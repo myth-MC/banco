@@ -2,7 +2,6 @@ package ovh.mythmc.banco.api.events.impl;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +17,13 @@ import java.math.BigDecimal;
 @Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
 public final class BancoTransactionEvent extends BancoEvent {
-    private final @NotNull Account account;
-    private final @NotNull BigDecimal amount;
+    private @NotNull Account account;
+    private @NotNull BigDecimal amount;
+
+    public BancoTransactionEvent(@NotNull Account account, @NotNull BigDecimal amount) {
+        super(true);
+        this.account = account;
+        this.amount = amount;
+    }
 }

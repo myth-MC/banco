@@ -24,7 +24,7 @@ public final class MenuManager {
     public void unregisterInventory(Inventory inventory) {
         this.inventories.remove(inventory);
     }
-
+    
     public void openInventory(BasicMenu inventory, Player player) {
         this.registerInventory(inventory.getInventory(), inventory);
         player.openInventory(inventory.getInventory());

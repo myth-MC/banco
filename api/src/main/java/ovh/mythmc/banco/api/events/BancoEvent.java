@@ -8,6 +8,14 @@ public class BancoEvent extends Event {
 
     private static final @NotNull HandlerList handlers = new HandlerList();
 
+    public BancoEvent() {
+        super(false);
+    }
+
+    public BancoEvent(boolean isAsync) {
+        super(isAsync);
+    }
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
