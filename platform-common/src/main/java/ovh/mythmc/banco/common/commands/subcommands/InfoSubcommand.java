@@ -5,10 +5,10 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.common.inventories.InventoryManager;
-import ovh.mythmc.banco.common.inventories.impl.InfoInventory;
+import ovh.mythmc.banco.common.menus.MenuManager;
+import ovh.mythmc.banco.common.menus.impl.InfoMenu;
+import ovh.mythmc.banco.common.update.UpdateChecker;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.UpdateChecker;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +27,7 @@ public class InfoSubcommand implements BiConsumer<Audience, String[]> {
             if (uuid.isEmpty())
                 return;
 
-            InventoryManager.getInstance().openInventory(new InfoInventory(), Objects.requireNonNull(Bukkit.getPlayer(uuid.get())));
+            MenuManager.getInstance().openInventory(new InfoMenu(), Objects.requireNonNull(Bukkit.getPlayer(uuid.get())));
         } else if (args[0].equalsIgnoreCase("dump")) {
             String version = Banco.get().version();
             String latest = UpdateChecker.getLatest();
@@ -35,7 +35,7 @@ public class InfoSubcommand implements BiConsumer<Audience, String[]> {
             MessageUtil.info(sender, translatable("banco.commands.banco", text(version), text(getBancoBuildSoftware())));
             if (!version.equals(latest)) {
                 MessageUtil.info(sender, translatable("banco.commands.banco.new-version", text(latest))
-                        .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/v" + latest)));
+                        .clickEvent(ClickEvent.openUrl("https://github.com/myth-MC/banco/releases/tag/" + latest)));
             }
 
             MessageUtil.debug(sender, translatable("banco.commands.banco.debug.1",

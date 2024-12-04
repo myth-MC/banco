@@ -4,7 +4,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.util.UUID;
@@ -18,7 +17,7 @@ public class PlayerQuitListener implements Listener {
         if (Banco.get().getAccountManager().get(uuid) == null)
             return;
 
-        BancoHelper.get().getValue(uuid);
+        Banco.get().getAccountManager().amount(uuid); // updates account amount
     }
 
 }

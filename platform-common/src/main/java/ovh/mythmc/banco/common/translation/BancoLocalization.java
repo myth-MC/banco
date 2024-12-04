@@ -4,7 +4,8 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.TranslationRegistry;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
-import org.jetbrains.annotations.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
@@ -17,7 +18,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@RequiredArgsConstructor
 public final class BancoLocalization {
+
+    private final File baseFile;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -36,7 +40,7 @@ public final class BancoLocalization {
         }
     };
 
-    public void load(final @NotNull File baseFile) {
+    public void load() {
         Path overrides = Paths.get(baseFile + "/lang/overrides.properties");
 
         if (!Files.exists(overrides)) {

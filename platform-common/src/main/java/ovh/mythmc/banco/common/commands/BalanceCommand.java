@@ -8,9 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
@@ -46,12 +43,14 @@ public abstract class BalanceCommand {
             if (account == null)
                 return;
 
-            BigDecimal toRemove = BigDecimal.valueOf(0);
+            BigDecimal toRemove = account.amount();
+            /*
             for (BancoStorage bancoStorage : Banco.get().getStorageManager().get()) {
                 if (bancoStorage instanceof PlayerInventoryImpl) {
+                    toRemove = 
                     toRemove = BancoHelper.get().getValue(uuid.get(), List.of(bancoStorage));
                 }
-            }
+            } */
 
             Player player = Bukkit.getPlayer(uuid.get());
             player.playSound(player, Sound.ITEM_ARMOR_EQUIP_IRON, 0.95F, 1.50F);

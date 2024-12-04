@@ -11,4 +11,7 @@ public class UpdateTrackerConfig {
     @Comment("Whether the update tracker should be enabled or not")
     private boolean enabled = true;
 
+    @Comment("Interval of hours between each check")
+    private int intervalInHours = 6;
+
 }

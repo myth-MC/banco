@@ -2,11 +2,12 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.event.impl.BancoItemRegisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoItemUnregisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoItemUnregisterEvent;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,10 +28,12 @@ public final class BancoItemManager {
     public void registerItems(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             bancoItem = validate(bancoItem);
-            itemsList.add(bancoItem);
 
             // Call BancoItemRegisterEvent
-            Banco.get().getEventManager().publish(new BancoItemRegisterEvent(bancoItem));
+            BancoItemRegisterEvent event = new BancoItemRegisterEvent(bancoItem);
+            Bukkit.getPluginManager().callEvent(event);
+
+            itemsList.add(event.bancoItem());
         });
     }
 
@@ -43,7 +46,8 @@ public final class BancoItemManager {
             itemsList.remove(bancoItem);
 
             // Call BancoItemUnregisterEvent
-            Banco.get().getEventManager().publish(new BancoItemUnregisterEvent(bancoItem));
+            BancoItemUnregisterEvent event = new BancoItemUnregisterEvent(bancoItem);
+            itemsList.remove(event.bancoItem());
         });
     }
 

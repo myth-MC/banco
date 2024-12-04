@@ -3,16 +3,16 @@ package ovh.mythmc.banco.api.accounts;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.event.impl.BancoAccountRegisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoAccountUnregisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
+import ovh.mythmc.banco.api.events.impl.BancoAccountRegisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoAccountUnregisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,17 +25,7 @@ public final class AccountManager {
     public static final AccountManager instance = new AccountManager();
 
     @Getter
-    private final AccountDatabase database = new AccountDatabase();
-
-    /**
-     * Registers an account
-     * @param account account to register
-     */
-    @Deprecated
-    @ScheduledForRemoval
-    public void registerAccount(final @NotNull Account account) { // used for migration
-        create(account);
-    }
+    private final AccountController database = new AccountController();
 
     /**
      * Creates an account
@@ -44,6 +34,7 @@ public final class AccountManager {
     public void create(final @NotNull UUID uuid) {
         Account account = new Account();
         account.setUuid(uuid);
+
         create(account);
     }
 
@@ -52,20 +43,10 @@ public final class AccountManager {
      * @param account account to create and register
      */
     public void create(final @NotNull Account account) {
-        database.create(account);
+        BancoAccountRegisterEvent event = new BancoAccountRegisterEvent(account);
+        Bukkit.getPluginManager().callEvent(event);
 
-        // Call BancoAccountRegisterEvent
-        Banco.get().getEventManager().publish(new BancoAccountRegisterEvent(account));
-    }
-
-    /**
-     * Unregisters an account
-     * @param account account to unregister
-     */
-    @Deprecated
-    @ScheduledForRemoval
-    public void unregisterAccount(final @NotNull Account account) {
-        delete(account);
+        database.create(event.account());
     }
 
     /**
@@ -73,10 +54,10 @@ public final class AccountManager {
      * @param account account to delete and unregister
      */
     public void delete(final @NotNull Account account) {
-        database.delete(account);
+        BancoAccountUnregisterEvent event = new BancoAccountUnregisterEvent(account);
+        Bukkit.getPluginManager().callEvent(event);
 
-        // Call BancoAccountUnregisterEvent
-        Banco.get().getEventManager().publish(new BancoAccountUnregisterEvent(account));
+        database.delete(event.account());
     }
 
     /**
@@ -104,16 +85,6 @@ public final class AccountManager {
 
     /**
      * Deposits an amount of money to an account
-     * @param account account that will be modified
-     * @param amount amount of money to deposit
-     */
-    @Deprecated
-    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        deposit(account.getUuid(), amount);
-    }
-
-    /**
-     * Deposits an amount of money to an account
      * @param uuid account uuid that will be modified
      * @param amount amount of money to deposit
      */
@@ -122,13 +93,12 @@ public final class AccountManager {
     }
 
     /**
-     * Withdraws an amount of money from an account
+     * Deposits an amount of money to an account
      * @param account account that will be modified
-     * @param amount amount of money to withdraw
+     * @param amount amount of money to deposit
      */
-    @Deprecated
-    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        withdraw(account.getUuid(), amount);
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        deposit(account.getUuid(), amount);
     }
 
     /**
@@ -141,18 +111,16 @@ public final class AccountManager {
     }
 
     /**
-     * Sets an account's balance to a specified amount
+     * Withdraws an amount of money from an account
      * @param account account that will be modified
-     * @param amount amount of money to set
+     * @param amount amount of money to withdraw
      */
-    @Deprecated
-    @ScheduledForRemoval
-    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        set(account.getUuid(), amount);
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        withdraw(account.getUuid(), amount);
     }
 
     /**
-     * Sets an account's balance to a specified amount
+     * Sets an account's balance to a specfic amount
      * @param account account that will be modified
      * @param amount amount of money to set
      */
@@ -163,12 +131,17 @@ public final class AccountManager {
             return;
 
         if (account.amount().compareTo(amount) < 0) { // Add amount to account
-            if (BancoHelper.get().isOnline(account.getUuid())) {
+            if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toAdd = amount.subtract(account.amount());
 
                 // Call BancoTransactionEvent
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
+                BancoTransactionEvent event = new BancoTransactionEvent(account, toAdd);
+                Bukkit.getPluginManager().callEvent(event);
+
+                // Update values in case they've been changed
+                account = event.account();
+                toAdd = event.amount();
 
                 // Add to all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageManager().get())
@@ -185,12 +158,17 @@ public final class AccountManager {
             account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
             database.update(account);
         } else { // Remove amount from account
-            if (BancoHelper.get().isOnline(account.getUuid())) {
+            if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
                 account.setTransactions(BigDecimal.valueOf(0));
                 BigDecimal toRemove = account.amount().subtract(amount);
 
                 // Call BancoTransactionEvent
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
+                BancoTransactionEvent event = new BancoTransactionEvent(account, toRemove.negate());
+                Bukkit.getPluginManager().callEvent(event);
+
+                // Update values in case they've been changed
+                account = event.account();
+                toRemove = event.amount().negate();
 
                 // Remove from all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageManager().get())
@@ -210,6 +188,15 @@ public final class AccountManager {
     }
 
     /**
+     * Sets an account's balance to a specific amount
+     * @param account account that will be modified
+     * @param amount amount of money to set
+     */
+    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        set(account.getUuid(), amount);
+    }
+
+    /**
      * Checks if an account has an amount of money
      * @param uuid uuid of account to check
      * @param amount amount to check
@@ -221,12 +208,10 @@ public final class AccountManager {
 
     /**
      * Checks if an account has an amount of money
-     * @param account account to check
+     * @param uuid uuid of account to check
      * @param amount amount to check
      * @return true if account has more than the specified amount
      */
-    @Deprecated
-    @ScheduledForRemoval
     public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
         return has(account.getUuid(), amount);
     }
@@ -238,8 +223,8 @@ public final class AccountManager {
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
         Account account = get(uuid);
-        if (BancoHelper.get().isOnline(account.getUuid())) {
-            account.setAmount(BancoHelper.get().getValue(account.getUuid()));
+        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
+            account.setAmount(getValueOfOnlinePlayer(uuid));
             database.update(account);
         }
 
@@ -251,10 +236,18 @@ public final class AccountManager {
      * @param account account to check
      * @return Account's balance
      */
-    @Deprecated
-    @ScheduledForRemoval
     public @NotNull BigDecimal amount(final @NotNull Account account) {
         return amount(account.getUuid());
+    }
+
+    private BigDecimal getValueOfOnlinePlayer(final @NotNull UUID uuid) {
+        BigDecimal value = BigDecimal.valueOf(0);
+
+        for (BancoStorage storage : Banco.get().getStorageManager().get()) {
+            value = value.add(storage.value(uuid));
+        }
+
+        return value;
     }
 
     @ApiStatus.Internal
@@ -263,7 +256,7 @@ public final class AccountManager {
         account.setTransactions(BigDecimal.valueOf(0));
         database.update(account);
 
-        set(account, amount);
+        set(account.getUuid(), amount);
     }
 
     /**

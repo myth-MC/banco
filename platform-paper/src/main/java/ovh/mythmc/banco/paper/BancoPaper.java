@@ -3,10 +3,7 @@ package ovh.mythmc.banco.paper;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.Plugin;
-import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -14,22 +11,18 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.listeners.*;
-import ovh.mythmc.banco.common.translation.BancoLocalization;
 import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
 import ovh.mythmc.banco.paper.commands.PayCommandImpl;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
-import ovh.mythmc.banco.common.impl.BancoHelperImpl;
 
 import java.util.*;
 
 @Getter
-public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
+public final class BancoPaper extends BancoBootstrap {
 
     public static BancoPaper instance;
-
-    private BancoVaultHook vaultImpl;
 
     private PaperGestaltLoader gestalt;
 
@@ -56,26 +49,16 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     }
 
     @Override
-    public void enable() {    
-        // Gestalt
+    public void loadGestalt() {
         gestalt = PaperGestaltLoader.builder()
             .initializer(getPlugin())
             .build();
 
         gestalt.initialize();
+    }
 
-        vaultImpl = new BancoVaultHook();
-        vaultImpl.hook(getPlugin());
-
-        new Metrics(getPlugin(), 23496);
-
-        new BancoLocalization().load(getPlugin().getDataFolder());
-
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
-            new BancoPlaceholderExpansion();
-
-        new BancoHelperImpl(); // BancoHelper.get()
-
+    @Override
+    public void enable() {    
         registerCommands();
         registerListeners();
     }
@@ -83,8 +66,6 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
     @Override
     public void shutdown() {
         gestalt.terminate();
-        
-        vaultImpl.unhook();
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -101,8 +82,7 @@ public final class BancoPaper extends BancoBootstrap<BancoPaperPlugin> {
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
-        // banco listeners
-        Banco.get().getEventManager().registerListener(new BancoListener());
+        Bukkit.getPluginManager().registerEvents(new BancoListener(), getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

@@ -7,6 +7,13 @@ public interface BancoStorage {
 
     /**
      *
+     * @param uuid UUID of the account who owns this BancoStorage
+     * @return Amount of money stored in this BancoStorage
+     */
+    BigDecimal value(UUID uuid);
+
+    /**
+     *
      * @param uuid UUID of the account where items will be added
      * @param amount amount of money to add to this BancoStorage
      * @return Total amount of money that has been added
