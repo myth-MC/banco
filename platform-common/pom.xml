@@ -6,11 +6,10 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>0.6.8</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>banco-common</artifactId>
-    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -19,11 +18,6 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
@@ -34,20 +28,14 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>banco-api</artifactId>
-            <version>1.0.0</version>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
-            <artifactId>banco-api-bukkit</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency> <!-- change once 0.3 is released -->
-            <groupId>com.github.myth-MC.social</groupId>
             <artifactId>social-api</artifactId>
-            <version>d4d47ff</version>
+            <version>v0.3.0b</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>banco</artifactId>
-    <version>0.6.8</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -14,7 +14,6 @@
         <module>platform-common</module>
         <module>platform-paper</module>
         <module>platform-bukkit</module>
-        <module>api-bukkit</module>
     </modules>
 
     <properties>
@@ -71,6 +70,11 @@
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>

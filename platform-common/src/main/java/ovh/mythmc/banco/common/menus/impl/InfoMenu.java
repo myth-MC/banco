@@ -12,7 +12,7 @@ import org.bukkit.profile.PlayerTextures;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.common.menus.BasicMenu;
 import ovh.mythmc.banco.common.menus.MenuButton;
-import ovh.mythmc.banco.common.util.UpdateChecker;
+import ovh.mythmc.banco.common.update.UpdateChecker;
 
 import java.net.MalformedURLException;
 import java.net.URI;
