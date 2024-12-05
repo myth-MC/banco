@@ -106,6 +106,20 @@
         </dependency>
 
         <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.21-R0.1-SNAPSHOT</version>

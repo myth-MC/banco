@@ -39,7 +39,7 @@ public abstract class BancoContainer implements BancoStorage {
             if (item == null)
                 continue;
 
-            BancoItem bancoItem = ItemUtil.getBancoItem(item);
+            BancoItem bancoItem = Banco.get().getItemManager().get(item);
             if (bancoItem == null)
                 continue;
 
@@ -60,7 +60,7 @@ public abstract class BancoContainer implements BancoStorage {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
-            BancoItem bancoItem = ItemUtil.getBancoItem(item);
+            BancoItem bancoItem = Banco.get().getItemManager().get(item);
             if (bancoItem != null)
                 amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
@@ -88,7 +88,7 @@ public abstract class BancoContainer implements BancoStorage {
 
             BigDecimal value = BigDecimal.valueOf(0);
 
-            BancoItem bancoItem = ItemUtil.getBancoItem(item);
+            BancoItem bancoItem = Banco.get().getItemManager().get(item);
             if (bancoItem != null)
                 value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 

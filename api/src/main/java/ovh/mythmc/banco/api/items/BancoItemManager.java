@@ -4,8 +4,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
 import ovh.mythmc.banco.api.events.impl.BancoItemUnregisterEvent;
 
@@ -21,14 +26,14 @@ public final class BancoItemManager {
     public static final BancoItemManager instance = new BancoItemManager();
     private static final List<BancoItem> itemsList = new ArrayList<>();
 
+    public final NamespacedKey CUSTOM_ITEM_IDENTIFIER_KEY = new NamespacedKey("banco", "identifier");
+
     /**
      * Registers a BancoItem
      * @param items item to register
      */
     public void registerItems(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
-            bancoItem = validate(bancoItem);
-
             // Call BancoItemRegisterEvent
             BancoItemRegisterEvent event = new BancoItemRegisterEvent(bancoItem);
             Bukkit.getPluginManager().callEvent(event);
@@ -68,21 +73,57 @@ public final class BancoItemManager {
      * @param customModelData custom model data of an item
      * @return A BancoItem matching parameters or null
      */
+    @Deprecated
+    @ScheduledForRemoval    
     public BancoItem get(final @NotNull String materialName,
                          final @NotNull String displayName,
                          final boolean glowEffect,
                          final Integer customModelData) {
         for (BancoItem item : get()) {
-            if (Objects.equals(materialName, item.name())
-                    && Objects.equals(displayName, item.displayName())
-                    && Objects.equals(glowEffect, item.glowEffect())
-                    && Objects.equals(customModelData, item.customModelData())) {
+            if (Objects.equals(materialName, item.material().name())
+                    && Objects.equals(displayName, item.options().displayName())
+                    && Objects.equals(glowEffect, item.options().glowEffect())
+                    && Objects.equals(customModelData, item.options().customModelData())) {
 
                 return item;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Gets a specific BancoItem
+     * @param materialName material name of an item
+     * @param displayName display name of an item
+     * @param glowEffect whether an item has glow effect or not
+     * @param customModelData custom model data of an item
+     * @return A BancoItem matching parameters or null
+     */
+    public BancoItem get(final @NotNull ItemStack itemStack) {
+        for (BancoItem item : get()) {
+            // Match by basic ItemStack
+            if (item.isSimilar(itemStack))
+                return item;
+
+            // Match by item identifier (useful for custom items where ItemStack::isSimilar can be wrong sometimes)
+            if (itemStack.hasItemMeta() && itemStack.getItemMeta().getPersistentDataContainer().has(CUSTOM_ITEM_IDENTIFIER_KEY)) {
+                String itemStackIdentifier = itemStack.getItemMeta().getPersistentDataContainer().get(CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING);
+                if (item.getIdentifier().equals(itemStackIdentifier))
+                    return item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks whether an ItemStack is a valid BancoItem or not
+     * @param item an ItemStack to get parameters from
+     * @return true if a BancoItem matching item's parameters exists
+     */
+    public boolean isValid(ItemStack item) {
+        return get(item) != null;
     }
 
     /**
@@ -93,13 +134,6 @@ public final class BancoItemManager {
      */
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
-    }
-
-    private BancoItem validate(@NotNull BancoItem item) {
-        if (item.glowEffect() == null)
-            item = item.withGlowEffect(false);
-
-        return item;
     }
 
 }

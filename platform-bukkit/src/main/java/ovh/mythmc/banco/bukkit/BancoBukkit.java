@@ -80,6 +80,7 @@ public final class BancoBukkit extends BancoBootstrap {
         // Bukkit listeners
         if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
             Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());

@@ -28,7 +28,13 @@ public final class BancoSettingsProvider {
         );
 
         Banco.get().getItemManager().clear();
-        get().getCurrency().getItems().forEach(bancoItem -> Banco.get().getItemManager().registerItems(bancoItem));
+        // Legacy items (pre 1.0)
+        if (get().getCurrency().getItems() != null)
+            get().getCurrency().getItems().forEach(bancoItem -> Banco.get().getItemManager().registerItems(bancoItem));
+        
+        // Modern items (post 1.0)
+        if (get().getCurrency().getItems() == null || get().getCurrency().getItems().size() == 0)
+            get().getCurrency().getItemMappings().forEach(bancoItem -> Banco.get().getItemManager().registerItems(bancoItem));
     }
 
     public BancoSettings get() { return settings; }

@@ -1,12 +1,13 @@
 package ovh.mythmc.banco.api.util;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
 
@@ -23,16 +24,18 @@ public final class ItemUtil {
      * @param amount amount of items
      * @return An ItemStack matching BancoItem's parameters
      */
+    @Deprecated
+    @ScheduledForRemoval
     public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
-        ItemStack itemStack = new ItemStack(Material.getMaterial(bancoItem.name()), amount);
+        ItemStack itemStack = new ItemStack(bancoItem.material(), amount);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        if (bancoItem.displayName() != null)
-            itemMeta.setDisplayName(bancoItem.displayName());
-        if (bancoItem.lore() != null)
-            itemMeta.setLore(bancoItem.lore().stream().map(string -> ChatColor.RESET + string).toList());
-        if (bancoItem.customModelData() != null)
-            itemMeta.setCustomModelData(bancoItem.customModelData());
-        if (bancoItem.glowEffect() != null && bancoItem.glowEffect())
+        if (bancoItem.options().displayName() != null)
+            itemMeta.setDisplayName(bancoItem.options().displayName());
+        if (bancoItem.options().lore() != null)
+            itemMeta.setLore(bancoItem.options().lore().stream().map(string -> ChatColor.RESET + string).toList());
+        if (bancoItem.options().customModelData() != null)
+            itemMeta.setCustomModelData(bancoItem.options().customModelData());
+        if (bancoItem.options().glowEffect() != null && bancoItem.options().glowEffect())
             itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         itemStack.setItemMeta(itemMeta);
@@ -44,6 +47,8 @@ public final class ItemUtil {
      * @param item an ItemStack to get parameters from
      * @return a BancoItem matching item's parameters
      */
+    @Deprecated
+    @ScheduledForRemoval
     public static BancoItem getBancoItem(final @NotNull ItemStack item) {
         String materialName = item.getType().name();
         String displayName = null;
@@ -67,6 +72,8 @@ public final class ItemUtil {
      * @param item an ItemStack to get parameters from
      * @return true if a BancoItem matching item's parameters exists
      */
+    @Deprecated
+    @ScheduledForRemoval
     public static boolean isBancoItem(ItemStack item) {
         return getBancoItem(item) != null;
     }
@@ -84,7 +91,7 @@ public final class ItemUtil {
                 int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
 
                 if (itemAmount > 0) {
-                    items.add(ItemUtil.getItemStack(bancoItem, itemAmount));
+                    items.add(bancoItem.asItemStack(itemAmount));
 
                     amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
                 }
