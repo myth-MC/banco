@@ -34,7 +34,7 @@ public record LegacyBancoItem(@NotNull String name,
     }
 
     @Override
-    public BancoItemOptions options() {
+    public BancoItemOptions customization() {
         return new BancoItemOptions(displayName, lore, customModelData, glowEffect, null);
     } 
 

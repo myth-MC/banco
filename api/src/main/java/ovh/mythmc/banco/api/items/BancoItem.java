@@ -28,7 +28,7 @@ public interface BancoItem {
 
     BigDecimal value();
 
-    BancoItemOptions options();
+    BancoItemOptions customization();
 
     default String getIdentifier() {
         return material().name() + "-" + value();
@@ -41,28 +41,28 @@ public interface BancoItem {
     default ItemStack asItemStack(int amount) {
         ItemStack itemStack = new ItemStack(material(), amount);
 
-        if (options() != null) {
+        if (customization() != null) {
             ItemMeta itemMeta = itemStack.getItemMeta();
 
             // Apply custom display name
-            if (options().displayName() != null)
-                itemMeta.setDisplayName(format(options().displayName()));
+            if (customization().displayName() != null)
+                itemMeta.setDisplayName(format(customization().displayName()));
 
             // Apply lore
-            if (options().lore() != null)
-                itemMeta.setLore(options().lore().stream().map(this::format).toList());
+            if (customization().lore() != null)
+                itemMeta.setLore(customization().lore().stream().map(this::format).toList());
 
             // Apply custom model data
-            if (options().customModelData() != null)
-                itemMeta.setCustomModelData(options().customModelData());
+            if (customization().customModelData() != null)
+                itemMeta.setCustomModelData(customization().customModelData());
 
             // Apply glow effect
-            if (options().glowEffect() != null && options().glowEffect())
+            if (customization().glowEffect() != null && customization().glowEffect())
                 itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);
 
             // Apply head texture URL
-            if (options().headTextureUrl() != null && material().equals(Material.PLAYER_HEAD))
-                ((SkullMeta) itemMeta).setOwnerProfile(getProfile(options().headTextureUrl()));
+            if (customization().headTextureUrl() != null && material().equals(Material.PLAYER_HEAD))
+                ((SkullMeta) itemMeta).setOwnerProfile(getProfile(customization().headTextureUrl()));
 
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -82,7 +82,7 @@ public interface BancoItem {
     }
 
     default PlayerProfile getProfile(String textureUrl) {
-        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID()); // Get a new player profile
+        PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(textureUrl.getBytes())); // Get a new player profile
         PlayerTextures textures = profile.getTextures();
         URL urlObject;
         try {

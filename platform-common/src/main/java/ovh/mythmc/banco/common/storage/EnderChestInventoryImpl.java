@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.inventories;
+package ovh.mythmc.banco.common.storage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;

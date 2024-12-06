@@ -44,13 +44,6 @@ public abstract class BalanceCommand {
                 return;
 
             BigDecimal toRemove = account.amount();
-            /*
-            for (BancoStorage bancoStorage : Banco.get().getStorageManager().get()) {
-                if (bancoStorage instanceof PlayerInventoryImpl) {
-                    toRemove = 
-                    toRemove = BancoHelper.get().getValue(uuid.get(), List.of(bancoStorage));
-                }
-            } */
 
             Player player = Bukkit.getPlayer(uuid.get());
             player.playSound(player, Sound.ITEM_ARMOR_EQUIP_IRON, 0.95F, 1.50F);
@@ -82,7 +75,8 @@ public abstract class BalanceCommand {
 
         List<String> onlinePlayers = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
-        onlinePlayers.add("change");
+        if (Banco.get().getSettings().get().getCurrency().isChangeMoney())
+            onlinePlayers.add("change");
         return List.copyOf(onlinePlayers);
     }
 

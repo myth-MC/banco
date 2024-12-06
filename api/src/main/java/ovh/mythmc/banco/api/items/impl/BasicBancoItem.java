@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.items.BancoItemOptions;
 
-public record BasicBancoItem(@NotNull Material material, @NotNull BigDecimal value, BancoItemOptions options) implements BancoItem {
+public record BasicBancoItem(@NotNull Material material, @NotNull BigDecimal value, BancoItemOptions customization) implements BancoItem {
     
 }

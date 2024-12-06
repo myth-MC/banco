@@ -81,9 +81,9 @@ public final class BancoItemManager {
                          final Integer customModelData) {
         for (BancoItem item : get()) {
             if (Objects.equals(materialName, item.material().name())
-                    && Objects.equals(displayName, item.options().displayName())
-                    && Objects.equals(glowEffect, item.options().glowEffect())
-                    && Objects.equals(customModelData, item.options().customModelData())) {
+                    && Objects.equals(displayName, item.customization().displayName())
+                    && Objects.equals(glowEffect, item.customization().glowEffect())
+                    && Objects.equals(customModelData, item.customization().customModelData())) {
 
                 return item;
             }

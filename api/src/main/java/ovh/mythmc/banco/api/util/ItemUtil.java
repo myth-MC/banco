@@ -1,10 +1,6 @@
 package ovh.mythmc.banco.api.util;
 
-import org.bukkit.ChatColor;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
@@ -27,19 +23,7 @@ public final class ItemUtil {
     @Deprecated
     @ScheduledForRemoval
     public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
-        ItemStack itemStack = new ItemStack(bancoItem.material(), amount);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (bancoItem.options().displayName() != null)
-            itemMeta.setDisplayName(bancoItem.options().displayName());
-        if (bancoItem.options().lore() != null)
-            itemMeta.setLore(bancoItem.options().lore().stream().map(string -> ChatColor.RESET + string).toList());
-        if (bancoItem.options().customModelData() != null)
-            itemMeta.setCustomModelData(bancoItem.options().customModelData());
-        if (bancoItem.options().glowEffect() != null && bancoItem.options().glowEffect())
-            itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
+        return bancoItem.asItemStack(amount);
     }
 
     /**
@@ -50,6 +34,8 @@ public final class ItemUtil {
     @Deprecated
     @ScheduledForRemoval
     public static BancoItem getBancoItem(final @NotNull ItemStack item) {
+        return Banco.get().getItemManager().get(item);
+        /*
         String materialName = item.getType().name();
         String displayName = null;
         Integer customModelData = null;
@@ -64,7 +50,7 @@ public final class ItemUtil {
                 glowEffect = true;
         }
 
-        return Banco.get().getItemManager().get(materialName, displayName, glowEffect, customModelData);
+        return Banco.get().getItemManager().get(materialName, displayName, glowEffect, customModelData); */
     }
 
     /**
