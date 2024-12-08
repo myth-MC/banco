@@ -26,6 +26,14 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    ItemsAdder:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Oraxen:
+      load: OMIT
+      required: false
+      join-classpath: true
 
 permissions:
   banco.user:

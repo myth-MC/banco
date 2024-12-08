@@ -14,6 +14,7 @@ public class BancoPaperPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        bootstrap.disable();
         bootstrap.shutdown();
     }
 

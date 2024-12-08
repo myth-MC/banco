@@ -2,23 +2,30 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.event.impl.BancoItemRegisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoItemUnregisterEvent;
+
+import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoItemUnregisterEvent;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BancoItemManager {
 
     public static final BancoItemManager instance = new BancoItemManager();
-    private static final List<BancoItem> itemsList = new ArrayList<>();
+
+    private final List<BancoItem> itemList = new ArrayList<>();
+
+    public final NamespacedKey CUSTOM_ITEM_IDENTIFIER_KEY = new NamespacedKey("banco", "identifier");
+
 
     /**
      * Registers a BancoItem
@@ -26,11 +33,11 @@ public final class BancoItemManager {
      */
     public void registerItems(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
-            bancoItem = validate(bancoItem);
-            itemsList.add(bancoItem);
-
             // Call BancoItemRegisterEvent
-            Banco.get().getEventManager().publish(new BancoItemRegisterEvent(bancoItem));
+            BancoItemRegisterEvent event = new BancoItemRegisterEvent(bancoItem);
+            Bukkit.getPluginManager().callEvent(event);
+
+            itemList.add(event.bancoItem());
         });
     }
 
@@ -40,21 +47,22 @@ public final class BancoItemManager {
      */
     public void unregisterItems(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
-            itemsList.remove(bancoItem);
+            itemList.remove(bancoItem);
 
             // Call BancoItemUnregisterEvent
-            Banco.get().getEventManager().publish(new BancoItemUnregisterEvent(bancoItem));
+            BancoItemUnregisterEvent event = new BancoItemUnregisterEvent(bancoItem);
+            itemList.remove(event.bancoItem());
         });
     }
 
     @ApiStatus.Internal
-    public void clear() { itemsList.clear(); }
+    public void clear() { itemList.clear(); }
 
     /**
      * Returns a list of registered items
      * @return A list with every registered items
      */
-    public List<BancoItem> get() { return List.copyOf(itemsList); }
+    public List<BancoItem> get() { return List.copyOf(itemList); }
 
     /**
      * Gets a specific BancoItem
@@ -64,21 +72,22 @@ public final class BancoItemManager {
      * @param customModelData custom model data of an item
      * @return A BancoItem matching parameters or null
      */
-    public BancoItem get(final @NotNull String materialName,
-                         final @NotNull String displayName,
-                         final boolean glowEffect,
-                         final Integer customModelData) {
+    public BancoItem get(final @NotNull ItemStack itemStack) {
         for (BancoItem item : get()) {
-            if (Objects.equals(materialName, item.name())
-                    && Objects.equals(displayName, item.displayName())
-                    && Objects.equals(glowEffect, item.glowEffect())
-                    && Objects.equals(customModelData, item.customModelData())) {
-
+            if (item.match(itemStack))
                 return item;
-            }
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether an ItemStack is a valid BancoItem or not
+     * @param item an ItemStack to get parameters from
+     * @return true if a BancoItem matching item's parameters exists
+     */
+    public boolean isValid(ItemStack item) {
+        return get(item) != null;
     }
 
     /**
@@ -89,13 +98,6 @@ public final class BancoItemManager {
      */
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
-    }
-
-    private BancoItem validate(@NotNull BancoItem item) {
-        if (item.glowEffect() == null)
-            item = item.withGlowEffect(false);
-
-        return item;
     }
 
 }

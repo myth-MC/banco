@@ -2,11 +2,12 @@ package ovh.mythmc.banco.api.storage;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.ApiStatus;
+
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.event.impl.BancoStorageRegisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoStorageUnregisterEvent;
+
+import ovh.mythmc.banco.api.events.impl.BancoStorageRegisterEvent;
+import ovh.mythmc.banco.api.events.impl.BancoStorageUnregisterEvent;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,19 +24,20 @@ public final class BancoStorageManager {
      *
      * @return A Collection of registered BancoStorages
      */
-    @ApiStatus.Internal
-    public Collection<BancoStorage> get() { return storages; }
+    public Collection<BancoStorage> get() { return List.copyOf(storages); }
 
     /**
      * Registers this BancoStorage
      * @param bancoStorages BancoStorages to register
      */
     public void registerStorage(final @NotNull BancoStorage... bancoStorages) {
-        List<BancoStorage> bancoStorageList = Arrays.asList(bancoStorages);
-        storages.addAll(bancoStorageList);
+        Arrays.asList(bancoStorages).stream()
+            .forEach(storage -> {
+                BancoStorageRegisterEvent event = new BancoStorageRegisterEvent(storage);
+                Bukkit.getPluginManager().callEvent(event);
 
-        // Call BancoInventoryRegisterEvent
-        bancoStorageList.forEach(bancoInventory -> Banco.get().getEventManager().publish(new BancoStorageRegisterEvent(bancoInventory)));
+                storages.add(event.bancoStorage());
+            });
     }
 
     /**
@@ -43,11 +45,13 @@ public final class BancoStorageManager {
      * @param bancoStorages BancoStorages to unregister
      */
     public void unregisterStorage(final @NotNull BancoStorage... bancoStorages) {
-        List<BancoStorage> bancoStorageList = Arrays.asList(bancoStorages);
-        storages.removeAll(bancoStorageList);
+        Arrays.asList(bancoStorages).stream()
+            .forEach(storage -> {
+                BancoStorageUnregisterEvent event = new BancoStorageUnregisterEvent(storage);
+                Bukkit.getPluginManager().callEvent(event);
 
-        // Call BancoInventoryUnregisterEvent
-        bancoStorageList.forEach(bancoInventory -> Banco.get().getEventManager().publish(new BancoStorageUnregisterEvent(bancoInventory)));
+                storages.remove(event.bancoStorage());
+            });
     }
 
 }
