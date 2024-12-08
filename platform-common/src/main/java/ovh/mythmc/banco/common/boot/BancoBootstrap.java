@@ -9,6 +9,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
 import ovh.mythmc.banco.common.features.InventoryFeatures;
+import ovh.mythmc.banco.common.features.ItemFeatures;
 import ovh.mythmc.banco.common.features.LocalizationFeature;
 import ovh.mythmc.banco.common.features.MetricsFeature;
 import ovh.mythmc.banco.common.features.PlaceholderAPIFeature;
@@ -48,6 +49,7 @@ public abstract class BancoBootstrap implements Banco {
         // Register Gestalt features
         Gestalt.get().register(
             InventoryFeatures.class,
+            ItemFeatures.class,
             PlaceholderAPIFeature.class,
             UpdateCheckerFeature.class
         );

@@ -61,8 +61,13 @@ public abstract class BancoInventory implements BancoStorage {
                 amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
             Player player = Bukkit.getPlayer(uuid);
-            if (!get(uuid).addItem(item).isEmpty())
-                player.getWorld().dropItemNaturally(player.getLocation(), item);
+            Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
+                @Override
+                public void run() {
+                    if (!get(uuid).addItem(item).isEmpty())
+                    player.getWorld().dropItemNaturally(player.getLocation(), item);
+                }
+            });
         }
 
         return amountGiven;

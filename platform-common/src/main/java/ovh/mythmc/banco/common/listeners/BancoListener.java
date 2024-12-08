@@ -25,9 +25,8 @@ public final class BancoListener implements Listener {
 
     @EventHandler
     public void onItemRegister(BancoItemRegisterEvent event) {
-        Banco.get().getLogger().info("Registered material {} with customization {}: {}",
-            event.bancoItem().material(),
-            event.bancoItem().customization(),
+        Banco.get().getLogger().info("Registered ItemStack {} with value {}",
+            event.bancoItem().asItemStack(),
             event.bancoItem().value()
         );
     }

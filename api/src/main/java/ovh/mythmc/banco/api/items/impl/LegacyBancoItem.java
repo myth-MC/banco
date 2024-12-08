@@ -1,12 +1,18 @@
 package ovh.mythmc.banco.api.items.impl;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.AccessLevel;
 import lombok.With;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.items.BancoItem;
-import ovh.mythmc.banco.api.items.BancoItemOptions;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,13 +35,39 @@ public record LegacyBancoItem(@NotNull String name,
                         @NotNull BigDecimal value) implements BancoItem {
                             
     @Override
-    public Material material() {
-        return Material.valueOf(name);
+    public ItemStack asItemStack(int amount) {
+        ItemStack itemStack = new ItemStack(Material.valueOf(name), amount);
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        // Apply custom display name
+        if (displayName != null)
+            itemMeta.setDisplayName(format(displayName));
+
+        // Apply lore
+        if (lore != null)
+            itemMeta.setLore(lore.stream().map(this::format).toList());
+
+        // Apply custom model data
+        if (customModelData != null)
+            itemMeta.setCustomModelData(customModelData);
+
+        // Apply glow effect
+        if (glowEffect != null && glowEffect)
+            itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);;
+
+        // Hide enchantments (used for glow effect)
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        // Apply ItemMeta
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
     }
 
-    @Override
-    public BancoItemOptions customization() {
-        return new BancoItemOptions(displayName, lore, customModelData, glowEffect, null);
+    private String format(String input) {
+        Component component = MiniMessage.miniMessage().deserialize(input);
+        return LegacyComponentSerializer.legacySection().serialize(component);
     } 
 
 }

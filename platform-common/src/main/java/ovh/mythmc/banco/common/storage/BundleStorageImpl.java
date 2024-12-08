@@ -75,8 +75,6 @@ public final class BundleStorageImpl implements BancoStorage {
                     // Minimum between existing newAmount and bundle free capacity
                     newAmount = Math.min(newAmount, Math.max(getBundleListFreeCapacity(newItemList) - newAmount, 0));
 
-                    Banco.get().getLogger().info(newAmount + " newAmount");
-
                     pendingAmountToAdd = pendingAmountToAdd - (newAmount - bundleItemStack.getAmount());
                     bundleItemStack.setAmount(newAmount);
 
@@ -107,7 +105,12 @@ public final class BundleStorageImpl implements BancoStorage {
         if (added) {
             if (itemStack.getAmount() > 0) {
                 Player player = Bukkit.getPlayer(uuid);
-                player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
+                    @Override
+                    public void run() {
+                        player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                    }
+                });
             }
         }
 

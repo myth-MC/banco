@@ -4,7 +4,7 @@ version: '${project.version}'
 api-version: 1.20
 
 main: ovh.mythmc.banco.bukkit.BancoBukkitPlugin
-softdepend: [ PlaceholderAPI, social, gestalt ]
+softdepend: [ PlaceholderAPI, social, gestalt, ItemsAdder, Oraxen ]
 loadbefore:
   - Vault
 

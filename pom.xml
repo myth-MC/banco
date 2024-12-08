@@ -51,6 +51,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.org.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.j256</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.com.j256</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
