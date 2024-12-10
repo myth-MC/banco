@@ -26,7 +26,7 @@ public final class InfoMenu extends BasicMenu {
 
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getInventories().getInfo().title());
+        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getMenus().getInfo().title());
     }
 
     @Override
@@ -34,8 +34,8 @@ public final class InfoMenu extends BasicMenu {
         addButton(0, getBancoButton());
         addButton(1, getInfoButton(Material.KNOWLEDGE_BOOK, "Server version", Bukkit.getBukkitVersion()));
         addButton(2, getInfoButton(Material.EMERALD, "Online mode", String.valueOf(Bukkit.getOnlineMode())));
-        addButton(3, getInfoButton(Material.STICK, "Items", Banco.get().getItemManager().get().size() + ""));
-        addButton(4, getInfoButton(Material.CHEST, "Storages", Banco.get().getStorageManager().get().size() + ""));
+        addButton(3, getInfoButton(Material.STICK, "Items", Banco.get().getItemRegistry().get().size() + ""));
+        addButton(4, getInfoButton(Material.CHEST, "Storages", Banco.get().getItemRegistry().get().size() + ""));
         addButton(5, getInfoButton(Material.COMPASS, "Accounts", Banco.get().getAccountManager().get().size() + " (" + Banco.get().getAccountManager().getDatabase().getCachedAccounts().size() + " cached)"));
         if (!UpdateChecker.getLatest().equals(Banco.get().version()))
             addButton(8, getInfoButton(Material.BELL, "New version available", "v" + UpdateChecker.getLatest()));
@@ -57,8 +57,8 @@ public final class InfoMenu extends BasicMenu {
     }
 
     private MenuButton getButton(ItemStack itemStack, String key, String value) {
-        String name = String.format(Banco.get().getSettings().get().getInventories().getInfo().keyFormat(), key);
-        String lore = String.format(Banco.get().getSettings().get().getInventories().getInfo().valueFormat(), value);
+        String name = String.format(Banco.get().getSettings().get().getMenus().getInfo().keyFormat(), key);
+        String lore = String.format(Banco.get().getSettings().get().getMenus().getInfo().valueFormat(), value);
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(name);

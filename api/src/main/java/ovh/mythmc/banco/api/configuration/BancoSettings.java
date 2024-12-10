@@ -27,7 +27,7 @@ public class BancoSettings {
     @Comment({"", "Configuration for commands"})
     private CommandsConfig commands = new CommandsConfig();
 
-    @Comment({"", "Configuration for inventories/GUIs"})
-    private InventoriesConfig inventories = new InventoriesConfig();
+    @Comment({"", "Configuration for menus/GUIs"})
+    private MenusConfig menus = new MenusConfig();
 
 }

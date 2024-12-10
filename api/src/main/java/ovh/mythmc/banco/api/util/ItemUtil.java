@@ -52,14 +52,14 @@ public final class ItemUtil {
     public static List<ItemStack> convertAmountToItems(BigDecimal amount) {
         List<ItemStack> items = new ArrayList<>();
 
-        for (BancoItem bancoItem : Banco.get().getItemManager().get().reversed()) {
+        for (BancoItem bancoItem : Banco.get().getItemRegistry().get().reversed()) {
             do {
                 int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
 
                 if (itemAmount > 0) {
                     items.add(bancoItem.asItemStack(itemAmount));
 
-                    amount = amount.subtract(Banco.get().getItemManager().value(bancoItem, itemAmount));
+                    amount = amount.subtract(Banco.get().getItemRegistry().value(bancoItem, itemAmount));
                 }
             } while (bancoItem.value().compareTo(amount) < 0);
         }

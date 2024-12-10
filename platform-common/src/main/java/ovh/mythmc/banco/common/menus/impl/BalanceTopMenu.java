@@ -19,7 +19,7 @@ public final class BalanceTopMenu extends BasicMenu {
 
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getInventories().getBalanceTop().title());
+        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getMenus().getBalanceTop().title());
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class BalanceTopMenu extends BasicMenu {
                     
                 String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
     
-                String itemName = String.format(Banco.get().getSettings().get().getInventories().getBalanceTop().format(),
+                String itemName = String.format(Banco.get().getSettings().get().getMenus().getBalanceTop().format(),
                         slot+1,
                         player.getName(),
                         balance

@@ -21,6 +21,11 @@ import ovh.mythmc.banco.api.util.ItemUtil;
 public final class BundleStorageImpl implements BancoStorage {
 
     @Override
+    public String friendlyName() {
+        return "BUNDLE";
+    }
+
+    @Override
     public BigDecimal value(UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
@@ -28,11 +33,11 @@ public final class BundleStorageImpl implements BancoStorage {
             if (item == null)
                 continue;
 
-            BancoItem bancoItem = Banco.get().getItemManager().get(item);
+            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
             if (bancoItem == null)
                 continue;
                 
-            value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+            value = value.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
         }
 
         return value;
@@ -43,10 +48,10 @@ public final class BundleStorageImpl implements BancoStorage {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
-            BancoItem bancoItem = Banco.get().getItemManager().get(item);
+            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
 
             if (addToBundle(uuid, item.clone()))
-                amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+                amountGiven = amountGiven.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
         }
 
         return amountGiven;
@@ -115,12 +120,12 @@ public final class BundleStorageImpl implements BancoStorage {
 
     @Override
     public BigDecimal remove(UUID uuid, BigDecimal amount) {
-        for (BancoItem bancoItem : Banco.get().getItemManager().get()) {
+        for (BancoItem bancoItem : Banco.get().getItemRegistry().get()) {
             for (ItemStack item : getCombinedBundlesContent(uuid)) {
-                if (item == null || !Banco.get().getItemManager().get(item).equals(bancoItem)) continue;
+                if (item == null || !Banco.get().getItemRegistry().get(item).equals(bancoItem)) continue;
                 if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) continue;
     
-                BigDecimal value = Banco.get().getItemManager().value(bancoItem, item.getAmount());
+                BigDecimal value = Banco.get().getItemRegistry().value(bancoItem, item.getAmount());
     
                 if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
                     removeFromBundle(uuid, item);

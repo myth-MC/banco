@@ -39,11 +39,11 @@ public abstract class BancoContainer implements BancoStorage {
             if (item == null)
                 continue;
 
-            BancoItem bancoItem = Banco.get().getItemManager().get(item);
+            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
             if (bancoItem == null)
                 continue;
 
-            value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+            value = value.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
         }
 
         return value;
@@ -60,9 +60,9 @@ public abstract class BancoContainer implements BancoStorage {
         BigDecimal amountGiven = BigDecimal.valueOf(0);
 
         for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
-            BancoItem bancoItem = Banco.get().getItemManager().get(item);
+            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
             if (bancoItem != null)
-                amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+                amountGiven = amountGiven.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
 
             //Player player = Bukkit.getPlayer(uuid);
             get(uuid).add(item);
@@ -88,9 +88,9 @@ public abstract class BancoContainer implements BancoStorage {
 
             BigDecimal value = BigDecimal.valueOf(0);
 
-            BancoItem bancoItem = Banco.get().getItemManager().get(item);
+            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
             if (bancoItem != null)
-                value = value.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
+                value = value.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
 
             if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
                 item.setAmount(0);

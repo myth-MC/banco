@@ -145,7 +145,7 @@ public final class AccountManager {
                 toAdd = event.amount();
 
                 // Add to all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageManager().get())
+                for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
                     if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
                         toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
 
@@ -172,7 +172,7 @@ public final class AccountManager {
                 toRemove = event.amount().negate();
 
                 // Remove from all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageManager().get())
+                for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
                     if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
                         toRemove = storage.remove(account.getUuid(), toRemove);
 
@@ -244,7 +244,7 @@ public final class AccountManager {
     private synchronized BigDecimal getValueOfOnlinePlayer(final @NotNull UUID uuid) {
         BigDecimal value = BigDecimal.valueOf(0);
 
-        for (BancoStorage storage : Banco.get().getStorageManager().get()) {
+        for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
             value = value.add(storage.value(uuid));
         }
 

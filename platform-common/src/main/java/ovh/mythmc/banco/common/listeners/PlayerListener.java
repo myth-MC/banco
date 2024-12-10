@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class PlayerJoinListener implements Listener {
+public class PlayerListener implements Listener {
 
     private final JavaPlugin plugin;
 
@@ -33,6 +34,21 @@ public class PlayerJoinListener implements Listener {
                 }
         
                 Banco.get().getAccountManager().updateTransactions(account);
+            }
+        });
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+
+                if (Banco.get().getAccountManager().get(uuid) == null)
+                    return;
+        
+                Banco.get().getAccountManager().amount(uuid); // updates account's balance amount
             }
         });
     }

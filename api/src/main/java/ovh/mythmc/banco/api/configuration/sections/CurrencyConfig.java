@@ -37,10 +37,10 @@ public class CurrencyConfig {
     private boolean changeMoney = false;
 
     @Comment("Order in which items will be added/removed from storages. You can add or remove entries to customize your setup")
-    private List<InventoryPriority> inventoryOrder = List.of(
-        InventoryPriority.BUNDLE,
-        InventoryPriority.PLAYER_INVENTORY,
-        InventoryPriority.ENDER_CHEST
+    private List<String> inventoryOrder = List.of(
+        "BUNDLE",
+        "PLAYER_INVENTORY",
+        "ENDER_CHEST"
     );
 
     @Comment("Worlds where banco's economy should be disabled")
@@ -55,11 +55,5 @@ public class CurrencyConfig {
 
     // Legacy items
     private List<LegacyBancoItem> items = null;
-
-    public enum InventoryPriority {
-        BUNDLE,
-        PLAYER_INVENTORY,
-        ENDER_CHEST
-    }
 
 }

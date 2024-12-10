@@ -84,10 +84,9 @@ public final class BancoPaper extends BancoBootstrap {
     private void registerListeners() {
         // Paper listeners
         if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
-            Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
+            Bukkit.getPluginManager().registerEvents(new ItemDropListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(getPlugin()), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(getPlugin()), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
         Bukkit.getPluginManager().registerEvents(new BancoListener(), getPlugin());

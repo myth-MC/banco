@@ -7,14 +7,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 import ovh.mythmc.banco.api.Banco;
 
-public class EntityDeathListener implements Listener {
+public class ItemDropListener implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         if (event.getEntityType().equals(EntityType.PLAYER))
             return;
 
-        event.getDrops().removeIf(item -> Banco.get().getItemManager().isValid(item));
+        event.getDrops().removeIf(item -> Banco.get().getItemRegistry().isValid(item));
     }
 
 }

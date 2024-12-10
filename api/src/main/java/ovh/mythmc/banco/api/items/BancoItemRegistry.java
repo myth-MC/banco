@@ -18,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BancoItemManager {
+public final class BancoItemRegistry {
 
-    public static final BancoItemManager instance = new BancoItemManager();
+    public static final BancoItemRegistry instance = new BancoItemRegistry();
 
     private final List<BancoItem> itemList = new ArrayList<>();
 

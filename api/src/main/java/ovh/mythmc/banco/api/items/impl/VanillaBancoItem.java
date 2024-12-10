@@ -34,7 +34,7 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
             return true;
 
         // Match by identifier
-        NamespacedKey key = Banco.get().getItemManager().CUSTOM_ITEM_IDENTIFIER_KEY;
+        NamespacedKey key = Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY;
         if (itemStack.hasItemMeta() && itemStack.getItemMeta().getPersistentDataContainer().has(key)) {
             String itemStackIdentifier = itemStack.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
             if (getIdentifier().equals(itemStackIdentifier))
@@ -75,7 +75,7 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
             // Store item identifier in PDC
-            itemMeta.getPersistentDataContainer().set(Banco.get().getItemManager().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
+            itemMeta.getPersistentDataContainer().set(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
             // Apply ItemMeta
             itemStack.setItemMeta(itemMeta);

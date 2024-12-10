@@ -16,7 +16,7 @@ public class CustomItemListener implements Listener {
             return;
 
         PersistentDataContainer persistentDataContainer = event.getItem().getItemMeta().getPersistentDataContainer();
-        if (persistentDataContainer.has(Banco.get().getItemManager().CUSTOM_ITEM_IDENTIFIER_KEY))
+        if (persistentDataContainer.has(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY))
             event.setCancelled(true);
     }
     

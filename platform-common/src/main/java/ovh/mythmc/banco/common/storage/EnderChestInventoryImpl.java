@@ -11,6 +11,11 @@ import java.util.UUID;
 public final class EnderChestInventoryImpl extends BancoInventory {
 
     @Override
+    public String friendlyName() {
+        return "ENDER_CHEST";
+    }
+
+    @Override
     public @NotNull Inventory get(UUID uuid) {
         return Bukkit.getPlayer(uuid).getEnderChest();
     }

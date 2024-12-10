@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.events.impl.BancoStorageRegisterEvent;
 import ovh.mythmc.banco.api.events.impl.BancoStorageUnregisterEvent;
 
@@ -13,11 +14,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class BancoStorageManager {
+public final class BancoStorageRegistry {
 
-    public static final BancoStorageManager instance = new BancoStorageManager();
+    public static final BancoStorageRegistry instance = new BancoStorageRegistry();
     private static final Collection<BancoStorage> storages = new Vector<>(0);
 
     /**
@@ -25,6 +27,17 @@ public final class BancoStorageManager {
      * @return A Collection of registered BancoStorages
      */
     public Collection<BancoStorage> get() { return List.copyOf(storages); }
+
+    /**
+     *
+     * @return A Collection of registered and enabled BancoStorages from settings
+     */
+    public Collection<BancoStorage> getByOrder() { 
+        return Banco.get().getSettings().get().getCurrency().getInventoryOrder().stream()
+            .map(this::getByFriendlyName)
+            .filter(o -> o != null)
+            .collect(Collectors.toList());
+    }
 
     /**
      * Registers this BancoStorage
@@ -52,6 +65,15 @@ public final class BancoStorageManager {
 
                 storages.remove(event.bancoStorage());
             });
+    }
+
+    /**
+     * Gets a registered BancoStorage by its friendly name
+     * @param friendlyName friendly name of the BancoStorage to get
+     * @return A Collection of registered BancoStorages
+     */
+    public BancoStorage getByFriendlyName(@NotNull String friendlyName) {
+        return storages.stream().filter(storage -> storage.friendlyName().equals(friendlyName)).findFirst().orElse(null);
     }
 
 }

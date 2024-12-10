@@ -10,6 +10,11 @@ import java.util.UUID;
 public final class PlayerInventoryImpl extends BancoInventory {
 
     @Override
+    public String friendlyName() {
+        return "PLAYER_INVENTORY";
+    }
+
+    @Override
     public @NotNull Inventory get(UUID uuid) {
         return Bukkit.getPlayer(uuid).getInventory();
     }
