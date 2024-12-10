@@ -6,6 +6,12 @@ import java.util.UUID;
 public interface BancoStorage {
 
     /**
+     * Friendly name of this storage that will be used in settings
+     * @return Friendly name of this storage
+     */
+    default String friendlyName() { return "OTHER"; }
+
+    /**
      *
      * @param uuid UUID of the account who owns this BancoStorage
      * @return Amount of money stored in this BancoStorage

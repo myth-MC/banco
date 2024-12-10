@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.BundleMeta;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.api.util.ItemUtil;
 
@@ -105,12 +106,7 @@ public final class BundleStorageImpl implements BancoStorage {
         if (added) {
             if (itemStack.getAmount() > 0) {
                 Player player = Bukkit.getPlayer(uuid);
-                Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
-                    @Override
-                    public void run() {
-                        player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-                    }
-                });
+                BancoScheduler.get().run(() -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
             }
         }
 

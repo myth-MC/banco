@@ -34,6 +34,14 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    MythicMobs:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Nova:
+      load: OMIT
+      required: false
+      join-classpath: true
 
 permissions:
   banco.user:

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.features.InventoryFeatures;
 import ovh.mythmc.banco.common.features.ItemFeatures;
 import ovh.mythmc.banco.common.features.LocalizationFeature;
@@ -44,6 +45,10 @@ public abstract class BancoBootstrap implements Banco {
     }
 
     public final void initialize() {
+        // Initialize BancoSheduler
+        BancoScheduler.set(scheduler());
+
+        // Load Gestalt library
         loadGestalt();
         
         // Register Gestalt features
@@ -95,6 +100,8 @@ public abstract class BancoBootstrap implements Banco {
     }
 
     public abstract String version();
+
+    public abstract BancoScheduler scheduler();
 
     private void registerFeatureWithPluginParam(Class<?>... classes) {
         Arrays.stream(classes).forEach(clazz -> {

@@ -2,7 +2,6 @@ package ovh.mythmc.banco.api.util;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
@@ -20,8 +19,7 @@ public final class ItemUtil {
      * @param amount amount of items
      * @return An ItemStack matching BancoItem's parameters
      */
-    @Deprecated
-    @ScheduledForRemoval
+    @Deprecated(since = "1.0", forRemoval = true)
     public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
         return bancoItem.asItemStack(amount);
     }
@@ -31,26 +29,9 @@ public final class ItemUtil {
      * @param item an ItemStack to get parameters from
      * @return a BancoItem matching item's parameters
      */
-    @Deprecated
-    @ScheduledForRemoval
+    @Deprecated(since = "1.0", forRemoval = true)
     public static BancoItem getBancoItem(final @NotNull ItemStack item) {
         return Banco.get().getItemManager().get(item);
-        /*
-        String materialName = item.getType().name();
-        String displayName = null;
-        Integer customModelData = null;
-        boolean glowEffect = false;
-
-        if (item.hasItemMeta()) {
-            if (item.getItemMeta().hasDisplayName())
-                displayName = item.getItemMeta().getDisplayName();
-            if (item.getItemMeta().hasCustomModelData())
-                customModelData = item.getItemMeta().getCustomModelData();
-            if (item.getItemMeta().hasEnchant(Enchantment.LOYALTY))
-                glowEffect = true;
-        }
-
-        return Banco.get().getItemManager().get(materialName, displayName, glowEffect, customModelData); */
     }
 
     /**
@@ -58,8 +39,7 @@ public final class ItemUtil {
      * @param item an ItemStack to get parameters from
      * @return true if a BancoItem matching item's parameters exists
      */
-    @Deprecated
-    @ScheduledForRemoval
+    @Deprecated(since = "1.0", forRemoval = true)
     public static boolean isBancoItem(ItemStack item) {
         return getBancoItem(item) != null;
     }

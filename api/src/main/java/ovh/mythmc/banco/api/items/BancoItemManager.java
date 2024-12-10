@@ -51,6 +51,8 @@ public final class BancoItemManager {
 
             // Call BancoItemUnregisterEvent
             BancoItemUnregisterEvent event = new BancoItemUnregisterEvent(bancoItem);
+            Bukkit.getPluginManager().callEvent(event);
+            
             itemList.remove(event.bancoItem());
         });
     }

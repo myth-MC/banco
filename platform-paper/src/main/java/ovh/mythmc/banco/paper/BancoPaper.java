@@ -10,11 +10,13 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
 import ovh.mythmc.banco.paper.commands.PayCommandImpl;
+import ovh.mythmc.banco.paper.scheduler.BancoSchedulerPaper;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 
 import java.util.*;
@@ -66,6 +68,11 @@ public final class BancoPaper extends BancoBootstrap {
     @Override
     public void disable() {
         gestalt.terminate();
+    }
+
+    @Override
+    public BancoScheduler scheduler() {
+        return new BancoSchedulerPaper(getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

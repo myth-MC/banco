@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.util.ItemUtil;
 
 import java.math.BigDecimal;
@@ -61,13 +62,8 @@ public abstract class BancoInventory implements BancoStorage {
                 amountGiven = amountGiven.add(Banco.get().getItemManager().value(bancoItem, item.getAmount()));
 
             Player player = Bukkit.getPlayer(uuid);
-            Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
-                @Override
-                public void run() {
-                    if (!get(uuid).addItem(item).isEmpty())
-                    player.getWorld().dropItemNaturally(player.getLocation(), item);
-                }
-            });
+            if (!get(uuid).addItem(item).isEmpty())
+                BancoScheduler.get().run(() -> player.getWorld().dropItemNaturally(player.getLocation(), item)); // Make sure that this task runs on the main thread
         }
 
         return amountGiven;

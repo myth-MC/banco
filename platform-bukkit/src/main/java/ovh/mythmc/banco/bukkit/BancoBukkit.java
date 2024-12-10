@@ -12,9 +12,11 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
+import ovh.mythmc.banco.bukkit.scheduler.BancoSchedulerBukkit;
 
 import java.util.*;
 
@@ -69,6 +71,11 @@ public final class BancoBukkit extends BancoBootstrap {
     @Override
     public void disable() {
         gestalt.terminate();
+    }
+
+    @Override
+    public BancoScheduler scheduler() {
+        return new BancoSchedulerBukkit(getPlugin());
     }
 
     @Override
