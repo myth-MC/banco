@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
+
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.BancoHelper;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
@@ -107,7 +107,7 @@ public class BancoVaultHook implements Economy {
 
         UUID uuid = PlayerUtil.getUuid(s);
 
-        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+        if (PlayerUtil.isInBlacklistedWorld(uuid))
             return 0;
 
         return Banco.get().getAccountManager().amount(uuid).doubleValue();
@@ -156,7 +156,7 @@ public class BancoVaultHook implements Economy {
             Banco.get().getAccountManager().create(uuid);
         }
 
-        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+        if (PlayerUtil.isInBlacklistedWorld(uuid))
             return new EconomyResponse(0,
                     getBalance(Bukkit.getOfflinePlayer(uuid)),
                     EconomyResponse.ResponseType.FAILURE,
@@ -193,7 +193,7 @@ public class BancoVaultHook implements Economy {
             Banco.get().getAccountManager().create(uuid);
         }
 
-        if (BancoHelper.get().isInBlacklistedWorld(uuid))
+        if (PlayerUtil.isInBlacklistedWorld(uuid))
             return new EconomyResponse(0,
                     getBalance(Bukkit.getOfflinePlayer(uuid)),
                     EconomyResponse.ResponseType.FAILURE,
@@ -321,6 +321,7 @@ public class BancoVaultHook implements Economy {
             return false;
 
         Banco.get().getAccountManager().create(PlayerUtil.getUuid(s));
+        
         return true;
     }
 

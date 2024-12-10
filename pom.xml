@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>banco</artifactId>
-    <version>0.6.8</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -14,7 +14,6 @@
         <module>platform-common</module>
         <module>platform-paper</module>
         <module>platform-bukkit</module>
-        <module>api-bukkit</module>
     </modules>
 
     <properties>
@@ -52,6 +51,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.org.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.j256</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.com.j256</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
@@ -71,6 +74,11 @@
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>
@@ -98,6 +106,27 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
             <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

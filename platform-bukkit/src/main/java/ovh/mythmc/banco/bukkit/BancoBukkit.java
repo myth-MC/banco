@@ -1,36 +1,31 @@
 package ovh.mythmc.banco.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.command.PluginCommand;
 
 import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
 import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
-import ovh.mythmc.banco.common.impl.BancoHelperImpl;
-import ovh.mythmc.banco.common.hooks.BancoPlaceholderExpansion;
-import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
-import ovh.mythmc.banco.common.translation.BancoLocalization;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
 import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
+import ovh.mythmc.banco.bukkit.scheduler.BancoSchedulerBukkit;
 
 import java.util.*;
 
 @Getter
-public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
+public final class BancoBukkit extends BancoBootstrap {
 
     public static BancoBukkit instance;
 
     private static BukkitAudiences adventure;
-
-    private BancoVaultHook vaultImpl;
 
     private BukkitGestaltLoader gestalt;
 
@@ -57,26 +52,16 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     }
 
     @Override
-    public void enable() {
-        // Gestalt
+    public void loadGestalt() {
         gestalt = BukkitGestaltLoader.builder()
             .initializer(getPlugin())
             .build();
 
         gestalt.initialize();
+    }
 
-        vaultImpl = new BancoVaultHook();
-        vaultImpl.hook(getPlugin());
-
-        new Metrics(getPlugin(), 23496);
-
-        new BancoLocalization().load(getPlugin().getDataFolder());
-
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI"))
-            new BancoPlaceholderExpansion();
-
-        new BancoHelperImpl(); // BancoHelper.get()
-
+    @Override
+    public void enable() {
         adventure = BukkitAudiences.create(getPlugin());
 
         registerListeners();
@@ -84,10 +69,13 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     }
 
     @Override
-    public void shutdown() {
+    public void disable() {
         gestalt.terminate();
+    }
 
-        vaultImpl.unhook();
+    @Override
+    public BancoScheduler scheduler() {
+        return new BancoSchedulerBukkit(getPlugin());
     }
 
     @Override
@@ -98,13 +86,12 @@ public final class BancoBukkit extends BancoBootstrap<BancoBukkitPlugin> {
     private void registerListeners() {
         // Bukkit listeners
         if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
-            Bukkit.getPluginManager().registerEvents(new EntityDeathListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), getPlugin());
+            Bukkit.getPluginManager().registerEvents(new ItemDropListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
 
-        // banco listeners
-        Banco.get().getEventManager().registerListener(new BancoListener());
+        Bukkit.getPluginManager().registerEvents(new BancoListener(), getPlugin());
     }
 
     private void registerCommands() {

@@ -8,9 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
@@ -46,12 +43,7 @@ public abstract class BalanceCommand {
             if (account == null)
                 return;
 
-            BigDecimal toRemove = BigDecimal.valueOf(0);
-            for (BancoStorage bancoStorage : Banco.get().getStorageManager().get()) {
-                if (bancoStorage instanceof PlayerInventoryImpl) {
-                    toRemove = BancoHelper.get().getValue(uuid.get(), List.of(bancoStorage));
-                }
-            }
+            BigDecimal toRemove = account.amount();
 
             Player player = Bukkit.getPlayer(uuid.get());
             player.playSound(player, Sound.ITEM_ARMOR_EQUIP_IRON, 0.95F, 1.50F);
@@ -83,7 +75,8 @@ public abstract class BalanceCommand {
 
         List<String> onlinePlayers = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
-        onlinePlayers.add("change");
+        if (Banco.get().getSettings().get().getCurrency().isChangeMoney())
+            onlinePlayers.add("change");
         return List.copyOf(onlinePlayers);
     }
 
