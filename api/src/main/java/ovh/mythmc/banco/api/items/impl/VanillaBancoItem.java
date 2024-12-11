@@ -10,7 +10,11 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -77,6 +81,11 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
             // Store item identifier in PDC
             itemMeta.getPersistentDataContainer().set(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
+            // Apply attribute modifiers
+            if (customization().attributes() != null) {
+                customization().attributes().forEach(attribute -> itemMeta.addAttributeModifier(attribute.getAttribute(), attribute.getAttributeModifier()));
+            }
+
             // Apply ItemMeta
             itemStack.setItemMeta(itemMeta);
         }
@@ -107,12 +116,25 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
         return material + "-" + value + "-" + customization;
     }
 
-    public record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, String headTextureUrl) {
+    public record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, String headTextureUrl, List<AttributeField> attributes) {
+        
         public Boolean glowEffect() {
             if (glowEffect == null)
                 return false;
 
             return glowEffect;
+        }
+
+        public record AttributeField(String key, double amount, AttributeModifier.Operation operation, String group) {
+            
+            public Attribute getAttribute() {
+                return Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
+            }
+
+            public AttributeModifier getAttributeModifier() {
+                return new AttributeModifier(new NamespacedKey("banco", UUID.nameUUIDFromBytes(key.getBytes()).toString()), amount, operation, EquipmentSlotGroup.getByName(group));
+            }
+
         }
     }
 

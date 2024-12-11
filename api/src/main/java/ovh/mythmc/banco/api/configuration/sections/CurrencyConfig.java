@@ -9,6 +9,7 @@ import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 import ovh.mythmc.banco.api.items.impl.VanillaBancoItem.BancoItemOptions;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.AttributeModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -48,9 +49,18 @@ public class CurrencyConfig {
 
     @Comment({"Configure items and their respective value", "Please, put less valuable items first. You can use MiniMessage to format text"})
     private List<BancoItem> itemRegistry = List.of(
-        new VanillaBancoItem(Material.GOLD_INGOT, BigDecimal.valueOf(1), null),
-        new VanillaBancoItem(Material.GOLD_BLOCK, BigDecimal.valueOf(9), null),
-        new VanillaBancoItem(Material.PLAYER_HEAD, BigDecimal.valueOf(576), new BancoItemOptions("<gold>Bag of Gold Blocks</gold>", List.of("<gray>This bag contains <gold>64x Gold Blocks</gold></gray>"), 1009, true, "http://textures.minecraft.net/texture/95fd67d56ffc53fb360a17879d9b5338d7332d8f129491a5e17e8d6e8aea6c3a"))
+        new VanillaBancoItem(Material.EMERALD, BigDecimal.valueOf(1), null),
+        new VanillaBancoItem(Material.EMERALD_BLOCK, BigDecimal.valueOf(9), null),
+        new VanillaBancoItem(Material.PLAYER_HEAD, BigDecimal.valueOf(576), new BancoItemOptions(
+            "<white>Bag of Emerald Blocks</white>", 
+            List.of("<gray>Holds <white>64x Emerald Blocks</whtie></gray>"), 
+            1009, 
+            false, 
+            "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
+            List.of(
+                new BancoItemOptions.AttributeField("minecraft:movement_speed", 0.05, AttributeModifier.Operation.ADD_NUMBER, "ANY")
+            )
+        ))
     );
 
     // Legacy items
