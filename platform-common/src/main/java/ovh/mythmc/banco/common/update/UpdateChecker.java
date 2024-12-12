@@ -65,8 +65,12 @@ public class UpdateChecker {
         try {
             connection = URI.create(url).toURL().openConnection();
         } catch (IOException e) {
-            if (Banco.get().getSettings().get().isDebug())
-                logger.warn(e.getMessage());
+            if (Banco.get().getSettings().get().isDebug()) {
+                logger.warn("The update checker is not available:");
+                e.printStackTrace();
+            }
+
+            return;
         }
 
         try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
@@ -75,6 +79,12 @@ public class UpdateChecker {
 
             String latest = scanner.next();
             setLatest(latest);
+
+            if (isDevelopmentBuild(latest)) {
+                if (Banco.get().getSettings().get().isDebug())
+                    logger.warn("This server is running a development build!");
+                return;
+            }
 
             if (!Banco.get().version().equals(latest)) {
                 logger.info("A new update has been found: " + latest + " (currently running " + Banco.get().version() + ")");
@@ -86,10 +96,25 @@ public class UpdateChecker {
                 logger.info("No updates have been found.");
         } catch (IOException e) {
             if (Banco.get().getSettings().get().isDebug())
-                logger.warn(e.getMessage());
+                e.printStackTrace();
         }
 
         scheduleTask();
+    }
+
+    private boolean isDevelopmentBuild(String latest) {
+        latest = latest
+            .replace(".", "")
+            .replace("v", "");
+
+        String currentVersion = Banco.get().version()
+            .replace(".", "")
+            .replace("v", "");
+
+        if (Integer.parseInt(currentVersion) > Integer.parseInt(latest))
+            return true;
+
+        return false;
     }
 
     public void startTask() {

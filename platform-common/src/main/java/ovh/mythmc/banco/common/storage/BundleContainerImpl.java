@@ -1,24 +1,17 @@
 package ovh.mythmc.banco.common.storage;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
 
-import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.items.BancoItem;
-import ovh.mythmc.banco.api.scheduler.BancoScheduler;
-import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.api.util.ItemUtil;
+import ovh.mythmc.banco.api.storage.BancoContainer;
 
-public final class BundleStorageImpl implements BancoStorage {
+public final class BundleContainerImpl extends BancoContainer {
 
     @Override
     public String friendlyName() {
@@ -26,40 +19,12 @@ public final class BundleStorageImpl implements BancoStorage {
     }
 
     @Override
-    public BigDecimal value(UUID uuid) {
-        BigDecimal value = BigDecimal.valueOf(0);
-
-        for (ItemStack item : getCombinedBundlesContent(uuid)) {
-            if (item == null)
-                continue;
-
-            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
-            if (bancoItem == null)
-                continue;
-                
-            value = value.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
-        }
-
-        return value;
+    public Collection<ItemStack> get(UUID uuid) {
+        return getCombinedBundlesContent(uuid);
     }
 
     @Override
-    public BigDecimal add(UUID uuid, BigDecimal amount) {
-        BigDecimal amountGiven = BigDecimal.valueOf(0);
-
-        for (ItemStack item : ItemUtil.convertAmountToItems(amount)) {
-            BancoItem bancoItem = Banco.get().getItemRegistry().get(item);
-
-            if (addToBundle(uuid, item.clone()))
-                amountGiven = amountGiven.add(Banco.get().getItemRegistry().value(bancoItem, item.getAmount()));
-        }
-
-        return amountGiven;
-    }
-
-    private boolean addToBundle(UUID uuid, ItemStack itemStack) {
-        boolean added = false;
-
+    protected ItemStack addItem(UUID uuid, ItemStack itemStack) {
         for (ItemStack bundle : Bukkit.getPlayer(uuid).getInventory()) {
             if (getBundleFreeCapacity(bundle) < 1)
                 continue;
@@ -89,7 +54,6 @@ public final class BundleStorageImpl implements BancoStorage {
             }
 
             // Add the remaining amount that couldn't be added to existing stacks as new ones
-            //itemStack.setAmount(pendingAmountToAdd);
             if (pendingAmountToAdd > 0) {
                 int freeCapacity = Math.min(pendingAmountToAdd, getBundleListFreeCapacity(newItemList));
                 itemStack.setAmount(freeCapacity);
@@ -104,50 +68,14 @@ public final class BundleStorageImpl implements BancoStorage {
             // Update bundle contents
             bundleMeta.setItems(newItemList.stream().filter(i -> !i.getType().isAir()).toList());
             bundle.setItemMeta(bundleMeta);
-            added = true;
         }
 
-        // We'll only drop items to the floor if any other items have already been added to a bundle
-        if (added) {
-            if (itemStack.getAmount() > 0) {
-                Player player = Bukkit.getPlayer(uuid);
-                BancoScheduler.get().run(() -> player.getWorld().dropItemNaturally(player.getLocation(), itemStack));
-            }
-        }
-
-        return added;
+        return itemStack;
     }
 
     @Override
-    public BigDecimal remove(UUID uuid, BigDecimal amount) {
-        for (BancoItem bancoItem : Banco.get().getItemRegistry().get()) {
-            for (ItemStack item : getCombinedBundlesContent(uuid)) {
-                if (item == null || !Banco.get().getItemRegistry().get(item).equals(bancoItem)) continue;
-                if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) continue;
-    
-                BigDecimal value = Banco.get().getItemRegistry().value(bancoItem, item.getAmount());
-    
-                if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
-                    removeFromBundle(uuid, item);
-
-                    BigDecimal added = BigDecimal.valueOf(0);
-                    if (value.compareTo(amount) > 0) {
-                        added = value.subtract(amount);
-                        Account account = Banco.get().getAccountManager().get(uuid);
-                        if (account != null)
-                            add(uuid, added);
-                    }
-    
-                    amount = amount.subtract(value.subtract(added));
-                }
-            }
-        }
-
-        return amount;
-    }
-
-    private boolean removeFromBundle(UUID uuid, ItemStack itemStack) {
-        boolean removed = false;
+    protected ItemStack removeItem(UUID uuid, ItemStack itemStack) {
+        ItemStack removedItem = null;
 
         for (ItemStack bundle : Bukkit.getPlayer(uuid).getInventory()) {
             if (bundle == null || !bundle.getType().name().contains("BUNDLE"))
@@ -163,11 +91,11 @@ public final class BundleStorageImpl implements BancoStorage {
             bundleMeta.setItems(updatedItems);
             bundle.setItemMeta(bundleMeta);
 
-            removed = true;
+            removedItem = itemStack;
             break;
         }
 
-        return removed;
+        return removedItem;
     }
 
     private List<ItemStack> getCombinedBundlesContent(UUID uuid) {

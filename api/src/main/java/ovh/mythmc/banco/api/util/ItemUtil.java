@@ -31,7 +31,7 @@ public final class ItemUtil {
      */
     @Deprecated(since = "1.0", forRemoval = true)
     public static BancoItem getBancoItem(final @NotNull ItemStack item) {
-        return Banco.get().getItemManager().get(item);
+        return Banco.get().getItemManager().getByItemStack(item);
     }
 
     /**
@@ -54,12 +54,12 @@ public final class ItemUtil {
 
         for (BancoItem bancoItem : Banco.get().getItemRegistry().get().reversed()) {
             do {
-                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), 64);
+                int itemAmount = Math.min((amount.divide(bancoItem.value(), RoundingMode.FLOOR)).intValue(), bancoItem.asItemStack().getMaxStackSize());
 
                 if (itemAmount > 0) {
                     items.add(bancoItem.asItemStack(itemAmount));
 
-                    amount = amount.subtract(Banco.get().getItemRegistry().value(bancoItem, itemAmount));
+                    amount = amount.subtract(bancoItem.value(itemAmount));
                 }
             } while (bancoItem.value().compareTo(amount) < 0);
         }

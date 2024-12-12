@@ -41,7 +41,8 @@ public class CurrencyConfig {
     private List<String> inventoryOrder = List.of(
         "BUNDLE",
         "PLAYER_INVENTORY",
-        "ENDER_CHEST"
+        "ENDER_CHEST",
+        "OTHER"
     );
 
     @Comment("Worlds where banco's economy should be disabled")

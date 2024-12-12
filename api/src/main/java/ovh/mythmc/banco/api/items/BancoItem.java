@@ -26,6 +26,10 @@ public interface BancoItem {
 
     ItemStack asItemStack(int amount);
 
+    default BigDecimal value(int amount) {
+        return value().multiply(BigDecimal.valueOf(amount));
+    }
+
     default boolean match(ItemStack itemStack) {
         return itemStack.isSimilar(asItemStack());
     }

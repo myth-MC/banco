@@ -30,7 +30,7 @@ public interface BancoStorage {
      *
      * @param uuid UUID of the account where items will be removed
      * @param amount amount of money to remove from this BancoStorage
-     * @return Amount of money that has not been removed
+     * @return Amount of money that has NOT been removed
      */
     BigDecimal remove(UUID uuid, BigDecimal amount);
 

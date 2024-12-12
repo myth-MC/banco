@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.events.impl.BancoStorageRegisterEvent;
@@ -22,6 +23,8 @@ public final class BancoStorageRegistry {
     public static final BancoStorageRegistry instance = new BancoStorageRegistry();
     private static final Collection<BancoStorage> storages = new Vector<>(0);
 
+    private BancoStorage remainderStorage = null;
+
     /**
      *
      * @return A Collection of registered BancoStorages
@@ -33,10 +36,15 @@ public final class BancoStorageRegistry {
      * @return A Collection of registered and enabled BancoStorages from settings
      */
     public Collection<BancoStorage> getByOrder() { 
-        return Banco.get().getSettings().get().getCurrency().getInventoryOrder().stream()
+        final Collection<BancoStorage> orderedStorage = Banco.get().getSettings().get().getCurrency().getInventoryOrder().stream()
             .map(this::getByFriendlyName)
             .filter(o -> o != null)
             .collect(Collectors.toList());
+
+        if (remainderStorage != null)
+            orderedStorage.add(remainderStorage);
+
+        return orderedStorage;
     }
 
     /**
@@ -61,10 +69,15 @@ public final class BancoStorageRegistry {
         Arrays.asList(bancoStorages).stream()
             .forEach(storage -> {
                 BancoStorageUnregisterEvent event = new BancoStorageUnregisterEvent(storage);
-                Bukkit.getPluginManager().callEvent(event);
+                event.call();
 
                 storages.remove(event.bancoStorage());
             });
+    }
+
+    @Internal
+    public void setRemainderStorage(final @NotNull BancoStorage remainderStorage) {
+        this.remainderStorage = remainderStorage;
     }
 
     /**

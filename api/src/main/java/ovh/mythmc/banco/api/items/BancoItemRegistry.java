@@ -31,7 +31,7 @@ public final class BancoItemRegistry {
      * Registers a BancoItem
      * @param items item to register
      */
-    public void registerItems(@NotNull BancoItem... items) {
+    public void register(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             // Call BancoItemRegisterEvent
             BancoItemRegisterEvent event = new BancoItemRegisterEvent(bancoItem);
@@ -45,7 +45,7 @@ public final class BancoItemRegistry {
      * Unregisters a BancoItem
      * @param items item to unregister
      */
-    public void unregisterItems(final @NotNull BancoItem... items) {
+    public void unregister(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             itemList.remove(bancoItem);
 
@@ -68,13 +68,10 @@ public final class BancoItemRegistry {
 
     /**
      * Gets a specific BancoItem
-     * @param materialName material name of an item
-     * @param displayName display name of an item
-     * @param glowEffect whether an item has glow effect or not
-     * @param customModelData custom model data of an item
+     * @param itemStack ItemStack that should match a BancoItem
      * @return A BancoItem matching parameters or null
      */
-    public BancoItem get(final @NotNull ItemStack itemStack) {
+    public BancoItem getByItemStack(final @NotNull ItemStack itemStack) {
         for (BancoItem item : get()) {
             if (item.match(itemStack))
                 return item;
@@ -89,7 +86,7 @@ public final class BancoItemRegistry {
      * @return true if a BancoItem matching item's parameters exists
      */
     public boolean isValid(ItemStack item) {
-        return get(item) != null;
+        return getByItemStack(item) != null;
     }
 
     /**
@@ -98,6 +95,7 @@ public final class BancoItemRegistry {
      * @param amount amount of items
      * @return Value of BancoItem multiplied by the amount
      */
+    @Deprecated(since = "1.0", forRemoval = true)
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
     }

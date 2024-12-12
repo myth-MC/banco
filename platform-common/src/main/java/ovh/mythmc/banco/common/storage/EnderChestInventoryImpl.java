@@ -16,7 +16,7 @@ public final class EnderChestInventoryImpl extends BancoInventory {
     }
 
     @Override
-    public @NotNull Inventory get(UUID uuid) {
+    public @NotNull Inventory inventory(UUID uuid) {
         return Bukkit.getPlayer(uuid).getEnderChest();
     }
 
