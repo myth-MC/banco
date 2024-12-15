@@ -13,6 +13,7 @@ import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -62,7 +63,8 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public int fractionalDigits() {
-        return 0;
+        DecimalFormat format = new DecimalFormat(Banco.get().getSettings().get().getCurrency().getFormat());
+        return format.getMaximumFractionDigits();
     }
 
     @Override
