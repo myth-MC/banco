@@ -18,13 +18,16 @@ public class BancoSettings {
     @Comment({"", "Configuration for currency"})
     private CurrencyConfig currency = new CurrencyConfig();
 
-    @Comment({"", "Configuration for the update tracker"})
-    private UpdateTrackerConfig updateTracker = new UpdateTrackerConfig();
+    @Comment({"", "Configuration for the database"})
+    private DatabaseConfig database = new DatabaseConfig();
+
+    @Comment({"", "Configuration for the update checker"})
+    private UpdateCheckerConfig updateChecker = new UpdateCheckerConfig();
 
     @Comment({"", "Configuration for commands"})
     private CommandsConfig commands = new CommandsConfig();
 
-    @Comment({"", "Configuration for inventories/GUIs"})
-    private InventoriesConfig inventories = new InventoriesConfig();
+    @Comment({"", "Configuration for menus/GUIs"})
+    private MenusConfig menus = new MenusConfig();
 
 }

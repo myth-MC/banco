@@ -2,8 +2,8 @@ package ovh.mythmc.banco.api.configuration;
 
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurations;
+
 import org.jetbrains.annotations.NotNull;
-import ovh.mythmc.banco.api.Banco;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -26,9 +26,6 @@ public final class BancoSettingsProvider {
                 BancoSettings.class,
                 YamlConfigurationProperties.newBuilder().charset(StandardCharsets.UTF_8).build()
         );
-
-        Banco.get().getItemManager().clear();
-        get().getCurrency().getItems().forEach(bancoItem -> Banco.get().getItemManager().registerItems(bancoItem));
     }
 
     public BancoSettings get() { return settings; }

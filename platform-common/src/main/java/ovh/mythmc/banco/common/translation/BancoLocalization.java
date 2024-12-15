@@ -4,7 +4,8 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.TranslationRegistry;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
-import org.jetbrains.annotations.NotNull;
+
+import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
@@ -17,7 +18,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@RequiredArgsConstructor
 public final class BancoLocalization {
+
+    private final List<String> langs = List.of(
+        "ca_ES",
+        "de_DE",
+        "en_US",
+        "es_ES",
+        "pt_BR",
+        "ru_RU",
+        "zh_CN"
+    );
+
+    private final File baseFile;
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -36,7 +50,7 @@ public final class BancoLocalization {
         }
     };
 
-    public void load(final @NotNull File baseFile) {
+    public void load() {
         Path overrides = Paths.get(baseFile + "/lang/overrides.properties");
 
         if (!Files.exists(overrides)) {
@@ -55,18 +69,12 @@ public final class BancoLocalization {
 
         final var translator = TranslationRegistry.create(Key.key("banco", "translation-registry"));
 
-        // TODO: move to loop
-        ResourceBundle ca_ES = ResourceBundle.getBundle("i10n_ca_ES", Locale.forLanguageTag("ca-ES"), UTF8ResourceBundleControl.get());
-        ResourceBundle de_DE = ResourceBundle.getBundle("i10n_de_DE", Locale.forLanguageTag("de-DE"), UTF8ResourceBundleControl.get());
-        ResourceBundle en_US = ResourceBundle.getBundle("i10n_en_US", Locale.forLanguageTag("en-US"), UTF8ResourceBundleControl.get());
-        ResourceBundle es_ES = ResourceBundle.getBundle("i10n_es_ES", Locale.forLanguageTag("es-ES"), UTF8ResourceBundleControl.get());
-        ResourceBundle zh_CN = ResourceBundle.getBundle("i10n_zh_CN", Locale.forLanguageTag("zh-CN"), UTF8ResourceBundleControl.get());
-
-        translator.registerAll(Locale.forLanguageTag("ca-ES"), override(overrides, ca_ES), true);
-        translator.registerAll(Locale.forLanguageTag("de-DE"), override(overrides, de_DE), true);
-        translator.registerAll(Locale.forLanguageTag("en-US"), override(overrides, en_US), true);
-        translator.registerAll(Locale.forLanguageTag("es-ES"), override(overrides, es_ES), true);
-        translator.registerAll(Locale.forLanguageTag("zh-CN"), override(overrides, zh_CN), true);
+        langs.forEach(langTag -> {
+            String baseName = "i10n_" + langTag;
+            Locale locale = Locale.forLanguageTag(langTag.replace("_", "-"));
+            ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale, UTF8ResourceBundleControl.get());
+            translator.registerAll(locale, override(overrides, resourceBundle), true);
+        });
 
         translator.defaultLocale(Locale.forLanguageTag(Banco.get().getSettings().get().getDefaultLanguageTag()));
         GlobalTranslator.translator().addSource(translator);
