@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.storage.BancoStorage;
@@ -132,17 +133,19 @@ public final class AccountManager {
             return;
 
         if (account.amount().compareTo(amount) < 0) { // Add amount to account
+            BigDecimal toAdd = amount.subtract(account.amount());
+
+            // Call BancoTransactionEvent
+            BancoTransactionEvent event = new BancoTransactionEvent(account, toAdd);
+            event.callAsync();
+
+            // Update values in case they've been changed
+            account = event.account();
+            toAdd = event.amount();
+
+            // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
                 account.setTransactions(BigDecimal.valueOf(0));
-                BigDecimal toAdd = amount.subtract(account.amount());
-
-                // Call BancoTransactionEvent
-                BancoTransactionEvent event = new BancoTransactionEvent(account, toAdd);
-                event.callAsync();
-
-                // Update values in case they've been changed
-                account = event.account();
-                toAdd = event.amount();
 
                 // Add to all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
@@ -155,21 +158,32 @@ public final class AccountManager {
                 return;
             }
 
+            // Add to all BancoStorage instances that do not require an online Player
+            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+                if (!storage.supportsOfflinePlayers())
+                    continue;
+                
+                if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
+                    toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
+            }
+
             // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
+            account.setTransactions(account.getTransactions().add(toAdd));
             database.update(account);
         } else { // Remove amount from account
+            BigDecimal toRemove = account.amount().subtract(amount);
+
+            // Call BancoTransactionEvent
+            BancoTransactionEvent event = new BancoTransactionEvent(account, toRemove.negate());
+            event.callAsync();
+
+            // Update values in case they've been changed
+            account = event.account();
+            toRemove = event.amount().negate();
+            
+            // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
                 account.setTransactions(BigDecimal.valueOf(0));
-                BigDecimal toRemove = account.amount().subtract(amount);
-
-                // Call BancoTransactionEvent
-                BancoTransactionEvent event = new BancoTransactionEvent(account, toRemove.negate());
-                event.callAsync();
-
-                // Update values in case they've been changed
-                account = event.account();
-                toRemove = event.amount().negate();
 
                 // Remove from all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
@@ -182,8 +196,17 @@ public final class AccountManager {
                 return;
             }
 
+            // Remove from all BancoStorage instances that do not require an online Player
+            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+                if (!storage.supportsOfflinePlayers())
+                    continue;
+            
+                if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
+                    toRemove = storage.remove(account.getUuid(), toRemove);
+            }
+
             // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
+            account.setTransactions(account.getTransactions().subtract(toRemove));
             database.update(account);
         }
     }
@@ -224,11 +247,18 @@ public final class AccountManager {
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
         Account account = get(uuid);
+
+        // Fake players / accounts
+        if (!Bukkit.getOfflinePlayer(uuid).hasPlayedBefore())
+            return account.getTransactions().add(getValueOfPlayer(uuid, false));
+
+        // Online players
         if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-            account.setAmount(getValueOfOnlinePlayer(uuid));
+            account.setAmount(getValueOfPlayer(uuid, true));
             database.update(account);
         }
 
+        // Offline players
         return account.getAmount().add(account.getTransactions());
     }
 
@@ -241,10 +271,14 @@ public final class AccountManager {
         return amount(account.getUuid());
     }
 
-    private synchronized BigDecimal getValueOfOnlinePlayer(final @NotNull UUID uuid) {
+    @Internal
+    private synchronized BigDecimal getValueOfPlayer(final @NotNull UUID uuid, boolean isOnline) {
         BigDecimal value = BigDecimal.valueOf(0);
 
         for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+            if (!isOnline && !storage.supportsOfflinePlayers())
+                continue;
+
             value = value.add(storage.value(uuid));
         }
 

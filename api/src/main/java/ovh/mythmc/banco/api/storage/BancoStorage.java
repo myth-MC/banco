@@ -12,6 +12,12 @@ public interface BancoStorage {
     default String friendlyName() { return "OTHER"; }
 
     /**
+     * Whether this storage supports offline players
+     * @return true if it does or false otherwise
+     */
+    default boolean supportsOfflinePlayers() { return false; }
+
+    /**
      *
      * @param uuid UUID of the account who owns this BancoStorage
      * @return Amount of money stored in this BancoStorage
