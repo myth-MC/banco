@@ -28,6 +28,9 @@ public class BancoEvent extends Event {
     }
 
     public void call() {
+        if (!Bukkit.getPluginManager().isPluginEnabled("banco"))
+            return;
+
         BancoEvent event = this;
         Bukkit.getScheduler().runTask(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
             @Override
@@ -38,6 +41,9 @@ public class BancoEvent extends Event {
     }
 
     public void callAsync() {
+        if (!Bukkit.getPluginManager().isPluginEnabled("banco"))
+            return;
+            
         BancoEvent event = this;
         Bukkit.getScheduler().runTaskAsynchronously(Bukkit.getPluginManager().getPlugin("banco"), new Runnable() {
             @Override

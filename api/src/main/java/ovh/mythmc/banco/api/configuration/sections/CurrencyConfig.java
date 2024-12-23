@@ -54,7 +54,7 @@ public class CurrencyConfig {
         new VanillaBancoItem(Material.EMERALD_BLOCK, BigDecimal.valueOf(9), null),
         new VanillaBancoItem(Material.PLAYER_HEAD, BigDecimal.valueOf(576), new BancoItemOptions(
             "<white>Bag of Emerald Blocks</white>", 
-            List.of("<gray>Holds <white>64x Emerald Blocks</whtie></gray>"), 
+            List.of("<gray>Holds <white>64x Emerald Blocks</white></gray>"), 
             1009, 
             false, 
             "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",

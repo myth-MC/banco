@@ -10,13 +10,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.Transaction.Operation;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.api.events.impl.BancoAccountRegisterEvent;
 import ovh.mythmc.banco.api.events.impl.BancoAccountUnregisterEvent;
-import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -90,8 +89,8 @@ public final class AccountManager {
      * @param uuid account uuid that will be modified
      * @param amount amount of money to deposit
      */
-    public synchronized void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(uuid, get(uuid).amount().add(amount));
+    public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+        deposit(get(uuid), amount);
     }
 
     /**
@@ -99,8 +98,14 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to deposit
      */
-    public synchronized void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        deposit(account.getUuid(), amount);
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.DEPOSIT)
+            .build();
+
+        transaction.queue();
     }
 
     /**
@@ -108,8 +113,8 @@ public final class AccountManager {
      * @param account account uuid that will be modified
      * @param amount amount of money to withdraw
      */
-    public synchronized void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(uuid, get(uuid).amount().subtract(amount));
+    public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+        withdraw(get(uuid), amount);
     }
 
     /**
@@ -117,8 +122,14 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to withdraw
      */
-    public synchronized void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        withdraw(account.getUuid(), amount);
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.WITHDRAW)
+            .build();
+
+        transaction.queue();
     }
 
     /**
@@ -126,89 +137,8 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to set
      */
-    public synchronized void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        Account account = get(uuid);
-
-        if (account.amount().compareTo(amount) == 0)
-            return;
-
-        if (account.amount().compareTo(amount) < 0) { // Add amount to account
-            BigDecimal toAdd = amount.subtract(account.amount());
-
-            // Call BancoTransactionEvent
-            BancoTransactionEvent event = new BancoTransactionEvent(account, toAdd);
-            event.callAsync();
-
-            // Update values in case they've been changed
-            account = event.account();
-            toAdd = event.amount();
-
-            // Online accounts
-            if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
-                account.setTransactions(BigDecimal.valueOf(0));
-
-                // Add to all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
-                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
-
-                // Set transactions to remaining amount
-                account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
-                database.update(account);
-                return;
-            }
-
-            // Add to all BancoStorage instances that do not require an online Player
-            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
-                if (!storage.supportsOfflinePlayers())
-                    continue;
-                
-                if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
-                    toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
-            }
-
-            // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().add(toAdd));
-            database.update(account);
-        } else { // Remove amount from account
-            BigDecimal toRemove = account.amount().subtract(amount);
-
-            // Call BancoTransactionEvent
-            BancoTransactionEvent event = new BancoTransactionEvent(account, toRemove.negate());
-            event.callAsync();
-
-            // Update values in case they've been changed
-            account = event.account();
-            toRemove = event.amount().negate();
-            
-            // Online accounts
-            if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
-                account.setTransactions(BigDecimal.valueOf(0));
-
-                // Remove from all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
-                    if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toRemove = storage.remove(account.getUuid(), toRemove);
-
-                // Set transactions to remaining amount
-                account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
-                database.update(account);
-                return;
-            }
-
-            // Remove from all BancoStorage instances that do not require an online Player
-            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
-                if (!storage.supportsOfflinePlayers())
-                    continue;
-            
-                if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
-                    toRemove = storage.remove(account.getUuid(), toRemove);
-            }
-
-            // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().subtract(toRemove));
-            database.update(account);
-        }
+    public void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
+        set(get(uuid), amount);
     }
 
     /**
@@ -216,8 +146,14 @@ public final class AccountManager {
      * @param account account that will be modified
      * @param amount amount of money to set
      */
-    public synchronized void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        set(account.getUuid(), amount);
+    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.SET)
+            .build();
+
+        transaction.queue();
     }
 
     /**
@@ -227,7 +163,7 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        return get(uuid).amount().compareTo(amount) >= 0;
+        return has(get(uuid), amount);
     }
 
     /**
@@ -237,7 +173,7 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        return has(account.getUuid(), amount);
+        return account.amount().compareTo(amount) >= 0;
     }
 
     /**
@@ -246,20 +182,7 @@ public final class AccountManager {
      * @return Account's balance
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
-        Account account = get(uuid);
-
-        // Fake players / accounts
-        if (!Bukkit.getOfflinePlayer(uuid).hasPlayedBefore())
-            return account.getTransactions().add(getValueOfPlayer(uuid, false));
-
-        // Online players
-        if (Bukkit.getOfflinePlayer(uuid).isOnline()) {
-            account.setAmount(getValueOfPlayer(uuid, true));
-            database.update(account);
-        }
-
-        // Offline players
-        return account.getAmount().add(account.getTransactions());
+        return amount(get(uuid));
     }
 
     /**
@@ -268,7 +191,18 @@ public final class AccountManager {
      * @return Account's balance
      */
     public @NotNull BigDecimal amount(final @NotNull Account account) {
-        return amount(account.getUuid());
+        // Fake players / accounts
+        if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
+            return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
+
+        // Online players
+        if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
+            account.setAmount(getValueOfPlayer(account.getUuid(), true));
+            database.update(account);
+        }
+
+        // Offline players
+        return account.getAmount().add(account.getTransactions());
     }
 
     @Internal

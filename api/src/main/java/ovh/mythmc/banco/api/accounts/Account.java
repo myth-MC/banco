@@ -27,7 +27,6 @@ public class Account {
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal amount;
 
-    @Setter(AccessLevel.PROTECTED)
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal transactions;
 

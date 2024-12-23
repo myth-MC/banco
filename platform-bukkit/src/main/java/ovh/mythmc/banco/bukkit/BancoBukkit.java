@@ -29,6 +29,8 @@ public final class BancoBukkit extends BancoBootstrap {
 
     private BukkitGestaltLoader gestalt;
 
+    private final BancoScheduler scheduler = new BancoSchedulerBukkit(getPlugin());
+
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(String message, Object... args) {
@@ -66,16 +68,19 @@ public final class BancoBukkit extends BancoBootstrap {
 
         registerListeners();
         registerCommands();
+
+        scheduler.initialize();
     }
 
     @Override
     public void disable() {
         gestalt.terminate();
+        scheduler.terminate();
     }
 
     @Override
     public BancoScheduler scheduler() {
-        return new BancoSchedulerBukkit(getPlugin());
+        return scheduler;
     }
 
     @Override

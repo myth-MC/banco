@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.menus.BasicMenu;
 import ovh.mythmc.banco.common.menus.MenuButton;
 import ovh.mythmc.banco.common.update.UpdateChecker;
@@ -37,6 +38,7 @@ public final class InfoMenu extends BasicMenu {
         addButton(3, getInfoButton(Material.STICK, "Items", Banco.get().getItemRegistry().get().size() + ""));
         addButton(4, getInfoButton(Material.CHEST, "Storages", Banco.get().getItemRegistry().get().size() + ""));
         addButton(5, getInfoButton(Material.COMPASS, "Accounts", Banco.get().getAccountManager().get().size() + " (" + Banco.get().getAccountManager().getDatabase().getCachedAccounts().size() + " cached)"));
+        addButton(6, getInfoButton(Material.CHAIN, "Transactions in Queue", BancoScheduler.get().getQueuedTransactions().size() + ""));
         if (!UpdateChecker.getLatest().equals(Banco.get().version()))
             addButton(8, getInfoButton(Material.BELL, "New version available", "v" + UpdateChecker.getLatest()));
 

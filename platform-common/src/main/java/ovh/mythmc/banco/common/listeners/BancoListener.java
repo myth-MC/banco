@@ -16,10 +16,11 @@ public final class BancoListener implements Listener {
         if (!Banco.get().getSettings().get().isDebug())
             return;
 
-        Banco.get().getLogger().info("Transaction ({}|{}): {}",
-            event.account().getUuid(),
-            Bukkit.getOfflinePlayer(event.account().getUuid()).getName(),
-            event.amount()
+        Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {}",
+            event.transaction().account().getUuid(),
+            Bukkit.getOfflinePlayer(event.transaction().account().getUuid()).getName(),
+            event.transaction().amount(),
+            event.transaction().operation()
         );
     }
 

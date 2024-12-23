@@ -28,6 +28,8 @@ public final class BancoPaper extends BancoBootstrap {
 
     private PaperGestaltLoader gestalt;
 
+    private final BancoScheduler scheduler = new BancoSchedulerPaper(getPlugin());
+
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(String message, Object... args) {
@@ -63,16 +65,19 @@ public final class BancoPaper extends BancoBootstrap {
     public void enable() {    
         registerCommands();
         registerListeners();
+
+        scheduler.initialize();
     }
 
     @Override
     public void disable() {
         gestalt.terminate();
+        scheduler.terminate();
     }
 
     @Override
     public BancoScheduler scheduler() {
-        return new BancoSchedulerPaper(getPlugin());
+        return scheduler;
     }
 
     @SuppressWarnings("UnstableApiUsage")

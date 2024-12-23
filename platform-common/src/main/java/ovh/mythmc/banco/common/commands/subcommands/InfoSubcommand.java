@@ -5,6 +5,7 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.menus.MenuManager;
 import ovh.mythmc.banco.common.menus.impl.InfoMenu;
 import ovh.mythmc.banco.common.update.UpdateChecker;
@@ -50,7 +51,8 @@ public class InfoSubcommand implements BiConsumer<Audience, String[]> {
                     text(Banco.get().getItemRegistry().get().size()),
                     text(Banco.get().getStorageRegistry().get().size()),
                     text(Banco.get().getAccountManager().get().size()),
-                    text(Banco.get().getAccountManager().getDatabase().getCachedAccounts().size())
+                    text(Banco.get().getAccountManager().getDatabase().getCachedAccounts().size()),
+                    text(BancoScheduler.get().getQueuedTransactions().size())
             ));
         }
     }
