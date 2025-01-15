@@ -24,6 +24,10 @@ public class Account {
     @DatabaseField(id = true)
     private UUID uuid;
 
+    @Getter(AccessLevel.PUBLIC)
+    @DatabaseField(uniqueIndex = true)
+    private String name;
+
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal amount;
 
@@ -32,9 +36,11 @@ public class Account {
     private BigDecimal transactions;
 
     public Account(UUID uuid,
+                   String name,
                    BigDecimal amount,
                    BigDecimal transactions) {
         this.uuid = uuid;
+        this.name = name;
         this.amount = amount;
         this.transactions = transactions;
     }

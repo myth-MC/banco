@@ -76,5 +76,17 @@ public final class AccountDatabase {
 
         return null;
     }
+    public Account getByName(@NotNull String name) {
+        try {
+            List<Account> accounts = accountsDao.queryForEq("name", name);
+            if (accounts != null && !accounts.isEmpty()) {
+                return accounts.getFirst();
+            }
+        } catch (SQLException e) {
+            logger.error("Exception while getting account {}", e);
+        }
+
+        return null;
+    }
     
 }

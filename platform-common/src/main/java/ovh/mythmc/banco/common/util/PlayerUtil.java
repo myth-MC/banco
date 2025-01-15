@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class PlayerUtil {
 
+
     public static UUID getUuid(@NotNull String name) {
         UUID uuid = null;
 

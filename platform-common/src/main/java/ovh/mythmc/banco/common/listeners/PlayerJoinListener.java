@@ -17,11 +17,12 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+        UUID uuid = event.getPlayer().getUniqueId();
+        String string = event.getPlayer().getName();
         Account account = accountManager.get(uuid);
 
         if (account == null) {
-            account = new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0));
+            account = new Account(uuid, string, BigDecimal.valueOf(0), BigDecimal.valueOf(0));
             accountManager.registerAccount(account);
         }
 
