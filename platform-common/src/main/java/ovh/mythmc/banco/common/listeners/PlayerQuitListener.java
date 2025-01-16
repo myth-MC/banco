@@ -13,7 +13,7 @@ public class PlayerQuitListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+        UUID uuid = event.getPlayer().getUniqueId();
 
         if (Banco.get().getAccountManager().get(uuid) == null)
             return;

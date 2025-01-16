@@ -61,7 +61,7 @@ public abstract class BalanceCommand {
             return;
         }
 
-        Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
+        Account target = Banco.get().getAccountManager().get(args[0]);
 
         if (target == null) {
             MessageUtil.error(sender, translatable("banco.errors.player-not-found", text(args[0])));

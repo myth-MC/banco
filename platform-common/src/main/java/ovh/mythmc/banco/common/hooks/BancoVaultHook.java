@@ -82,7 +82,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean hasAccount(String s) {
-        return Banco.get().getAccountManager().get(PlayerUtil.getUuid(s)) != null;
+        return Banco.get().getAccountManager().get(s) != null;
     }
 
     @Override

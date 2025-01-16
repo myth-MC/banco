@@ -1,5 +1,7 @@
 package ovh.mythmc.banco.common.util;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.banco.api.Banco;
@@ -26,7 +28,9 @@ public final class MigrationUtil {
         provider.load();
 
         provider.get().getAccounts().forEach(legacyAccount -> {
-            Account account = new Account(legacyAccount.getUuid(), legacyAccount.getAmount(), legacyAccount.getTransactions());
+            Player player = Bukkit.getPlayer(legacyAccount.getUuid());
+            String name = player.getName();
+            Account account = new Account(legacyAccount.getUuid(),name, legacyAccount.getAmount(), legacyAccount.getTransactions());
             Banco.get().getAccountManager().create(account);
         });
 

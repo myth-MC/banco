@@ -3,6 +3,8 @@ package ovh.mythmc.banco.api.accounts;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
@@ -42,8 +44,10 @@ public final class AccountManager {
      * @param uuid uuid of account to create and register
      */
     public void create(final @NotNull UUID uuid) {
-        Account account = new Account();
-        account.setUuid(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        String name = player.getName();
+
+        Account account = new Account(uuid, name, BigDecimal.valueOf(0),BigDecimal.valueOf(0));
         create(account);
     }
 
@@ -100,6 +104,10 @@ public final class AccountManager {
      */
     public Account get(final @NotNull UUID uuid) {
         return database.getByUuid(uuid);
+    }
+
+    public Account get(final @NotNull String string) {
+        return database.getByName(string);
     }
 
     /**

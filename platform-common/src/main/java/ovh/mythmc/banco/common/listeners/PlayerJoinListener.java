@@ -18,7 +18,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
-        String string = event.getPlayer().getName();
+        String string = event.getPlayer().getName().toLowerCase();
         Account account = accountManager.get(uuid);
 
         if (account == null) {

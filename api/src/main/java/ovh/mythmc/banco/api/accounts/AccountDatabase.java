@@ -78,7 +78,10 @@ public final class AccountDatabase {
     }
     public Account getByName(@NotNull String name) {
         try {
-            List<Account> accounts = accountsDao.queryForEq("name", name);
+            List<Account> accounts = accountsDao.queryBuilder()
+                    .where()
+                    .eq("name", name.toLowerCase())
+                    .query();
             if (accounts != null && !accounts.isEmpty()) {
                 return accounts.getFirst();
             }
