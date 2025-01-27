@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
+
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
@@ -72,6 +76,7 @@ public abstract class BancoBootstrap implements Banco {
         Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
         try {
+            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary database verbose
             Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + File.separator + "accounts.db");
             enable();
         } catch (Throwable throwable) {
