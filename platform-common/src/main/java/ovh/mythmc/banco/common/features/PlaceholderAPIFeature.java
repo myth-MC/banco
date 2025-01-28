@@ -11,7 +11,7 @@ import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 @Feature(group = "banco", identifier = "PLACEHOLDERAPI")
 public class PlaceholderAPIFeature {
 
-    private BancoPlaceholderExpansion expansion = new BancoPlaceholderExpansion();
+    private BancoPlaceholderExpansion expansion;
 
     @FeatureConditionBoolean
     public boolean canBeEnabled() {
@@ -20,6 +20,9 @@ public class PlaceholderAPIFeature {
 
     @FeatureEnable
     public void enable() {
+        if (expansion == null)
+            expansion = new BancoPlaceholderExpansion();
+
         expansion.register();
     }
 

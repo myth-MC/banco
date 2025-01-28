@@ -5,7 +5,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 import ovh.mythmc.banco.api.util.ItemUtil;
 
@@ -19,12 +22,15 @@ public final class RemainderStorageImpl implements BancoStorage {
     @Override
     public BigDecimal add(UUID uuid, BigDecimal amount) {
         Player player = Bukkit.getPlayer(uuid);
+        BigDecimal added = BigDecimal.valueOf(0);
 
-        ItemUtil.convertAmountToItems(amount).forEach(itemStack -> {
+        for (ItemStack itemStack : ItemUtil.convertAmountToItems(amount)) {
+            BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(itemStack);
+            added = added.add(bancoItem.value(itemStack.getAmount()));
             player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-        });
+        }
 
-        return amount;
+        return added;
     }
 
     @Override

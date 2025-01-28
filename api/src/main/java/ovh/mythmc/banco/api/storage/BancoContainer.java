@@ -4,7 +4,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.util.ItemUtil;
 
@@ -97,9 +96,7 @@ public abstract class BancoContainer implements BancoStorage {
                     BigDecimal removed = BigDecimal.valueOf(0);
                     if (value.compareTo(amount) > 0) {
                         removed = value.subtract(amount);
-                        Account account = Banco.get().getAccountManager().get(uuid);
-                        if (account != null)
-                            add(uuid, removed);
+                        Banco.get().getAccountManager().deposit(uuid, removed);
                     }
     
                     amount = amount.subtract(value.subtract(removed));

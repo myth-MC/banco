@@ -59,12 +59,11 @@ public class Transaction {
             return;
 
         if (account.amount().compareTo(newAmount) < 0) { // Add amount to account
+            account.setTransactions(BigDecimal.valueOf(0));
             BigDecimal toAdd = newAmount.subtract(account.amount());
 
             // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
-                account.setTransactions(BigDecimal.valueOf(0));
-
                 // Add to all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
                     if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
@@ -93,7 +92,6 @@ public class Transaction {
             
             // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
-                account.setTransactions(BigDecimal.valueOf(0));
 
                 // Remove from all BancoStorage instances
                 for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder())
