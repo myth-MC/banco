@@ -1,34 +1,41 @@
 package ovh.mythmc.banco.common.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
-import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
+import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
+import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
+import ovh.mythmc.gestalt.key.IdentifierKey;
 
 // Used for debugging
-public final class BancoListener implements Listener {
+public final class BancoListener {
 
-    @EventHandler
-    public void onTransaction(BancoTransactionEvent event) {
-        if (!Banco.get().getSettings().get().isDebug())
-            return;
+    private final static IdentifierKey DEBUG_KEY = IdentifierKey.of("banco", "debug");
 
-        Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {}",
-            event.transaction().account().getUuid(),
-            Bukkit.getOfflinePlayer(event.transaction().account().getUuid()).getName(),
-            event.transaction().amount(),
-            event.transaction().operation()
-        );
+    public void registerCallbacks() {
+        BancoTransactionCallback.INSTANCE.registerListener(DEBUG_KEY, (transaction) -> {
+            if (!Banco.get().getSettings().get().isDebug())
+                return;
+
+            Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {}",
+                transaction.account().getUuid(),
+                Bukkit.getOfflinePlayer(transaction.account().getUuid()).getName(),
+                transaction.amount(),
+                transaction.operation()
+            );
+        });
+
+        BancoItemRegisterCallback.INSTANCE.registerListener(DEBUG_KEY, (item) -> {
+            Banco.get().getLogger().info("Registered ItemStack {} with value {}",
+                item.asItemStack(),
+                item.value()
+            );
+        });
     }
 
-    @EventHandler
-    public void onItemRegister(BancoItemRegisterEvent event) {
-        Banco.get().getLogger().info("Registered ItemStack {} with value {}",
-            event.bancoItem().asItemStack(),
-            event.bancoItem().value()
-        );
+    public void unregisterCallbacks() {
+        BancoTransactionCallback.INSTANCE.unregisterListeners(DEBUG_KEY);
+        BancoItemRegisterCallback.INSTANCE.unregisterListeners(DEBUG_KEY);
     }
+
 }

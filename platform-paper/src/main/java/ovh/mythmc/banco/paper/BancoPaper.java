@@ -93,8 +93,6 @@ public final class BancoPaper extends BancoBootstrap {
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new PlayerListener(getPlugin()), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
-
-        Bukkit.getPluginManager().registerEvents(new BancoListener(), getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

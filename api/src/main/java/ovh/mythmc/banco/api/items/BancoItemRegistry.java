@@ -2,15 +2,15 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ovh.mythmc.banco.api.callbacks.item.BancoItemRegister;
+import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
+import ovh.mythmc.banco.api.callbacks.item.BancoItemUnregister;
+import ovh.mythmc.banco.api.callbacks.item.BancoItemUnregisterCallback;
 
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import ovh.mythmc.banco.api.events.impl.BancoItemRegisterEvent;
-import ovh.mythmc.banco.api.events.impl.BancoItemUnregisterEvent;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,11 +33,8 @@ public final class BancoItemRegistry {
      */
     public void register(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
-            // Call BancoItemRegisterEvent
-            BancoItemRegisterEvent event = new BancoItemRegisterEvent(bancoItem);
-            Bukkit.getPluginManager().callEvent(event);
-
-            itemList.add(event.bancoItem());
+            var callback = new BancoItemRegister(bancoItem);
+            BancoItemRegisterCallback.INSTANCE.handle(callback, result -> itemList.add(result.bancoItem()));
         });
     }
 
@@ -47,13 +44,8 @@ public final class BancoItemRegistry {
      */
     public void unregister(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
-            itemList.remove(bancoItem);
-
-            // Call BancoItemUnregisterEvent
-            BancoItemUnregisterEvent event = new BancoItemUnregisterEvent(bancoItem);
-            Bukkit.getPluginManager().callEvent(event);
-            
-            itemList.remove(event.bancoItem());
+            var callback = new BancoItemUnregister(bancoItem);
+            BancoItemUnregisterCallback.INSTANCE.handle(callback, result -> itemList.remove(result.bancoItem()));
         });
     }
 

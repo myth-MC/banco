@@ -17,6 +17,7 @@ import ovh.mythmc.banco.api.events.BancoEvent;
 @Accessors(fluent = true)
 @ToString
 @EqualsAndHashCode(callSuper = false)
+@Deprecated(since = "1.0", forRemoval = true)
 public final class BancoAccountUnregisterEvent extends BancoEvent {
     private @NotNull Account account;
 

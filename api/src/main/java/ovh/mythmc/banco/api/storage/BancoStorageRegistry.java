@@ -3,13 +3,14 @@ package ovh.mythmc.banco.api.storage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.events.impl.BancoStorageRegisterEvent;
-import ovh.mythmc.banco.api.events.impl.BancoStorageUnregisterEvent;
+import ovh.mythmc.banco.api.callbacks.storage.BancoStorageRegister;
+import ovh.mythmc.banco.api.callbacks.storage.BancoStorageRegisterCallback;
+import ovh.mythmc.banco.api.callbacks.storage.BancoStorageUnregister;
+import ovh.mythmc.banco.api.callbacks.storage.BancoStorageUnregisterCallback;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,10 +55,8 @@ public final class BancoStorageRegistry {
     public void registerStorage(final @NotNull BancoStorage... bancoStorages) {
         Arrays.asList(bancoStorages).stream()
             .forEach(storage -> {
-                BancoStorageRegisterEvent event = new BancoStorageRegisterEvent(storage);
-                Bukkit.getPluginManager().callEvent(event);
-
-                storages.add(event.bancoStorage());
+                var callback = new BancoStorageRegister(storage);
+                BancoStorageRegisterCallback.INSTANCE.handle(callback, result -> storages.add(result.bancoStorage()));
             });
     }
 
@@ -68,10 +67,8 @@ public final class BancoStorageRegistry {
     public void unregisterStorage(final @NotNull BancoStorage... bancoStorages) {
         Arrays.asList(bancoStorages).stream()
             .forEach(storage -> {
-                BancoStorageUnregisterEvent event = new BancoStorageUnregisterEvent(storage);
-                event.call();
-
-                storages.remove(event.bancoStorage());
+                var callback = new BancoStorageUnregister(storage);
+                BancoStorageUnregisterCallback.INSTANCE.handle(callback, result -> storages.remove(result.bancoStorage()));
             });
     }
 

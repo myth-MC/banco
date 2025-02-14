@@ -11,9 +11,11 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
+import ovh.mythmc.banco.api.callbacks.account.BancoAccountRegister;
+import ovh.mythmc.banco.api.callbacks.account.BancoAccountRegisterCallback;
+import ovh.mythmc.banco.api.callbacks.account.BancoAccountUnregister;
+import ovh.mythmc.banco.api.callbacks.account.BancoAccountUnregisterCallback;
 import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.api.events.impl.BancoAccountRegisterEvent;
-import ovh.mythmc.banco.api.events.impl.BancoAccountUnregisterEvent;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -44,10 +46,8 @@ public final class AccountManager {
      * @param account account to create and register
      */
     public synchronized void create(final @NotNull Account account) {
-        BancoAccountRegisterEvent event = new BancoAccountRegisterEvent(account);
-        event.callAsync();
-
-        database.create(event.account());
+        var callback = new BancoAccountRegister(account);
+        BancoAccountRegisterCallback.INSTANCE.handle(callback, result -> database.create(result.account()));
     }
 
     /**
@@ -55,10 +55,8 @@ public final class AccountManager {
      * @param account account to delete and unregister
      */
     public synchronized void delete(final @NotNull Account account) {
-        BancoAccountUnregisterEvent event = new BancoAccountUnregisterEvent(account);
-        event.callAsync();
-
-        database.delete(event.account());
+        var callback = new BancoAccountUnregister(account);
+        BancoAccountUnregisterCallback.INSTANCE.handle(callback, result -> database.delete(result.account()));
     }
 
     /**

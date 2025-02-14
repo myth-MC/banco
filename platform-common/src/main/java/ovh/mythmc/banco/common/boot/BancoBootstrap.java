@@ -20,6 +20,7 @@ import ovh.mythmc.banco.common.features.MetricsFeature;
 import ovh.mythmc.banco.common.features.PlaceholderAPIFeature;
 import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
 import ovh.mythmc.banco.common.features.VaultFeature;
+import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.GestaltListener;
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.features.FeatureConstructorParams;
@@ -35,7 +36,10 @@ public abstract class BancoBootstrap implements Banco {
     private JavaPlugin plugin;
 
     private final BancoSettingsProvider settings;
+
     private final File dataDirectory;
+
+    private BancoListener bancoListener;
 
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
                           final File dataDirectory) {
@@ -75,6 +79,10 @@ public abstract class BancoBootstrap implements Banco {
         // Register Gestalt feature listener
         Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
+        // Register debugger callbacks
+        bancoListener = new BancoListener();
+        bancoListener.registerCallbacks();
+
         try {
             Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary database verbose
             Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + File.separator + "accounts.db");
@@ -93,6 +101,8 @@ public abstract class BancoBootstrap implements Banco {
     public abstract void disable();
 
     public final void shutdown() {
+        bancoListener.unregisterCallbacks();
+
         Banco.get().getAccountManager().getDatabase().shutdown();
     }
 

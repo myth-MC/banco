@@ -5,6 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated(forRemoval = true)
 public class BancoEvent extends Event {
 
     private static final @NotNull HandlerList handlers = new HandlerList();

@@ -32,10 +32,19 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>social-api</artifactId>
             <version>v0.3.0b</version>
+            <scope>provided</scope>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>com.github.myth-MC.social</groupId>
+            <artifactId>social-api</artifactId>
+            <version>5771cbb</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

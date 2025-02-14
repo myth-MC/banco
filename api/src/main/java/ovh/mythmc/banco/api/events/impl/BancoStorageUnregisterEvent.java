@@ -18,6 +18,7 @@ import ovh.mythmc.banco.api.storage.BancoStorage;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @RequiredArgsConstructor
+@Deprecated(since = "1.0", forRemoval = true)
 public final class BancoStorageUnregisterEvent extends BancoEvent {
     private final @NotNull BancoStorage bancoStorage;
 }

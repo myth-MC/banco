@@ -98,13 +98,15 @@ public final class AccountDatabase {
     }
 
     private void updateAllDatabaseEntries() {
+        var startTime = System.currentTimeMillis();
+
         if (Banco.get().getSettings().get().isDebug())
             Banco.get().getLogger().info("Updating " + cache.size() + " cached accounts...");
 
         Map.copyOf(cache).values().forEach(this::updateDatabaseEntry);
 
         if (Banco.get().getSettings().get().isDebug())
-            Banco.get().getLogger().info("Done!");
+            Banco.get().getLogger().info("Done! (took " + (System.currentTimeMillis() - startTime) + "ms)");
     }
 
     private void updateDatabaseEntry(@NotNull Account account) {

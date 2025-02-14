@@ -11,7 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.events.impl.BancoTransactionEvent;
+import ovh.mythmc.banco.api.callbacks.BancoTransaction;
+import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 
@@ -28,14 +29,14 @@ public class Transaction {
     private @NotNull BigDecimal amount;
 
     public void transact() {
-        // Call event
-        BancoTransactionEvent event = new BancoTransactionEvent(this);
-        event.callAsync();
-
-        // Update values in case they've been changed
-        account = event.transaction().account();
-        operation = event.transaction().operation();
-        amount = event.transaction().amount();
+        // Callback
+        var callback = new BancoTransaction(this);
+        BancoTransactionCallback.INSTANCE.handle(callback, result -> {
+            // Update values in case they've been changed
+            account = result.transaction().account();
+            operation = result.transaction().operation();
+            amount = result.transaction().amount();
+        });
 
         switch (operation) {
             case DEPOSIT -> {

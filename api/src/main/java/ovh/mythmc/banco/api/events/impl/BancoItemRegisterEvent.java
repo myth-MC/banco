@@ -18,6 +18,7 @@ import ovh.mythmc.banco.api.items.BancoItem;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 @RequiredArgsConstructor
+@Deprecated(since = "1.0", forRemoval = true)
 public final class BancoItemRegisterEvent extends BancoEvent {
     private final @NotNull BancoItem bancoItem;
 }
