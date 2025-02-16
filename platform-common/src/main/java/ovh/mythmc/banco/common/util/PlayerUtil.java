@@ -14,6 +14,7 @@ import java.util.UUID;
 @UtilityClass
 public class PlayerUtil {
 
+    @Deprecated(forRemoval = true)
     public UUID getUuid(@NotNull String name) {
         UUID uuid = null;
 

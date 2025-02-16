@@ -31,7 +31,7 @@ public class Transaction {
     public void transact() {
         // Callback
         var callback = new BancoTransaction(this);
-        BancoTransactionCallback.INSTANCE.handle(callback, result -> {
+        BancoTransactionCallback.INSTANCE.invoke(callback, result -> {
             // Update values in case they've been changed
             account = result.transaction().account();
             operation = result.transaction().operation();

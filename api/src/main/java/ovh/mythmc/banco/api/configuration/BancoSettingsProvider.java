@@ -28,6 +28,11 @@ public final class BancoSettingsProvider {
         );
     }
 
+    public void updateVersion(int newVersion) {
+        this.settings.getDatabase().setVersion(newVersion);
+        YamlConfigurations.save(settingsFilePath, BancoSettings.class, this.settings);
+    }
+
     public BancoSettings get() { return settings; }
 
 }

@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
 import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
-import ovh.mythmc.gestalt.key.IdentifierKey;
+import ovh.mythmc.callbacks.key.IdentifierKey;
 
 // Used for debugging
 public final class BancoListener {

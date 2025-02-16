@@ -59,7 +59,7 @@ public class CurrencyConfig {
             false, 
             "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
             List.of(
-                new BancoItemOptions.AttributeField("minecraft:movement_speed", 0.05, AttributeModifier.Operation.ADD_NUMBER, "ANY")
+                new BancoItemOptions.AttributeField("minecraft:movement_speed", -0.0025, AttributeModifier.Operation.ADD_NUMBER, "ANY")
             )
         ))
     );

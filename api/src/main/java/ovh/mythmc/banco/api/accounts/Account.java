@@ -1,6 +1,7 @@
 package ovh.mythmc.banco.api.accounts;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ import com.j256.ormlite.table.DatabaseTable;
 @Data
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @DatabaseTable(tableName = "accounts")
 public class Account {
 
@@ -24,19 +26,15 @@ public class Account {
     @DatabaseField(id = true)
     private UUID uuid;
 
+    @Getter(AccessLevel.PUBLIC)
+    @DatabaseField(canBeNull = false)
+    private String name;
+
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal amount;
 
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal transactions;
-
-    public Account(UUID uuid,
-                   BigDecimal amount,
-                   BigDecimal transactions) {
-        this.uuid = uuid;
-        this.amount = amount;
-        this.transactions = transactions;
-    }
 
     /**
      * Returns this account's balance
@@ -44,6 +42,10 @@ public class Account {
      */
     public BigDecimal amount() {
         return Banco.get().getAccountManager().amount(uuid);
+    }
+
+    public AccountIdentifierKey getIdentifier() {
+        return AccountIdentifierKey.of(uuid, name);
     }
     
     protected void setAmount(BigDecimal amount) {

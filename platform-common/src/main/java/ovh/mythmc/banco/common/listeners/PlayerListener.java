@@ -26,11 +26,13 @@ public class PlayerListener implements Listener {
             @Override
             public void run() {
                 UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
-                Account account = Banco.get().getAccountManager().get(uuid);
+                Account account = Banco.get().getAccountManager().getByUuid(uuid);
         
                 if (account == null) {
-                    account = new Account(uuid, BigDecimal.valueOf(0), BigDecimal.valueOf(0));
+                    account = new Account(uuid, event.getPlayer().getName(), BigDecimal.valueOf(0), BigDecimal.valueOf(0));
                     Banco.get().getAccountManager().create(account);
+                } else {
+                    Banco.get().getAccountManager().updateName(account, event.getPlayer().getName());
                 }
         
                 Banco.get().getAccountManager().updateTransactions(account);
@@ -45,7 +47,7 @@ public class PlayerListener implements Listener {
             public void run() {
                 UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
 
-                if (Banco.get().getAccountManager().get(uuid) == null)
+                if (Banco.get().getAccountManager().getByUuid(uuid) == null)
                     return;
         
                 Banco.get().getAccountManager().amount(uuid); // updates account's balance amount

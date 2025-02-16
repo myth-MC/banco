@@ -5,7 +5,6 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MathUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.function.BiConsumer;
@@ -22,7 +21,7 @@ public class GiveSubcommand implements BiConsumer<Audience, String[]> {
             return;
         }
 
-        Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
+        Account target = Banco.get().getAccountManager().getByName(args[0]);
         if (target == null) {
             MessageUtil.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
             return;

@@ -41,7 +41,7 @@ public final class BancoSocialHook {
 
         @Override
         public Component process(SocialParserContext context) {
-            Account account = Banco.get().getAccountManager().get(context.user().getUuid());
+            Account account = Banco.get().getAccountManager().getByUuid(context.user().getUuid());
             if (account == null)
                 return null;
 

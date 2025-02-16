@@ -29,7 +29,7 @@ public final class AccountDatabase {
     private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
 
     private Dao<Account, UUID> accountsDao;
-    private final Map<UUID, Account> cache = new HashMap<>();
+    private final Map<AccountIdentifierKey, Account> cache = new HashMap<>();
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -52,6 +52,8 @@ public final class AccountDatabase {
         ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
         TableUtils.createTableIfNotExists(connectionSource, Account.class);
         accountsDao = DaoManager.createDao(connectionSource, Account.class);
+
+        upgrade();
 
         scheduleAutoSaver();
 
@@ -80,7 +82,7 @@ public final class AccountDatabase {
     }
 
     public void update(@NotNull Account account) {
-        cache.put(account.getUuid(), account);
+        cache.put(account.getIdentifier(), account);
     }
 
     private void scheduleAutoSaver() {
@@ -114,7 +116,7 @@ public final class AccountDatabase {
             accountsDao.update(account);
 
             // Clear cache value
-            cache.remove(account.getUuid());
+            cache.remove(account.getIdentifier());
         } catch (SQLException e) {
             logger.error("Exception while updating account {}", e);
         }
@@ -135,21 +137,76 @@ public final class AccountDatabase {
     }
 
     public Account getByUuid(@NotNull UUID uuid) {
-        if (cache.containsKey(uuid))
-            return cache.get(uuid);
+        Account cachedAccount = findCachedAccountByUuid(uuid);
+        if (cachedAccount != null)
+            return cachedAccount;
 
         try {
             Account account = accountsDao.queryForId(uuid);
             if (account == null)
                 return null;
 
-            cache.put(uuid, account);
+            cache.put(account.getIdentifier(), account);
             return account;
         } catch (SQLException e) {
             logger.error("Exception while getting account {}", e);
         }
 
         return null;
+    }
+
+    public Account getByName(@NotNull String name) {
+        Account cachedAccount = findCachedAccountByName(name);
+        if (cachedAccount != null)
+            return cachedAccount;
+
+        try {
+            List<Account> accounts = accountsDao.queryBuilder()
+                    .where()
+                    .eq("name", name)
+                    .query();
+
+            if (accounts != null && !accounts.isEmpty()) {
+                Account account = accounts.getFirst();
+                
+                cache.put(account.getIdentifier(), account);
+                return account;
+            }
+        } catch (SQLException e) {
+            logger.error("Exception while getting account {}", e);
+        }
+
+        return null;
+    }
+
+    private Account findCachedAccountByUuid(@NotNull UUID uuid) {
+        return cache.entrySet().stream()
+            .filter(entry -> entry.getKey().uuid().equals(uuid))
+            .map(entry -> entry.getValue())
+            .findFirst().orElse(null);
+    }
+
+    private Account findCachedAccountByName(@NotNull String name) {
+        return cache.entrySet().stream()
+            .filter(entry -> entry.getKey().name() != null)
+            .filter(entry -> entry.getKey().name().equals(name))
+            .map(entry -> entry.getValue())
+            .findFirst().orElse(null);
+    }
+
+    public void upgrade() {
+        int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
+        if(oldVersion < 1) {
+            try {
+                logger.info("Upgrading database...");
+                accountsDao.executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
+                logger.info("Done!");
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+            }
+        }
+
+        Banco.get().getSettings().updateVersion(1);
     }
     
 }

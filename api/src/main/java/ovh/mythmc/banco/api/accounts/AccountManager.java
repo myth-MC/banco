@@ -47,7 +47,7 @@ public final class AccountManager {
      */
     public synchronized void create(final @NotNull Account account) {
         var callback = new BancoAccountRegister(account);
-        BancoAccountRegisterCallback.INSTANCE.handle(callback, result -> database.create(result.account()));
+        BancoAccountRegisterCallback.INSTANCE.invoke(callback, result -> database.create(result.account()));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class AccountManager {
      */
     public synchronized void delete(final @NotNull Account account) {
         var callback = new BancoAccountUnregister(account);
-        BancoAccountUnregisterCallback.INSTANCE.handle(callback, result -> database.delete(result.account()));
+        BancoAccountUnregisterCallback.INSTANCE.invoke(callback, result -> database.delete(result.account()));
     }
 
     /**
@@ -75,11 +75,31 @@ public final class AccountManager {
 
     /**
      * Gets a specific account by its UUID
+     * @deprecated use getByUuid(uuid) instead
      * @param uuid UUID of the player
      * @return an account matching the UUID or null
      */
+    @Deprecated(forRemoval = true, since = "1.0")
     public Account get(final @NotNull UUID uuid) {
+        return getByUuid(uuid);
+    }
+
+    /**
+     * Gets a specific account by its UUID
+     * @param uuid UUID of the player
+     * @return an account matching the UUID or null
+     */
+    public Account getByUuid(final @NotNull UUID uuid) {
         return database.getByUuid(uuid);
+    }
+
+    /**
+     * Gets a specific account by its UUID
+     * @param uuid UUID of the player
+     * @return an account matching the UUID or null
+     */
+    public Account getByName(final @NotNull String name) {
+        return database.getByName(name);
     }
 
     /**
@@ -224,6 +244,12 @@ public final class AccountManager {
         database.update(account);
 
         set(account.getUuid(), amount);
+    }
+
+    @ApiStatus.Internal
+    public void updateName(final @NotNull Account account, String newName) {
+        account.setName(newName);
+        database.update(account);
     }
 
     /**

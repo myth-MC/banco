@@ -8,6 +8,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.banco.common.util.PlayerUtil;
@@ -84,7 +85,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean hasAccount(String s) {
-        return Banco.get().getAccountManager().get(PlayerUtil.getUuid(s)) != null;
+        return Banco.get().getAccountManager().getByName(s) != null;
     }
 
     @Override
@@ -107,12 +108,12 @@ public class BancoVaultHook implements Economy {
         if (!hasAccount(s))
             return 0;
 
-        UUID uuid = PlayerUtil.getUuid(s);
+        Account account = Banco.get().getAccountManager().getByName(s);
 
-        if (PlayerUtil.isInBlacklistedWorld(uuid))
+        if (PlayerUtil.isInBlacklistedWorld(account.getUuid()))
             return 0;
 
-        return Banco.get().getAccountManager().amount(uuid).doubleValue();
+        return Banco.get().getAccountManager().amount(account).doubleValue();
     }
 
     @Override

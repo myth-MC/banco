@@ -56,7 +56,7 @@ public final class BancoStorageRegistry {
         Arrays.asList(bancoStorages).stream()
             .forEach(storage -> {
                 var callback = new BancoStorageRegister(storage);
-                BancoStorageRegisterCallback.INSTANCE.handle(callback, result -> storages.add(result.bancoStorage()));
+                BancoStorageRegisterCallback.INSTANCE.invoke(callback, result -> storages.add(result.bancoStorage()));
             });
     }
 
@@ -68,7 +68,7 @@ public final class BancoStorageRegistry {
         Arrays.asList(bancoStorages).stream()
             .forEach(storage -> {
                 var callback = new BancoStorageUnregister(storage);
-                BancoStorageUnregisterCallback.INSTANCE.handle(callback, result -> storages.remove(result.bancoStorage()));
+                BancoStorageUnregisterCallback.INSTANCE.invoke(callback, result -> storages.remove(result.bancoStorage()));
             });
     }
 

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -25,7 +24,7 @@ public abstract class BalanceCommand {
         if (args.length == 0) {
             if (uuid.isEmpty()) return;
 
-            BigDecimal amount = Banco.get().getAccountManager().get(uuid.get()).amount();
+            BigDecimal amount = Banco.get().getAccountManager().getByUuid(uuid.get()).amount();
 
             MessageUtil.info(sender, translatable("banco.commands.balance",
                     text(MessageUtil.format(amount)),
@@ -39,7 +38,7 @@ public abstract class BalanceCommand {
             if (!Banco.get().getSettings().get().getCurrency().isChangeMoney())
                 return;
 
-            Account account = Banco.get().getAccountManager().get(uuid.get());
+            Account account = Banco.get().getAccountManager().getByUuid(uuid.get());
             if (account == null)
                 return;
 
@@ -53,7 +52,7 @@ public abstract class BalanceCommand {
             return;
         }
 
-        Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
+        Account target = Banco.get().getAccountManager().getByName(args[0]);
 
         if (target == null) {
             MessageUtil.error(sender, translatable("banco.errors.player-not-found", text(args[0])));

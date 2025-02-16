@@ -36,7 +36,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        Account account = Banco.get().getAccountManager().get(player.getUniqueId());
+        Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
         if (account == null)
             return null;
 

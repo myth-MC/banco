@@ -34,7 +34,7 @@ public final class BancoItemRegistry {
     public void register(@NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             var callback = new BancoItemRegister(bancoItem);
-            BancoItemRegisterCallback.INSTANCE.handle(callback, result -> itemList.add(result.bancoItem()));
+            BancoItemRegisterCallback.INSTANCE.invoke(callback, result -> itemList.add(result.bancoItem()));
         });
     }
 
@@ -45,7 +45,7 @@ public final class BancoItemRegistry {
     public void unregister(final @NotNull BancoItem... items) {
         Arrays.asList(items).forEach(bancoItem -> {
             var callback = new BancoItemUnregister(bancoItem);
-            BancoItemUnregisterCallback.INSTANCE.handle(callback, result -> itemList.remove(result.bancoItem()));
+            BancoItemUnregisterCallback.INSTANCE.invoke(callback, result -> itemList.remove(result.bancoItem()));
         });
     }
 

@@ -14,6 +14,13 @@ public class DatabaseConfig {
     @Comment("Time between each cache clean in minutes")
     private int cacheClearInterval = 5;
 
+    @Comment("Don't change this, you might lose all your data")
+    private int databaseVersion = 1;
+
+    public void setVersion(int version) {
+        databaseVersion = version;
+    }
+
     public enum DatabaseType {
         SQLITE,
         MYSQL,

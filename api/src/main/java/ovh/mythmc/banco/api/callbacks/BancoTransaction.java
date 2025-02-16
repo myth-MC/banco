@@ -5,17 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ovh.mythmc.banco.api.accounts.Transaction;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.Callback;
-import ovh.mythmc.gestalt.callbacks.v1.annotations.CallbackFieldGetter;
+import ovh.mythmc.callbacks.annotations.v1.Callback;
+import ovh.mythmc.callbacks.annotations.v1.CallbackFieldGetter;
 
 @AllArgsConstructor
 @Getter
 @Setter
 @Accessors(fluent = true)
 @Callback
+@CallbackFieldGetter(field = "transaction", getter = "transaction()")
 public final class BancoTransaction {
     
-    @CallbackFieldGetter("transaction")
     private Transaction transaction;
 
 }
