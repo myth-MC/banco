@@ -21,6 +21,7 @@ public abstract class BancoCommand {
         subCommands.put("give", new GiveSubcommand());
         subCommands.put("take", new TakeSubcommand());
         subCommands.put("reload", new ReloadSubcommand());
+        subCommands.put("dump", new DumpSubcommand());
     }
 
     public void run(@NotNull Audience sender, @NotNull String[] args) {

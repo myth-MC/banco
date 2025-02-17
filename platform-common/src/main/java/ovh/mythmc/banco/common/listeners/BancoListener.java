@@ -5,12 +5,11 @@ import org.bukkit.Bukkit;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
 import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
-import ovh.mythmc.callbacks.key.IdentifierKey;
 
 // Used for debugging
 public final class BancoListener {
 
-    private final static IdentifierKey DEBUG_KEY = IdentifierKey.of("banco", "debug");
+    private final static String DEBUG_KEY = "banco:debug";
 
     public void registerCallbacks() {
         BancoTransactionCallback.INSTANCE.registerListener(DEBUG_KEY, (transaction) -> {

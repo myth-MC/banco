@@ -1,5 +1,9 @@
 package ovh.mythmc.banco.api.accounts;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +35,8 @@ public final class AccountDatabase {
     private Dao<Account, UUID> accountsDao;
     private final Map<AccountIdentifierKey, Account> cache = new HashMap<>();
 
+    private String path;
+
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(final String message, final Object... args) {
@@ -53,12 +59,27 @@ public final class AccountDatabase {
         TableUtils.createTableIfNotExists(connectionSource, Account.class);
         accountsDao = DaoManager.createDao(connectionSource, Account.class);
 
+        this.path = path;
+
+        backup("backup");
         upgrade();
 
         scheduleAutoSaver();
 
         if (Banco.get().getSettings().get().isDebug())
             Banco.get().getLogger().info("Loaded a total amount of " + get().size() + " accounts! (using V3 format)");
+    }
+
+    public void backup(String differentiator) {
+        var file = new File(path);
+        var oldFile = new File(path + "." + differentiator);
+        
+        try {
+            Files.deleteIfExists(oldFile.toPath());
+            Files.copy(file.toPath(), new FileOutputStream(oldFile));
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
     }
 
     public void shutdown() {

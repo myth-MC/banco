@@ -8,11 +8,22 @@ import lombok.experimental.UtilityClass;
 import ovh.mythmc.banco.api.Banco;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
 @UtilityClass
 public class PlayerUtil {
+
+    public OfflinePlayer getOfflinePlayerByUuid(final @NotNull UUID uuid) {
+        for (OfflinePlayer offlinePlayer : Arrays.asList(Bukkit.getOfflinePlayers())) {
+            if (offlinePlayer.getUniqueId().equals(uuid)) {
+                return offlinePlayer;
+            }
+        }
+
+        return null;
+    }
 
     @Deprecated(forRemoval = true)
     public UUID getUuid(@NotNull String name) {

@@ -25,7 +25,8 @@ public class PlayerListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+                //UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+                UUID uuid = event.getPlayer().getUniqueId();
                 Account account = Banco.get().getAccountManager().getByUuid(uuid);
         
                 if (account == null) {
@@ -45,7 +46,8 @@ public class PlayerListener implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
-                UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+                //UUID uuid = PlayerUtil.getUuid(event.getPlayer().getName());
+                UUID uuid = event.getPlayer().getUniqueId();
 
                 if (Banco.get().getAccountManager().getByUuid(uuid) == null)
                     return;

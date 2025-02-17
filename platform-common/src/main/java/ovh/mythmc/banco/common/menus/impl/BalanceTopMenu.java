@@ -11,6 +11,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.common.menus.BasicMenu;
 import ovh.mythmc.banco.common.menus.MenuButton;
 import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -31,8 +32,8 @@ public final class BalanceTopMenu extends BasicMenu {
                 if (slot >= 8)
                     break;
     
-                OfflinePlayer player = Bukkit.getOfflinePlayer(entry.getKey());
-                if (!player.hasPlayedBefore())
+                OfflinePlayer player = PlayerUtil.getOfflinePlayerByUuid(entry.getKey());
+                if (player == null || !player.hasPlayedBefore())
                     continue;
                     
                 String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();

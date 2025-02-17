@@ -15,7 +15,7 @@ public class DatabaseConfig {
     private int cacheClearInterval = 5;
 
     @Comment("Don't change this, you might lose all your data")
-    private int databaseVersion = 1;
+    private int databaseVersion = 0;
 
     public void setVersion(int version) {
         databaseVersion = version;
