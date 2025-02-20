@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.api.callbacks.account;
+package ovh.mythmc.banco.api.callback.account;
 
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.callbacks.annotations.v1.Callback;

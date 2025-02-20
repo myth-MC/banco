@@ -2,10 +2,10 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ovh.mythmc.banco.api.callbacks.item.BancoItemRegister;
-import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
-import ovh.mythmc.banco.api.callbacks.item.BancoItemUnregister;
-import ovh.mythmc.banco.api.callbacks.item.BancoItemUnregisterCallback;
+import ovh.mythmc.banco.api.callback.item.BancoItemRegister;
+import ovh.mythmc.banco.api.callback.item.BancoItemUnregister;
+import ovh.mythmc.banco.api.callback.item.BancoItemRegisterCallback;
+import ovh.mythmc.banco.api.callback.item.BancoItemUnregisterCallback;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;

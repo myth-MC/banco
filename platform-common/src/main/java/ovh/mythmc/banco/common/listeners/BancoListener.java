@@ -3,8 +3,8 @@ package ovh.mythmc.banco.common.listeners;
 import org.bukkit.Bukkit;
 
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
-import ovh.mythmc.banco.api.callbacks.item.BancoItemRegisterCallback;
+import ovh.mythmc.banco.api.callback.transaction.BancoTransactionProcessCallback;
+import ovh.mythmc.banco.api.callback.item.BancoItemRegisterCallback;
 
 // Used for debugging
 public final class BancoListener {
@@ -12,15 +12,16 @@ public final class BancoListener {
     private final static String DEBUG_KEY = "banco:debug";
 
     public void registerCallbacks() {
-        BancoTransactionCallback.INSTANCE.registerListener(DEBUG_KEY, (transaction) -> {
+        BancoTransactionProcessCallback.INSTANCE.registerListener(DEBUG_KEY, (transaction, cancelled) -> {
             if (!Banco.get().getSettings().get().isDebug())
                 return;
 
-            Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {}",
+            Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {} - cancelled: {}",
                 transaction.account().getUuid(),
                 Bukkit.getOfflinePlayer(transaction.account().getUuid()).getName(),
                 transaction.amount(),
-                transaction.operation()
+                transaction.operation(),
+                cancelled
             );
         });
 
@@ -33,7 +34,7 @@ public final class BancoListener {
     }
 
     public void unregisterCallbacks() {
-        BancoTransactionCallback.INSTANCE.unregisterListeners(DEBUG_KEY);
+        BancoTransactionProcessCallback.INSTANCE.unregisterListeners(DEBUG_KEY);
         BancoItemRegisterCallback.INSTANCE.unregisterListeners(DEBUG_KEY);
     }
 

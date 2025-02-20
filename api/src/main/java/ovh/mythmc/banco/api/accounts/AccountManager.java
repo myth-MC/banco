@@ -11,10 +11,10 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
-import ovh.mythmc.banco.api.callbacks.account.BancoAccountRegister;
-import ovh.mythmc.banco.api.callbacks.account.BancoAccountRegisterCallback;
-import ovh.mythmc.banco.api.callbacks.account.BancoAccountUnregister;
-import ovh.mythmc.banco.api.callbacks.account.BancoAccountUnregisterCallback;
+import ovh.mythmc.banco.api.callback.account.BancoAccountRegister;
+import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
+import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
+import ovh.mythmc.banco.api.callback.account.BancoAccountUnregisterCallback;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 
 import java.math.BigDecimal;

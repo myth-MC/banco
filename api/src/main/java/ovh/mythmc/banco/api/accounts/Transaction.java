@@ -11,8 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.callbacks.BancoTransaction;
-import ovh.mythmc.banco.api.callbacks.BancoTransactionCallback;
+import ovh.mythmc.banco.api.callback.transaction.BancoTransactionProcessCallback;
+import ovh.mythmc.banco.api.callback.transaction.BancoTransactionProcess;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.storage.BancoStorage;
 
@@ -30,13 +30,11 @@ public class Transaction {
 
     public void transact() {
         // Callback
-        var callback = new BancoTransaction(this);
-        BancoTransactionCallback.INSTANCE.invoke(callback, result -> {
-            // Update values in case they've been changed
-            account = result.transaction().account();
-            operation = result.transaction().operation();
-            amount = result.transaction().amount();
-        });
+        var callback = new BancoTransactionProcess(this);
+        BancoTransactionProcessCallback.INSTANCE.invoke(callback);
+
+        if (callback.cancelled())
+            return;
 
         switch (operation) {
             case DEPOSIT -> {
@@ -53,6 +51,10 @@ public class Transaction {
 
     public void queue() {
         BancoScheduler.get().queueTransaction(this);
+    }
+
+    public ImmutableView asImmutable() {
+        return new ImmutableView(this);
     }
 
     private void set(@NotNull BigDecimal newAmount) {
@@ -124,6 +126,28 @@ public class Transaction {
         DEPOSIT,
         WITHDRAW,
         SET
+    }
+
+    public static class ImmutableView {
+
+        private final Transaction transaction;
+
+        ImmutableView(Transaction transaction) {
+            this.transaction = transaction;
+        }
+
+        public Account account() {
+            return transaction.account;
+        }
+
+        public BigDecimal amount() {
+            return transaction.amount;
+        }
+
+        public Operation operation() {
+            return transaction.operation;
+        }
+
     }
 
 }

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction;
+import ovh.mythmc.banco.api.callback.transaction.BancoTransactionQueue;
+import ovh.mythmc.banco.api.callback.transaction.BancoTransactionQueueCallback;
 
 public abstract class BancoScheduler {
 
@@ -40,6 +42,11 @@ public abstract class BancoScheduler {
     }
 
     public void queueTransaction(Transaction transaction) {
+        var callback = new BancoTransactionQueue(transaction.asImmutable(), transactionQueue.size() + 1);
+        BancoTransactionQueueCallback.INSTANCE.invoke(callback);
+        if (callback.cancelled())
+            return;
+
         transactionQueue.add(transaction);
     }
 

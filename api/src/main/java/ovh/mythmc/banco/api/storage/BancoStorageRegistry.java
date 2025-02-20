@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.callbacks.storage.BancoStorageRegister;
-import ovh.mythmc.banco.api.callbacks.storage.BancoStorageRegisterCallback;
-import ovh.mythmc.banco.api.callbacks.storage.BancoStorageUnregister;
-import ovh.mythmc.banco.api.callbacks.storage.BancoStorageUnregisterCallback;
+import ovh.mythmc.banco.api.callback.storage.BancoStorageRegister;
+import ovh.mythmc.banco.api.callback.storage.BancoStorageUnregister;
+import ovh.mythmc.banco.api.callback.storage.BancoStorageRegisterCallback;
+import ovh.mythmc.banco.api.callback.storage.BancoStorageUnregisterCallback;
 
 import java.util.Arrays;
 import java.util.Collection;
