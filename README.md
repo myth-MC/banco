@@ -30,10 +30,7 @@
 
 ## 📚 Information
 
-**banco 🏦** provides server owners with a simple and configurable item-based currency system, ideal for RPG-style servers.
-
->[!WARNING]
-> banco is still under development. Although most of its features do work, we cannot promise a bug-free experience. You can report any misbehaviours or share any feedback by [creating an issue](https://github.com/myth-MC/banco/issues). 
+**banco 🏦** provides server owners with a **simple** and **configurable** item-based currency system, ideal for RPG-style servers. The plugin has been designed with **performance** on mind, making it a good fit for small or large servers equally.
 
 ### Features
 
@@ -41,7 +38,7 @@
 * 💭 **Customizable items** (display name, lore, custom model data, item attributes...) with built-in support for **ItemsAdder**, **Nexo**, Slimefun, Oraxen, Nova and MythicMobs
 * 🤝 [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
 * 🏷️ [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
-* 🌐 **Multi-language** (full list [here](https://docs.mythmc.ovh/banco/administration/translations))
+* 🌐 **Multi-language** (full list [here](https://banco.mythmc.ovh/docs/getting-started/configuration/translations/))
 * 🍃 **Lightweight** and performant with scalable optimizations
 * 😮‍💨 Developed with **configurability** and simplicity on mind
 * ☕️ Extensive **API for developers** with countless possibilities
