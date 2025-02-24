@@ -2,6 +2,7 @@ package ovh.mythmc.banco.api.items;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.callback.item.BancoItemRegister;
 import ovh.mythmc.banco.api.callback.item.BancoItemUnregister;
 import ovh.mythmc.banco.api.callback.item.BancoItemRegisterCallback;
@@ -90,6 +91,10 @@ public final class BancoItemRegistry {
     @Deprecated(since = "1.0", forRemoval = true)
     public BigDecimal value(final @NotNull BancoItem item, int amount) {
         return item.value().multiply(BigDecimal.valueOf(amount));
+    }
+
+    public boolean isLegacy() {
+        return Banco.get().getSettings().get().getCurrency().getItems() != null;
     }
 
 }

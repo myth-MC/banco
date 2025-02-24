@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import lombok.AccessLevel;
 import lombok.With;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 import java.math.BigDecimal;
@@ -42,11 +39,11 @@ public record LegacyBancoItem(@NotNull String name,
 
         // Apply custom display name
         if (displayName != null)
-            itemMeta.setDisplayName(format(displayName));
+            itemMeta.setDisplayName(displayName);
 
         // Apply lore
         if (lore != null)
-            itemMeta.setLore(lore.stream().map(this::format).toList());
+            itemMeta.setLore(lore.stream().toList());
 
         // Apply custom model data
         if (customModelData != null)
@@ -64,10 +61,5 @@ public record LegacyBancoItem(@NotNull String name,
 
         return itemStack;
     }
-
-    private String format(String input) {
-        Component component = MiniMessage.miniMessage().deserialize(input);
-        return LegacyComponentSerializer.legacySection().serialize(component);
-    } 
 
 }
