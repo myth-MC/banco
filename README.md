@@ -15,13 +15,13 @@
   <summary>Quick navigation</summary>
   <ol>
     <li>
-      <a href="#information">Information</a>
+      <a href="#information">📚 Information</a>
     </li>
     <li>
-      <a href="#installation">Installation</a>
+      <a href="#installation">📥 Installation</a>
     </li>
     <li>
-      <a href="#usage">Usage</a>
+      <a href="#usage">✏ Usage</a>
     </li>
   </ol>
 </details>
@@ -37,14 +37,15 @@
 
 ### Features
 
-* **Item-based** economy system
-* Customizable items (display name, lore and **custom model data**)
-* [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
-* [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
-* **Multi-language** (full list [here](https://docs.mythmc.ovh/banco/administration/translations))
-* **Lightweight** and performant
-* Developed with **configurability** and simplicity on mind
-* No dependencies other than Vault
+* 💰 **Item-based** economy system with support for bundles
+* 💭 **Customizable items** (display name, lore, custom model data, item attributes...) with built-in support for **ItemsAdder**, **Nexo**, Slimefun, Oraxen, Nova and MythicMobs
+* 🤝 [Vault](https://www.spigotmc.org/resources/vault.34315/) support (Towny Advanced, Factions, Jobs Reborn...)
+* 🏷️ [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) support
+* 🌐 **Multi-language** (full list [here](https://docs.mythmc.ovh/banco/administration/translations))
+* 🍃 **Lightweight** and performant with scalable optimizations
+* 😮‍💨 Developed with **configurability** and simplicity on mind
+* ☕️ Extensive **API for developers** with countless possibilities
+* ‼️ No dependencies other than Vault
 
 ### Planned features
 
@@ -69,8 +70,6 @@
 ### Dependencies
 
 * [Vault](https://www.spigotmc.org/resources/vault.34315/) 1.7+ or [VaultUnlocked](https://www.spigotmc.org/resources/vaultunlocked.117277/) 2.2+ (required)
-* [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) (optional)
-* [Towny Advanced](https://townyadvanced.github.io) (optional)
 
 <div id="installation"></div>
 
@@ -87,14 +86,12 @@
 
 When you run banco for the very first time it will automatically generate two files:
 * 'settings.yml' contains general settings
-* 'accounts.yml' is where data will be stored
+* 'accounts.db' is where accounts will be stored
 
-banco comes with a very simple gold-based economy setup that can be expanded by modifying `settings.yml`
+banco comes with a very simple emerald-based economy setup that can be expanded by modifying `settings.yml`
 
-#### Other supported plugins
+### Built-in Integrations
 
-* [Towny Advanced](https://townyadvanced.github.io)
-* [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
-* Any other plugin with Vault support
-  
-<div id="bugs"></div>
+* 🏷️ [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
+* 🐣 [social](https://github.com/myth-MC/social)
+* Any other plugin with Vault support, including Factions, Towny Advanced, Jobs...
