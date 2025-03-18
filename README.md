@@ -92,3 +92,12 @@ banco comes with a very simple emerald-based economy setup that can be expanded 
 * 🏷️ [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
 * 🐣 [social](https://github.com/myth-MC/social)
 * Any other plugin with Vault support, including Factions, Towny Advanced, Jobs...
+
+<hr>
+
+<a href="https://sponsor.mythmc.ovh/">
+  <img src="https://assets.mythmc.ovh/banner_godlike.png" />
+</a>
+<div align="center">
+  <p>We're sponsored by <a href="https://sponsor.mythmc.ovh/">Godlike</a>, a high performance game server hosting. Check them out!</p>
+</div>
