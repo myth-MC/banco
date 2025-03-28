@@ -2,76 +2,101 @@ package ovh.mythmc.banco.common.util;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import org.jetbrains.annotations.NotNull;
+
+import lombok.experimental.UtilityClass;
 import ovh.mythmc.banco.api.Banco;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public final class MessageUtil {
+@UtilityClass
+public class MessageUtil {
 
-    private static final class Icons {
-        public static String WARNING = "\u26A0";
-        public static String CHECKMARK = "\u2714";
-        public static String CROSS = "\u274C";
-        public static String BELL = "\uD83D\uDD14";
-        public static String BUG = "\uD83E\uDEB2";
-    }
-
-    public static TextColor INFO_COLOR = TextColor.color(106, 178, 197);
-    public static TextColor WARN_COLOR = TextColor.color(255, 163, 25);
-    public static TextColor SUCCESS_COLOR = TextColor.color(110,188,81);
-    public static TextColor ERROR_COLOR = TextColor.color(129,9,10);
-    public static TextColor DEBUG_COLOR = TextColor.color(44, 200, 60);
-    public static TextColor TEXT_COLOR = TextColor.color(240,239,255);
-
-    public static void info(Audience audience, String message) {
+    public void info(Audience audience, String message) {
         info(audience, Component.translatable(message));
     }
 
-    public static void info(Audience audience, Component message) {
-        audience.sendMessage(Component.translatable(Icons.BELL + " ", INFO_COLOR)
-                .append(message.color(TEXT_COLOR)));
+    public void info(Audience audience, Component message) {
+        audience.sendMessage(getInfoPrefix()
+            .append(message.color(NamedTextColor.WHITE))
+        );
     }
 
-    public static void warn(Audience audience, String message) {
+    public void warn(Audience audience, String message) {
         warn(audience, Component.translatable(message));
     }
 
-    public static void warn(Audience audience,Component message) {
-        audience.sendMessage(Component.translatable(Icons.WARNING + " ", WARN_COLOR)
-                .append(message.color(TEXT_COLOR)));
+    public void warn(Audience audience, Component message) {
+        audience.sendMessage(getWarnPrefix()
+            .append(message.color(NamedTextColor.WHITE))
+        );
     }
 
-    public static void success(Audience audience, String message) {
+    public void success(Audience audience, String message) {
         success(audience, Component.translatable(message));
     }
 
-    public static void success(Audience audience, Component message) {
-        audience.sendMessage(Component.translatable(Icons.CHECKMARK + " ", SUCCESS_COLOR)
-                .append(message.color(TEXT_COLOR)));
+    public void success(Audience audience, Component message) {
+        audience.sendMessage(getSuccessPrefix()
+            .append(message.color(NamedTextColor.WHITE))
+        );
     }
 
-    public static void error(Audience audience, String message) {
+    public void error(Audience audience, String message) {
         error(audience, Component.translatable(message));
     }
 
-    public static void error(Audience audience, Component message) {
-        audience.sendMessage(Component.translatable(Icons.CROSS + " ", ERROR_COLOR)
-                .append(message.color(TEXT_COLOR)));
+    public void error(Audience audience, Component message) {
+        audience.sendMessage(getErrorPrefix()
+            .append(message.color(NamedTextColor.WHITE))
+        );
     }
 
-    public static void debug(Audience audience, String message) { debug(audience, Component.translatable(message)); }
-
-    public static void debug(Audience audience, Component message) {
-        audience.sendMessage(Component.translatable(Icons.BUG + " ", DEBUG_COLOR)
-                .append(message.color(TEXT_COLOR)));
+    public void debug(Audience audience, String message) { 
+        debug(audience, Component.translatable(message)); 
     }
 
-    public static String format(final @NotNull BigDecimal value) {
+    public void debug(Audience audience, Component message) {
+        audience.sendMessage(getDebugPrefix()
+            .append(message.color(NamedTextColor.WHITE))
+        );
+    }
+
+    public String format(final @NotNull BigDecimal value) {
         DecimalFormat format = new DecimalFormat(Banco.get().getSettings().get().getCurrency().getFormat());
         return format.format(value);
+    }
+
+    private Component getPrefix(String configPrefix) {
+        Component prefix = Component.empty();
+        if (configPrefix != null && !configPrefix.isEmpty())
+            prefix = MiniMessage.miniMessage().deserialize(configPrefix + " ");
+
+        return prefix;
+    }
+
+    private Component getInfoPrefix() {
+        return getPrefix(Banco.get().getSettings().get().getCommands().getInfoPrefix());
+    }
+
+    private Component getWarnPrefix() {
+        return getPrefix(Banco.get().getSettings().get().getCommands().getWarnPrefix());
+    }
+
+    private Component getSuccessPrefix() {
+        return getPrefix(Banco.get().getSettings().get().getCommands().getSuccessPrefix());
+    }
+
+    private Component getErrorPrefix() {
+        return getPrefix(Banco.get().getSettings().get().getCommands().getErrorPrefix());
+    }
+
+    private Component getDebugPrefix() {
+        return getPrefix("<#2cc83c>\uD83E\uDEB2</#2cc83c>");
     }
 
 }

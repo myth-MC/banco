@@ -3,10 +3,9 @@ package ovh.mythmc.banco.api;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
-import ovh.mythmc.banco.api.storage.BancoStorageManager;
-import ovh.mythmc.banco.api.event.BancoEventManager;
+import ovh.mythmc.banco.api.storage.BancoStorageRegistry;
 import ovh.mythmc.banco.api.accounts.AccountManager;
-import ovh.mythmc.banco.api.items.BancoItemManager;
+import ovh.mythmc.banco.api.items.BancoItemRegistry;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 public interface Banco {
@@ -22,16 +21,18 @@ public interface Banco {
      */
     String version();
 
+    @NotNull AccountManager getAccountManager();
+
     @NotNull LoggerWrapper getLogger();
 
     @NotNull BancoSettingsProvider getSettings();
 
-    @NotNull default AccountManager getAccountManager() { return AccountManager.instance; }
+    @Deprecated(since = "1.0") default BancoItemRegistry getItemManager() { return getItemRegistry(); }
 
-    @NotNull default BancoItemManager getItemManager() { return BancoItemManager.instance; }
+    @Deprecated(since = "1.0") default BancoStorageRegistry getStorageManager() { return getStorageRegistry(); }
 
-    @NotNull default BancoEventManager getEventManager() { return BancoEventManager.instance; }
+    @NotNull default BancoItemRegistry getItemRegistry() { return BancoItemRegistry.instance; }
 
-    @NotNull default BancoStorageManager getStorageManager() { return BancoStorageManager.instance; }
+    @NotNull default BancoStorageRegistry getStorageRegistry() { return BancoStorageRegistry.instance; }
 
 }

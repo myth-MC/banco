@@ -1,17 +1,18 @@
 package ovh.mythmc.banco.common.listeners;
 
 import lombok.RequiredArgsConstructor;
+import ovh.mythmc.banco.common.menus.MenuManager;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import ovh.mythmc.banco.common.inventories.InventoryManager;
 
 @RequiredArgsConstructor
 public final class InventoryListener implements Listener {
 
-    private final InventoryManager inventoryManager = InventoryManager.getInstance();
+    private final MenuManager inventoryManager = MenuManager.getInstance();
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {

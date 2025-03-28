@@ -3,29 +3,45 @@ package ovh.mythmc.banco.common.boot;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
+
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
+import ovh.mythmc.banco.common.features.InventoryFeatures;
+import ovh.mythmc.banco.common.features.ItemFeatures;
+import ovh.mythmc.banco.common.features.LocalizationFeature;
+import ovh.mythmc.banco.common.features.MetricsFeature;
+import ovh.mythmc.banco.common.features.PlaceholderAPIFeature;
+import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
+import ovh.mythmc.banco.common.features.VaultFeature;
+import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.GestaltListener;
-import ovh.mythmc.banco.common.util.MigrationUtil;
-import ovh.mythmc.banco.common.util.UpdateChecker;
 import ovh.mythmc.gestalt.Gestalt;
+import ovh.mythmc.gestalt.features.FeatureConstructorParams;
+import ovh.mythmc.gestalt.features.GestaltFeature;
 
 import java.io.File;
-import java.sql.SQLException;
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class BancoBootstrap<T> implements Banco {
+public abstract class BancoBootstrap implements Banco {
 
-    private T plugin;
+    private JavaPlugin plugin;
 
     private final BancoSettingsProvider settings;
-    private final MigrationUtil migrationUtil;
+
     private final File dataDirectory;
 
-    public BancoBootstrap(final @NotNull T plugin,
+    private BancoListener bancoListener;
+
+    public BancoBootstrap(final @NotNull JavaPlugin plugin,
                           final File dataDirectory) {
         // Set the Banco API
         BancoSupplier.set(this);
@@ -33,45 +49,85 @@ public abstract class BancoBootstrap<T> implements Banco {
         this.plugin = plugin;
 
         this.dataDirectory = dataDirectory;
-        this.migrationUtil = new MigrationUtil(dataDirectory);
         this.settings = new BancoSettingsProvider(dataDirectory);
-  
     }
 
     public final void initialize() {
-        getSettings().load();
+        // Initialize BancoSheduler
+        BancoScheduler.set(scheduler());
 
-        migrationUtil.data();
+        // Load Gestalt library
+        loadGestalt();
+        
+        // Register Gestalt features
+        Gestalt.get().register(
+            InventoryFeatures.class,
+            ItemFeatures.class,
+            PlaceholderAPIFeature.class,
+            UpdateCheckerFeature.class
+        );
+
+        registerFeatureWithPluginParam(
+            LocalizationFeature.class, 
+            MetricsFeature.class, 
+            VaultFeature.class
+        );
+
+        // Load settings and messages
+        reload();
+
+        // Register Gestalt feature listener
+        Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
+
+        // Register debugger callbacks
+        bancoListener = new BancoListener();
+        bancoListener.registerCallbacks();
 
         try {
+            Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary database verbose
             Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + File.separator + "accounts.db");
-        } catch (SQLException e) {
-            Banco.get().getLogger().error("An exception has been produced while loading database: ", e);
-        }
-
-        try {
             enable();
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing banco: {}", throwable);
             throwable.printStackTrace(System.err);
             return;
         }
-
-        // Register Gestalt feature listener
-        Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
-
-        if (Banco.get().getSettings().get().getUpdateTracker().isEnabled())
-            UpdateChecker.check();
     }
+
+    public abstract void loadGestalt();
 
     public abstract void enable();
 
-    public abstract void shutdown();
+    public abstract void disable();
+
+    public final void shutdown() {
+        bancoListener.unregisterCallbacks();
+
+        Banco.get().getAccountManager().getDatabase().shutdown();
+    }
 
     public final void reload() {
+        Gestalt.get().disableAllFeatures("banco");
+
         getSettings().load();
+
+        Gestalt.get().enableAllFeatures("banco");
     }
 
     public abstract String version();
+
+    public abstract BancoScheduler scheduler();
+
+    private void registerFeatureWithPluginParam(Class<?>... classes) {
+        Arrays.stream(classes).forEach(clazz -> {
+            Gestalt.get().register(GestaltFeature.builder()
+                .featureClass(clazz)
+                .constructorParams(FeatureConstructorParams.builder()
+                    .params(plugin)
+                    .types(JavaPlugin.class)
+                    .build())
+                .build());
+        });
+    }
 
 }

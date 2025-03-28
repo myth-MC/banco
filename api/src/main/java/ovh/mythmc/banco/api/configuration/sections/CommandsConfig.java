@@ -8,7 +8,15 @@ import lombok.Getter;
 @Getter
 public class CommandsConfig {
 
-    @Comment("Disabling commands will only work in PaperMC and its forks")
+    private String infoPrefix = "<#6ab2c5>\uD83D\uDD14</#6ab2c5>";
+
+    private String warnPrefix = "<#ffa319>\u26A0</#ffa319>";
+
+    private String successPrefix = "<#6ebc51>\u2714</#6ebc51>";
+
+    private String errorPrefix = "<#810909>\u274C</#810909>";
+
+    @Comment("Disabling commands will only work in Paper and its forks")
     private SimpleCommand balance = new SimpleCommand(true);
 
     private SimpleCommand pay = new SimpleCommand(true);

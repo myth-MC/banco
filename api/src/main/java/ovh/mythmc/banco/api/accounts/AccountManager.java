@@ -2,48 +2,44 @@ package ovh.mythmc.banco.api.accounts;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ApiStatus.ScheduledForRemoval;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.Transaction.Operation;
+import ovh.mythmc.banco.api.accounts.service.LocalUUIDResolver;
+import ovh.mythmc.banco.api.callback.account.BancoAccountRegister;
+import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
+import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
+import ovh.mythmc.banco.api.callback.account.BancoAccountUnregisterCallback;
 import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.event.impl.BancoAccountRegisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoAccountUnregisterEvent;
-import ovh.mythmc.banco.api.event.impl.BancoTransactionEvent;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class AccountManager {
 
-    public static final AccountManager instance = new AccountManager();
+    @Getter
+    private final LocalUUIDResolver uuidResolver;
 
     @Getter
     private final AccountDatabase database = new AccountDatabase();
 
     /**
-     * Registers an account
-     * @param account account to register
-     */
-    @Deprecated
-    @ScheduledForRemoval
-    public void registerAccount(final @NotNull Account account) { // used for migration
-        create(account);
-    }
-
-    /**
      * Creates an account
      * @param uuid uuid of account to create and register
      */
-    public void create(final @NotNull UUID uuid) {
+    public synchronized void create(final @NotNull UUID uuid) {
         Account account = new Account();
         account.setUuid(uuid);
+
         create(account);
     }
 
@@ -51,39 +47,25 @@ public final class AccountManager {
      * Creates an account
      * @param account account to create and register
      */
-    public void create(final @NotNull Account account) {
-        database.create(account);
-
-        // Call BancoAccountRegisterEvent
-        Banco.get().getEventManager().publish(new BancoAccountRegisterEvent(account));
-    }
-
-    /**
-     * Unregisters an account
-     * @param account account to unregister
-     */
-    @Deprecated
-    @ScheduledForRemoval
-    public void unregisterAccount(final @NotNull Account account) {
-        delete(account);
+    public synchronized void create(final @NotNull Account account) {
+        var callback = new BancoAccountRegister(account);
+        BancoAccountRegisterCallback.INSTANCE.invoke(callback, result -> database.create(result.account()));
     }
 
     /**
      * Deletes an account
      * @param account account to delete and unregister
      */
-    public void delete(final @NotNull Account account) {
-        database.delete(account);
-
-        // Call BancoAccountUnregisterEvent
-        Banco.get().getEventManager().publish(new BancoAccountUnregisterEvent(account));
+    public synchronized void delete(final @NotNull Account account) {
+        var callback = new BancoAccountUnregister(account);
+        BancoAccountUnregisterCallback.INSTANCE.invoke(callback, result -> database.delete(result.account()));
     }
 
     /**
      * Deletes an account
      * @param uuid uuid of account to delete and unregister
      */
-    public void delete(final @NotNull UUID uuid) {
+    public synchronized void delete(final @NotNull UUID uuid) {
         delete(get(uuid));
     }
 
@@ -95,21 +77,31 @@ public final class AccountManager {
 
     /**
      * Gets a specific account by its UUID
+     * @deprecated use getByUuid(uuid) instead
      * @param uuid UUID of the player
      * @return an account matching the UUID or null
      */
+    @Deprecated(forRemoval = true, since = "1.0")
     public Account get(final @NotNull UUID uuid) {
+        return getByUuid(uuid);
+    }
+
+    /**
+     * Gets a specific account by its UUID
+     * @param uuid UUID of the player
+     * @return an account matching the UUID or null
+     */
+    public Account getByUuid(final @NotNull UUID uuid) {
         return database.getByUuid(uuid);
     }
 
     /**
-     * Deposits an amount of money to an account
-     * @param account account that will be modified
-     * @param amount amount of money to deposit
+     * Gets a specific account by its UUID
+     * @param uuid UUID of the player
+     * @return an account matching the UUID or null
      */
-    @Deprecated
-    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        deposit(account.getUuid(), amount);
+    public Account getByName(final @NotNull String name) {
+        return database.getByNameOrUuid(name, uuidResolver.resolve(name).orElse(null));
     }
 
     /**
@@ -118,17 +110,22 @@ public final class AccountManager {
      * @param amount amount of money to deposit
      */
     public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(uuid, get(uuid).amount().add(amount));
+        deposit(get(uuid), amount);
     }
 
     /**
-     * Withdraws an amount of money from an account
+     * Deposits an amount of money to an account
      * @param account account that will be modified
-     * @param amount amount of money to withdraw
+     * @param amount amount of money to deposit
      */
-    @Deprecated
-    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        withdraw(account.getUuid(), amount);
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.DEPOSIT)
+            .build();
+
+        transaction.queue();
     }
 
     /**
@@ -137,76 +134,46 @@ public final class AccountManager {
      * @param amount amount of money to withdraw
      */
     public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(uuid, get(uuid).amount().subtract(amount));
+        withdraw(get(uuid), amount);
     }
 
     /**
-     * Sets an account's balance to a specified amount
+     * Withdraws an amount of money from an account
      * @param account account that will be modified
-     * @param amount amount of money to set
+     * @param amount amount of money to withdraw
      */
-    @Deprecated
-    @ScheduledForRemoval
-    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        set(account.getUuid(), amount);
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.WITHDRAW)
+            .build();
+
+        transaction.queue();
     }
 
     /**
-     * Sets an account's balance to a specified amount
+     * Sets an account's balance to a specfic amount
      * @param account account that will be modified
      * @param amount amount of money to set
      */
     public void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        Account account = get(uuid);
+        set(get(uuid), amount);
+    }
 
-        if (account.amount().compareTo(amount) == 0)
-            return;
+    /**
+     * Sets an account's balance to a specific amount
+     * @param account account that will be modified
+     * @param amount amount of money to set
+     */
+    public void set(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.SET)
+            .build();
 
-        if (account.amount().compareTo(amount) < 0) { // Add amount to account
-            if (BancoHelper.get().isOnline(account.getUuid())) {
-                account.setTransactions(BigDecimal.valueOf(0));
-                BigDecimal toAdd = amount.subtract(account.amount());
-
-                // Call BancoTransactionEvent
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toAdd));
-
-                // Add to all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageManager().get())
-                    if (toAdd.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
-
-                // Set transactions to remaining amount
-                account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
-                database.update(account);
-                return;
-            }
-
-            // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().add(amount.subtract(account.amount())));
-            database.update(account);
-        } else { // Remove amount from account
-            if (BancoHelper.get().isOnline(account.getUuid())) {
-                account.setTransactions(BigDecimal.valueOf(0));
-                BigDecimal toRemove = account.amount().subtract(amount);
-
-                // Call BancoTransactionEvent
-                Banco.get().getEventManager().publish(new BancoTransactionEvent(account, toRemove.negate()));
-
-                // Remove from all BancoStorage instances
-                for (BancoStorage storage : Banco.get().getStorageManager().get())
-                    if (toRemove.compareTo(BigDecimal.valueOf(0)) > 0)
-                        toRemove = storage.remove(account.getUuid(), toRemove);
-
-                // Set transactions to remaining amount
-                account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
-                database.update(account);
-                return;
-            }
-
-            // Register transaction if player is not online
-            account.setTransactions(account.getTransactions().subtract(account.amount().subtract(amount)));
-            database.update(account);
-        }
+        transaction.queue();
     }
 
     /**
@@ -216,19 +183,17 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        return get(uuid).amount().compareTo(amount) >= 0;
+        return has(get(uuid), amount);
     }
 
     /**
      * Checks if an account has an amount of money
-     * @param account account to check
+     * @param uuid uuid of account to check
      * @param amount amount to check
      * @return true if account has more than the specified amount
      */
-    @Deprecated
-    @ScheduledForRemoval
     public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        return has(account.getUuid(), amount);
+        return account.amount().compareTo(amount) >= 0;
     }
 
     /**
@@ -237,13 +202,7 @@ public final class AccountManager {
      * @return Account's balance
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
-        Account account = get(uuid);
-        if (BancoHelper.get().isOnline(account.getUuid())) {
-            account.setAmount(BancoHelper.get().getValue(account.getUuid()));
-            database.update(account);
-        }
-
-        return account.getAmount().add(account.getTransactions());
+        return amount(get(uuid));
     }
 
     /**
@@ -251,29 +210,69 @@ public final class AccountManager {
      * @param account account to check
      * @return Account's balance
      */
-    @Deprecated
-    @ScheduledForRemoval
     public @NotNull BigDecimal amount(final @NotNull Account account) {
-        return amount(account.getUuid());
+        // Fake players / accounts
+        if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
+            return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
+
+        // Online players
+        if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
+            account.setAmount(getValueOfPlayer(account.getUuid(), true));
+            database.update(account);
+        }
+
+        // Offline players
+        return account.getAmount().add(account.getTransactions());
+    }
+
+    @Internal
+    private synchronized BigDecimal getValueOfPlayer(final @NotNull UUID uuid, boolean isOnline) {
+        BigDecimal value = BigDecimal.valueOf(0);
+
+        for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+            if (!isOnline && !storage.supportsOfflinePlayers())
+                continue;
+
+            value = value.add(storage.value(uuid));
+        }
+
+        return value;
     }
 
     @ApiStatus.Internal
-    public void updateTransactions(final @NotNull Account account) {
+    public synchronized void updateTransactions(final @NotNull Account account) {
         BigDecimal amount = account.amount();
         account.setTransactions(BigDecimal.valueOf(0));
         database.update(account);
 
-        set(account, amount);
+        set(account.getUuid(), amount);
+    }
+
+    @ApiStatus.Internal
+    public void updateName(final @NotNull Account account, String newName) {
+        account.setName(newName);
+        database.update(account);
+    }
+
+    /**
+     * Gets a CompletableFuture containing a LinkedHashMap ordered by players with the highest balance
+     * @param limit how many entries should we look before returning the LinkedHashMap
+     * @return A LinkedHashMap ordered by players with the highest balance
+     */
+    public CompletableFuture<LinkedHashMap<UUID, BigDecimal>> getTopAsync(int limit) {
+        return CompletableFuture.supplyAsync(() -> {
+            return getTop(limit);
+        });
     }
 
     /**
      * Gets a LinkedHashMap ordered by players with the highest balance
-     * @param limit how many entries should map return
+     * @param limit how many entries should we look before returning the LinkedHashMap
      * @return A LinkedHashMap ordered by players with the highest balance
      */
     public LinkedHashMap<UUID, BigDecimal> getTop(int limit) {
         Map<UUID, BigDecimal> values = new LinkedHashMap<>();
-        for (Account account : Banco.get().getAccountManager().get()) {
+        for (Account account : get()) {
             values.put(account.getUuid(), account.amount());
         }
 
@@ -286,12 +285,12 @@ public final class AccountManager {
     }
 
     /**
-     * Gets an entry with the account's UUID and balance at the specified top position
-     * @param pos position to get
-     * @return An entry with account's UUID and money amount
+     * Gets the player at top position
+     * @param position position at the top ladder
+     * @return A LinkedHashMap ordered by players with the highest balance
      */
-    public Map.Entry<UUID, BigDecimal> getTopPosition(int pos) {
-        return getTop(pos).lastEntry();
+    public Map.Entry<UUID, BigDecimal> getTopPosition(int position) {
+        return getTop(position).lastEntry();
     }
 
 }

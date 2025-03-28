@@ -14,6 +14,9 @@ dependencies:
       load: AFTER
       required: true
       join-classpath: true
+    Essentials:
+      load: AFTER
+      required: false
     PlaceholderAPI:
       load: BEFORE
       required: false
@@ -23,6 +26,30 @@ dependencies:
       required: false
       join-classpath: true
     social:
+      load: OMIT
+      required: false
+      join-classpath: true
+    ItemsAdder:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Oraxen:
+      load: OMIT
+      required: false
+      join-classpath: true
+    MythicMobs:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Nova:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Nexo:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Slimefun:
       load: OMIT
       required: false
       join-classpath: true

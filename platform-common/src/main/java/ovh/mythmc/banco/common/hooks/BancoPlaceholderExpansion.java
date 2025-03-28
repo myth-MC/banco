@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.economy.BancoHelper;
+import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
 import java.math.BigDecimal;
@@ -13,10 +13,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class BancoPlaceholderExpansion extends PlaceholderExpansion {
-
-    public BancoPlaceholderExpansion() {
-        register();
-    }
 
     @Override
     public @NotNull String getIdentifier() {
@@ -40,8 +36,12 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
+        Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
+        if (account == null)
+            return null;
+
         if (params.equalsIgnoreCase("balance")) {
-            return MessageUtil.format(BancoHelper.get().getValue(player.getUniqueId()));
+            return MessageUtil.format(account.amount());
         } else if (params.equalsIgnoreCase("symbol")) {
             return Banco.get().getSettings().get().getCurrency().getSymbol();
         } else if (params.equalsIgnoreCase("name_plural")) {

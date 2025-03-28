@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>banco</artifactId>
-    <version>0.6.8</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -14,7 +14,6 @@
         <module>platform-common</module>
         <module>platform-paper</module>
         <module>platform-bukkit</module>
-        <module>api-bukkit</module>
     </modules>
 
     <properties>
@@ -52,6 +51,10 @@
                             <pattern>org.bstats</pattern>
                             <shadedPattern>ovh.mythmc.banco.libs.org.bstats</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>com.j256</pattern>
+                            <shadedPattern>ovh.mythmc.banco.libs.com.j256</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
 
@@ -67,10 +70,46 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <distributionManagement>
+                <repository>
+                    <id>myth-mc-releases</id>
+                    <url>https://repo.mythmc.ovh/releases</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>snapshot</id>
+            <distributionManagement>
+                <repository>
+                    <id>myth-mc-releases</id>
+                    <url>https://repo.mythmc.ovh/snapshots</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
     <repositories>
+        <repository>
+            <id>myth-mc-releases</id>
+            <url>https://repo.mythmc.ovh/repositories/releases/</url>
+        </repository>
+
+        <repository>
+            <id>myth-mc-snapshots</id>
+            <url>https://repo.mythmc.ovh/repositories/snapshots/</url>
+        </repository>
+
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>
@@ -102,6 +141,27 @@
         </dependency>
 
         <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-serializer-legacy</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
@@ -124,15 +184,36 @@
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
+            <artifactId>callbacks-lib</artifactId>
+            <version>0.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>0.1.8</version>
+            <version>0.1.10</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-loader</artifactId>
-            <version>0.1.8</version>
+            <version>0.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-core</artifactId>
+            <version>6.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-jdbc</artifactId>
+            <version>6.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

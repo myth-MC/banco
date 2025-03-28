@@ -6,6 +6,25 @@ import java.util.UUID;
 public interface BancoStorage {
 
     /**
+     * Friendly name of this storage that will be used in settings
+     * @return Friendly name of this storage
+     */
+    default String friendlyName() { return "OTHER"; }
+
+    /**
+     * Whether this storage supports offline players
+     * @return true if it does or false otherwise
+     */
+    default boolean supportsOfflinePlayers() { return false; }
+
+    /**
+     *
+     * @param uuid UUID of the account who owns this BancoStorage
+     * @return Amount of money stored in this BancoStorage
+     */
+    BigDecimal value(UUID uuid);
+
+    /**
      *
      * @param uuid UUID of the account where items will be added
      * @param amount amount of money to add to this BancoStorage
@@ -17,7 +36,7 @@ public interface BancoStorage {
      *
      * @param uuid UUID of the account where items will be removed
      * @param amount amount of money to remove from this BancoStorage
-     * @return Amount of money that has not been removed
+     * @return Amount of money that has NOT been removed
      */
     BigDecimal remove(UUID uuid, BigDecimal amount);
 

@@ -8,11 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.economy.BancoHelper;
-import ovh.mythmc.banco.api.storage.BancoStorage;
-import ovh.mythmc.banco.common.impl.inventories.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -28,7 +24,7 @@ public abstract class BalanceCommand {
         if (args.length == 0) {
             if (uuid.isEmpty()) return;
 
-            BigDecimal amount = Banco.get().getAccountManager().get(uuid.get()).amount();
+            BigDecimal amount = Banco.get().getAccountManager().getByUuid(uuid.get()).amount();
 
             MessageUtil.info(sender, translatable("banco.commands.balance",
                     text(MessageUtil.format(amount)),
@@ -42,16 +38,11 @@ public abstract class BalanceCommand {
             if (!Banco.get().getSettings().get().getCurrency().isChangeMoney())
                 return;
 
-            Account account = Banco.get().getAccountManager().get(uuid.get());
+            Account account = Banco.get().getAccountManager().getByUuid(uuid.get());
             if (account == null)
                 return;
 
-            BigDecimal toRemove = BigDecimal.valueOf(0);
-            for (BancoStorage bancoStorage : Banco.get().getStorageManager().get()) {
-                if (bancoStorage instanceof PlayerInventoryImpl) {
-                    toRemove = BancoHelper.get().getValue(uuid.get(), List.of(bancoStorage));
-                }
-            }
+            BigDecimal toRemove = account.amount();
 
             Player player = Bukkit.getPlayer(uuid.get());
             player.playSound(player, Sound.ITEM_ARMOR_EQUIP_IRON, 0.95F, 1.50F);
@@ -61,7 +52,7 @@ public abstract class BalanceCommand {
             return;
         }
 
-        Account target = Banco.get().getAccountManager().get(PlayerUtil.getUuid(args[0]));
+        Account target = Banco.get().getAccountManager().getByName(args[0]);
 
         if (target == null) {
             MessageUtil.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
@@ -83,7 +74,8 @@ public abstract class BalanceCommand {
 
         List<String> onlinePlayers = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(player -> onlinePlayers.add(player.getName()));
-        onlinePlayers.add("change");
+        if (Banco.get().getSettings().get().getCurrency().isChangeMoney())
+            onlinePlayers.add("change");
         return List.copyOf(onlinePlayers);
     }
 
