@@ -10,8 +10,8 @@ import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.api.util.PlayerUtil;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -153,7 +153,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String s, double v) {
-        UUID uuid = PlayerUtil.getUuid(s);
+        final UUID uuid = Banco.get().getAccountManager().getUuidResolver().resolve(s).orElse(null);
 
         if (!hasAccount(s)) {
             Banco.get().getAccountManager().create(uuid);
@@ -190,7 +190,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String s, double v) {
-        UUID uuid = PlayerUtil.getUuid(s);
+        final UUID uuid = Banco.get().getAccountManager().getUuidResolver().resolve(s).orElse(null);
 
         if (!hasAccount(s)) {
             Banco.get().getAccountManager().create(uuid);
@@ -323,7 +323,8 @@ public class BancoVaultHook implements Economy {
         if (hasAccount(s))
             return false;
 
-        Banco.get().getAccountManager().create(PlayerUtil.getUuid(s));
+        final UUID uuid = Banco.get().getAccountManager().getUuidResolver().resolve(s).orElse(null);
+        Banco.get().getAccountManager().create(uuid);
         
         return true;
     }

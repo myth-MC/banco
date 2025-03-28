@@ -17,8 +17,15 @@ public class DatabaseConfig {
     @Comment("Don't change this, you might lose all your data")
     private int databaseVersion = 0;
 
+    @Comment("Don't change this, you might lose all your data")
+    private boolean initialized = false;
+
     public void setVersion(int version) {
         databaseVersion = version;
+    }
+
+    public void setDatabaseInitialized() {
+        this.initialized = true;
     }
 
     public enum DatabaseType {

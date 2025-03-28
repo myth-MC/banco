@@ -21,6 +21,8 @@ public interface Banco {
      */
     String version();
 
+    @NotNull AccountManager getAccountManager();
+
     @NotNull LoggerWrapper getLogger();
 
     @NotNull BancoSettingsProvider getSettings();
@@ -28,8 +30,6 @@ public interface Banco {
     @Deprecated(since = "1.0") default BancoItemRegistry getItemManager() { return getItemRegistry(); }
 
     @Deprecated(since = "1.0") default BancoStorageRegistry getStorageManager() { return getStorageRegistry(); }
-
-    @NotNull default AccountManager getAccountManager() { return AccountManager.instance; }
 
     @NotNull default BancoItemRegistry getItemRegistry() { return BancoItemRegistry.instance; }
 

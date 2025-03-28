@@ -45,6 +45,14 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    Nexo:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Slimefun:
+      load: OMIT
+      required: false
+      join-classpath: true
 
 permissions:
   banco.user:

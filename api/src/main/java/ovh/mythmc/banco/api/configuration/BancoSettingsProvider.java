@@ -33,6 +33,11 @@ public final class BancoSettingsProvider {
         YamlConfigurations.save(settingsFilePath, BancoSettings.class, this.settings);
     }
 
+    public void setDatabaseInitialized() {
+        this.settings.getDatabase().setDatabaseInitialized();
+        YamlConfigurations.save(settingsFilePath, BancoSettings.class, this.settings);
+    }
+
     public BancoSettings get() { return settings; }
 
 }

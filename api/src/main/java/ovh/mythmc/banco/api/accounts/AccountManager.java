@@ -2,7 +2,7 @@ package ovh.mythmc.banco.api.accounts;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
@@ -11,6 +11,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
+import ovh.mythmc.banco.api.accounts.service.LocalUUIDResolver;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
@@ -22,10 +23,11 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class AccountManager {
 
-    public static final AccountManager instance = new AccountManager();
+    @Getter
+    private final LocalUUIDResolver uuidResolver;
 
     @Getter
     private final AccountDatabase database = new AccountDatabase();
@@ -99,7 +101,7 @@ public final class AccountManager {
      * @return an account matching the UUID or null
      */
     public Account getByName(final @NotNull String name) {
-        return database.getByName(name);
+        return database.getByNameOrUuid(name, uuidResolver.resolve(name).orElse(null));
     }
 
     /**

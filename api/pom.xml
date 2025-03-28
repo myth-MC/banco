@@ -28,11 +28,13 @@
             <url>https://repo.xenondevs.xyz/releases</url>
         </repository>
 
+        <!--
         <repository>
             <id>nexus</id>
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository>
+        </repository
+        -->
 
         <repository>
             <id>nexo</id>
@@ -65,12 +67,14 @@
         </dependency>
 
         <!-- MythicMobs API -->
+        <!--
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
             <version>5.6.1</version>  
             <scope>provided</scope>
         </dependency>
+        -->
 
         <!-- Oraxen API -->
         <dependency>

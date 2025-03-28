@@ -27,7 +27,7 @@ public class Account {
     private UUID uuid;
 
     @Getter(AccessLevel.PUBLIC)
-    @DatabaseField(canBeNull = false)
+    @DatabaseField
     private String name;
 
     @DatabaseField(defaultValue = "0.0")

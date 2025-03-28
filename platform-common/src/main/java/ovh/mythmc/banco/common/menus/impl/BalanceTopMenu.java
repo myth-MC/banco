@@ -8,10 +8,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.util.PlayerUtil;
 import ovh.mythmc.banco.common.menus.BasicMenu;
 import ovh.mythmc.banco.common.menus.MenuButton;
 import ovh.mythmc.banco.common.util.MessageUtil;
-import ovh.mythmc.banco.common.util.PlayerUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -32,7 +32,7 @@ public final class BalanceTopMenu extends BasicMenu {
                 if (slot >= 8)
                     break;
     
-                OfflinePlayer player = PlayerUtil.getOfflinePlayerByUuid(entry.getKey());
+                final OfflinePlayer player = PlayerUtil.getOfflinePlayerByUuid(entry.getKey());
                 if (player == null || !player.hasPlayedBefore())
                     continue;
                     

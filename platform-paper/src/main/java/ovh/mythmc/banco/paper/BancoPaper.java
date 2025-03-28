@@ -9,6 +9,8 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.AccountManager;
+import ovh.mythmc.banco.api.accounts.service.defaults.BukkitLocalUUIDResolver;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
@@ -30,6 +32,10 @@ public final class BancoPaper extends BancoBootstrap {
 
     private final BancoScheduler scheduler = new BancoSchedulerPaper(getPlugin());
 
+    private final BukkitLocalUUIDResolver uuidResolver;
+
+    private final AccountManager accountManager;
+
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(String message, Object... args) {
@@ -50,6 +56,12 @@ public final class BancoPaper extends BancoBootstrap {
     public BancoPaper(final @NotNull BancoPaperPlugin plugin) {
         super(plugin, plugin.getDataFolder());
         instance = this;
+
+        // Register platform UUID resolver
+        this.uuidResolver = new BukkitLocalUUIDResolver(scheduler);
+
+        // Register platform account manager
+        this.accountManager = new AccountManager(uuidResolver);
     }
 
     @Override
@@ -91,8 +103,11 @@ public final class BancoPaper extends BancoBootstrap {
         if (Banco.get().getSettings().get().getCurrency().isRemoveDrops())
             Bukkit.getPluginManager().registerEvents(new ItemDropListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(), getPlugin());
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(getPlugin()), getPlugin());
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), getPlugin());
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
+
+        // UUID resolver
+        Bukkit.getPluginManager().registerEvents(uuidResolver, getPlugin());
     }
 
     @SuppressWarnings("UnstableApiUsage")

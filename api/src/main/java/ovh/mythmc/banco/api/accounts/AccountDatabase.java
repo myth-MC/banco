@@ -33,7 +33,10 @@ public final class AccountDatabase {
     private final ScheduledExecutorService asyncScheduler = Executors.newScheduledThreadPool(1);
 
     private Dao<Account, UUID> accountsDao;
+
     private final Map<AccountIdentifierKey, Account> cache = new HashMap<>();
+
+    private boolean firstBoot = false;
 
     private String path;
 
@@ -61,6 +64,9 @@ public final class AccountDatabase {
 
         this.path = path;
 
+        firstBoot = !Banco.get().getSettings().get().getDatabase().isInitialized() &&
+            Banco.get().getSettings().get().getDatabase().getDatabaseVersion() == 0;
+
         backup("backup");
         upgrade();
 
@@ -68,6 +74,8 @@ public final class AccountDatabase {
 
         if (Banco.get().getSettings().get().isDebug())
             Banco.get().getLogger().info("Loaded a total amount of " + get().size() + " accounts! (using V3 format)");
+
+        Banco.get().getSettings().get().getDatabase().setDatabaseInitialized();
     }
 
     public void backup(String differentiator) {
@@ -200,6 +208,31 @@ public final class AccountDatabase {
         return null;
     }
 
+    public Account getByNameOrUuid(@NotNull String name, UUID uuid) {
+        Account cachedAccount = findCachedAccountByName(name);
+        if (cachedAccount != null)
+            return cachedAccount;
+
+        try {
+            List<Account> accounts = accountsDao.queryBuilder()
+                    .where()
+                    .eq("name", name)
+                    .query();
+
+            if (accounts != null && !accounts.isEmpty()) {
+                Account account = accounts.getFirst();
+                
+                cache.put(account.getIdentifier(), account);
+                return account;
+            }
+        } catch (SQLException e) {
+            if (uuid != null)
+                return getByUuid(uuid);
+        }
+
+        return null;
+    }
+
     private Account findCachedAccountByUuid(@NotNull UUID uuid) {
         return cache.entrySet().stream()
             .filter(entry -> entry.getKey().uuid().equals(uuid))
@@ -216,18 +249,20 @@ public final class AccountDatabase {
     }
 
     public void upgrade() {
-        int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
-        if(oldVersion < 1) {
-            try {
-                logger.info("Upgrading database...");
-                accountsDao.executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
-                logger.info("Done!");
-            } catch (SQLException e) {
-                logger.error("Exception while upgrading database: {}", e);
-            }
+        if (!firstBoot) {
+            int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
+            if(oldVersion < 1) {
+                try {
+                    logger.info("Upgrading database...");
+                    accountsDao.executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
+                    logger.info("Done!");
+                } catch (SQLException e) {
+                    logger.error("Exception while upgrading database: {}", e);
+                }
+            } 
         }
 
-        Banco.get().getSettings().updateVersion(1);
+        Banco.get().getSettings().updateVersion(1);  
     }
     
 }

@@ -11,11 +11,6 @@ import ovh.mythmc.banco.api.items.BancoItem;
 public record NexoBancoItem(String identifier, BigDecimal value) implements BancoItem {
 
     @Override
-    public boolean match(ItemStack itemStack) {
-        return NexoItems.idFromItem(itemStack).equals(identifier);
-    }
-
-    @Override
     public ItemStack asItemStack(int amount) {
         ItemStack itemStack = NexoItems.itemFromId(identifier).build();
         itemStack.setAmount(amount);
