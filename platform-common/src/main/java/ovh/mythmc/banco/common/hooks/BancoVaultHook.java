@@ -90,7 +90,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean hasAccount(OfflinePlayer offlinePlayer) {
-        return hasAccount(offlinePlayer.getName());
+        return Banco.get().getAccountManager().getByUuid(offlinePlayer.getUniqueId()) != null;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean hasAccount(OfflinePlayer offlinePlayer, String s) {
-        return hasAccount(offlinePlayer.getName());
+        return hasAccount(offlinePlayer);
     }
 
     @Override
@@ -118,7 +118,15 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public double getBalance(OfflinePlayer offlinePlayer) {
-        return getBalance(offlinePlayer.getName());
+        if (!hasAccount(offlinePlayer))
+            return 0;
+
+        Account account = Banco.get().getAccountManager().getByUuid(offlinePlayer.getUniqueId());
+
+        if (PlayerUtil.isInBlacklistedWorld(account.getUuid()))
+            return 0;
+
+        return Banco.get().getAccountManager().amount(account).doubleValue();
     }
 
     @Override
@@ -138,7 +146,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean has(OfflinePlayer offlinePlayer, double v) {
-        return has(offlinePlayer.getName(), v);
+        return getBalance(offlinePlayer) >= v;
     }
 
     @Override
@@ -148,7 +156,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean has(OfflinePlayer offlinePlayer, String s, double v) {
-        return has(offlinePlayer.getName(), v);
+        return has(offlinePlayer, v);
     }
 
     @Override
@@ -175,7 +183,24 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, double v) {
-        return withdrawPlayer(offlinePlayer.getName(), v);
+        final UUID uuid = offlinePlayer.getUniqueId();
+
+        if (!hasAccount(offlinePlayer)) {
+            Banco.get().getAccountManager().create(uuid);
+        }
+
+        if (PlayerUtil.isInBlacklistedWorld(uuid))
+            return new EconomyResponse(0,
+                    getBalance(offlinePlayer),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Player is in blacklisted world");
+
+        Banco.get().getAccountManager().withdraw(uuid, BigDecimal.valueOf(v));
+
+        return new EconomyResponse(v,
+                getBalance(offlinePlayer),
+                EconomyResponse.ResponseType.SUCCESS,
+                "");
     }
 
     @Override
@@ -185,7 +210,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer offlinePlayer, String s, double v) {
-        return withdrawPlayer(offlinePlayer.getName(), v);
+        return withdrawPlayer(offlinePlayer, v);
     }
 
     @Override
@@ -212,7 +237,24 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer offlinePlayer, double v) {
-        return depositPlayer(offlinePlayer.getName(), v);
+        final UUID uuid = offlinePlayer.getUniqueId();
+
+        if (!hasAccount(offlinePlayer)) {
+            Banco.get().getAccountManager().create(uuid);
+        }
+
+        if (PlayerUtil.isInBlacklistedWorld(uuid))
+            return new EconomyResponse(0,
+                    getBalance(offlinePlayer),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Player is in blacklisted world");
+
+        Banco.get().getAccountManager().deposit(uuid, BigDecimal.valueOf(v));
+
+        return new EconomyResponse(v,
+                getBalance(offlinePlayer),
+                EconomyResponse.ResponseType.SUCCESS,
+                "");
     }
 
     @Override
@@ -222,7 +264,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer offlinePlayer, String s, double v) {
-        return depositPlayer(offlinePlayer.getName(), v);
+        return depositPlayer(offlinePlayer, v);
     }
 
     @Override
@@ -323,7 +365,9 @@ public class BancoVaultHook implements Economy {
         if (hasAccount(s))
             return false;
 
-        final UUID uuid = Banco.get().getAccountManager().getUuidResolver().resolve(s).orElse(null);
+        final UUID uuid = Banco.get().getAccountManager().getUuidResolver().resolve(s)
+            .orElse(UUID.nameUUIDFromBytes(s.getBytes()));
+
         Banco.get().getAccountManager().create(uuid);
         
         return true;
@@ -331,7 +375,13 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer) {
-        return createPlayerAccount(offlinePlayer.getName());
+        if (hasAccount(offlinePlayer))
+            return false;
+
+        final UUID uuid = offlinePlayer.getUniqueId();
+        Banco.get().getAccountManager().create(uuid);
+        
+        return true;
     }
 
     @Override
@@ -341,6 +391,7 @@ public class BancoVaultHook implements Economy {
 
     @Override
     public boolean createPlayerAccount(OfflinePlayer offlinePlayer, String s) {
-        return createPlayerAccount(offlinePlayer.getName());
+        return createPlayerAccount(offlinePlayer);
     }
+
 }
