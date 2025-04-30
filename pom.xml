@@ -6,7 +6,7 @@
 
     <groupId>ovh.mythmc</groupId>
     <artifactId>banco</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -94,12 +94,12 @@
     <repositories>
         <repository>
             <id>myth-mc-releases</id>
-            <url>https://repo.mythmc.ovh/repositories/releases/</url>
+            <url>https://repo.mythmc.ovh/releases/</url>
         </repository>
 
         <repository>
             <id>myth-mc-snapshots</id>
-            <url>https://repo.mythmc.ovh/repositories/snapshots/</url>
+            <url>https://repo.mythmc.ovh/snapshots/</url>
         </repository>
 
         <repository>
@@ -192,14 +192,14 @@
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-api</artifactId>
-            <version>0.1.10</version>
+            <version>0.2.2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>ovh.mythmc</groupId>
             <artifactId>gestalt-loader</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.2</version>
             <scope>compile</scope>
         </dependency>
 
