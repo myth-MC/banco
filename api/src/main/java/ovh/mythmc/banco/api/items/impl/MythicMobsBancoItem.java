@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 
 import org.bukkit.inventory.ItemStack;
 
-//import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import ovh.mythmc.banco.api.items.BancoItem;
 
-public record MythicMobsBancoItem(String identifier, BigDecimal value)  {//implements BancoItem {
+public record MythicMobsBancoItem(String identifier, BigDecimal value) implements BancoItem {
 
-    //@Override
+    @Override
     public ItemStack asItemStack(int amount) {
-        return null;
-        //return MythicBukkit.inst().getItemManager().getItemStack(identifier, amount);
+        return MythicBukkit.inst().getItemManager().getItemStack(identifier, amount);
     }
     
 }
