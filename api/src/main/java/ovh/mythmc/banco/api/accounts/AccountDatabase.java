@@ -192,7 +192,7 @@ public final class AccountDatabase {
         try {
             List<Account> accounts = accountsDao.queryBuilder()
                     .where()
-                    .eq("name", name)
+                    .like("name", name)
                     .query();
 
             if (accounts != null && !accounts.isEmpty()) {
@@ -216,7 +216,7 @@ public final class AccountDatabase {
         try {
             List<Account> accounts = accountsDao.queryBuilder()
                     .where()
-                    .eq("name", name)
+                    .like("name", name)
                     .query();
 
             if (accounts != null && !accounts.isEmpty()) {
@@ -243,7 +243,7 @@ public final class AccountDatabase {
     private Account findCachedAccountByName(@NotNull String name) {
         return cache.entrySet().stream()
             .filter(entry -> entry.getKey().name() != null)
-            .filter(entry -> entry.getKey().name().equals(name))
+            .filter(entry -> entry.getKey().name().equalsIgnoreCase(name))
             .map(entry -> entry.getValue())
             .findFirst().orElse(null);
     }

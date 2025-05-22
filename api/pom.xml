@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
 
     <artifactId>banco-api</artifactId>
@@ -28,13 +28,11 @@
             <url>https://repo.xenondevs.xyz/releases</url>
         </repository>
 
-        <!--
         <repository>
             <id>nexus</id>
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
-        </repository
-        -->
+        </repository>
 
         <repository>
             <id>nexo</id>
@@ -66,15 +64,13 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- MythicMobs API -->
-        <!--
+         <!-- MythicMobs API -->
         <dependency>
             <groupId>io.lumine</groupId>
             <artifactId>Mythic-Dist</artifactId>
-            <version>5.6.1</version>  
+            <version>5.8.2</version>  
             <scope>provided</scope>
         </dependency>
-        -->
 
         <!-- Oraxen API -->
         <dependency>
