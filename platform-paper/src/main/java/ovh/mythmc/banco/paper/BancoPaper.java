@@ -1,12 +1,16 @@
 package ovh.mythmc.banco.paper;
 
-import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
+
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
+import ovh.mythmc.banco.common.command.BancoCommandProvider;
+import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountManager;
@@ -14,14 +18,8 @@ import ovh.mythmc.banco.api.accounts.service.defaults.BukkitLocalUUIDResolver;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
-import ovh.mythmc.banco.paper.commands.BalanceCommandImpl;
-import ovh.mythmc.banco.paper.commands.BalanceTopCommandImpl;
-import ovh.mythmc.banco.paper.commands.BancoCommandImpl;
-import ovh.mythmc.banco.paper.commands.PayCommandImpl;
 import ovh.mythmc.banco.paper.scheduler.BancoSchedulerPaper;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
-
-import java.util.*;
 
 @Getter
 public final class BancoPaper extends BancoBootstrap {
@@ -54,7 +52,7 @@ public final class BancoPaper extends BancoBootstrap {
     };
 
     public BancoPaper(final @NotNull BancoPaperPlugin plugin) {
-        super(plugin, plugin.getDataFolder());
+        super(plugin, plugin.getDataFolder(), provider(plugin));
         instance = this;
 
         // Register platform UUID resolver
@@ -75,7 +73,6 @@ public final class BancoPaper extends BancoBootstrap {
 
     @Override
     public void enable() {    
-        registerCommands();
         registerListeners();
 
         scheduler.initialize();
@@ -110,21 +107,17 @@ public final class BancoPaper extends BancoBootstrap {
         Bukkit.getPluginManager().registerEvents(uuidResolver, getPlugin());
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private void registerCommands() {
-        LifecycleEventManager<Plugin> manager = getPlugin().getLifecycleManager();
-        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
-            final Commands commands = event.registrar();
-            commands.register("banco", "Main command for managing banco accounts", new BancoCommandImpl());
+    private static BancoCommandProvider provider(@NotNull JavaPlugin plugin) {
+        final var commandManager = new LegacyPaperCommandManager<BancoCommandSource>(
+            plugin, 
+            ExecutionCoordinator.simpleCoordinator(), 
+            SenderMapper.create(
+                commandSender -> new PaperCommandSource(commandSender),
+                bancoSource -> (CommandSender) bancoSource.source()
+            )
+        );
 
-            // Optional commands
-            if (Banco.get().getSettings().get().getCommands().getBalance().enabled())
-                commands.register("balance", List.of("bal", "money"), new BalanceCommandImpl());
-            if (Banco.get().getSettings().get().getCommands().getBalanceTop().enabled())
-                commands.register("balancetop", List.of("baltop"), new BalanceTopCommandImpl());
-            if (Banco.get().getSettings().get().getCommands().getPay().enabled())
-                commands.register("pay", new PayCommandImpl());
-        });
+        return new BancoCommandProvider(commandManager);
     }
 
 }

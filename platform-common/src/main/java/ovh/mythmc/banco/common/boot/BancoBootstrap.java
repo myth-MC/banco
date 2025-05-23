@@ -13,6 +13,7 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
+import ovh.mythmc.banco.common.command.BancoCommandProvider;
 import ovh.mythmc.banco.common.features.InventoryFeatures;
 import ovh.mythmc.banco.common.features.ItemFeatures;
 import ovh.mythmc.banco.common.features.LocalizationFeature;
@@ -39,10 +40,13 @@ public abstract class BancoBootstrap implements Banco {
 
     private final File dataDirectory;
 
+    private final BancoCommandProvider commandProvider;
+
     private BancoListener bancoListener;
 
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
-                          final File dataDirectory) {
+                          final @NotNull File dataDirectory,
+                          final @NotNull BancoCommandProvider commandProvider) {
         // Set the Banco API
         BancoSupplier.set(this);
 
@@ -50,6 +54,8 @@ public abstract class BancoBootstrap implements Banco {
 
         this.dataDirectory = dataDirectory;
         this.settings = new BancoSettingsProvider(dataDirectory);
+
+        this.commandProvider = commandProvider;
     }
 
     public final void initialize() {
@@ -87,6 +93,9 @@ public abstract class BancoBootstrap implements Banco {
             Logger.setGlobalLogLevel(Level.ERROR); // Disable unnecessary database verbose
             Banco.get().getAccountManager().getDatabase().initialize(dataDirectory.getAbsolutePath() + File.separator + "accounts.db");
             enable();
+
+            // Register commands
+            commandProvider.register();
         } catch (Throwable throwable) {
             getLogger().error("An error has occurred while initializing banco: {}", throwable);
             throwable.printStackTrace(System.err);

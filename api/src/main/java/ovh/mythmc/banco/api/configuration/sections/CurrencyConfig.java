@@ -19,10 +19,10 @@ import java.util.List;
 public class CurrencyConfig {
 
     @Comment("Currency name in singular")
-    private @NotNull String nameSingular = "Dollar";
+    private @NotNull String nameSingular = "Emerald";
 
     @Comment("Currency name in plural")
-    private @NotNull String namePlural = "Dollars";
+    private @NotNull String namePlural = "Emeralds";
 
     @Comment("Currency symbol")
     private @NotNull String symbol = "$";
@@ -32,9 +32,6 @@ public class CurrencyConfig {
 
     @Comment({"Whether to prevent items configured below from dropping when killing mobs", "This prevents players from building money farms, so it's recommended to keep it enabled"})
     private boolean removeDrops = true;
-
-    @Comment("Enable this if you want to give players the chance of changing lower value items for higher value ones by using /balance change")
-    private boolean changeMoney = false;
 
     @Comment("Order in which items will be added/removed from storages. You can add or remove entries to customize your setup")
     private List<String> inventoryOrder = List.of(

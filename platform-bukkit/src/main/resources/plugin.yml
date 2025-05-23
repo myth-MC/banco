@@ -14,23 +14,46 @@ libraries:
   - net.kyori:adventure-platform-bukkit:4.3.4
   - net.kyori:adventure-text-minimessage:4.17.0
 
-commands:
-  banco:
-    permission: banco.admin
-  balance:
-    permission: banco.user
-    aliases:
-      - bal
-      - money
-  balancetop:
-    permission: banco.user
-    aliases:
-      - baltop
-  pay:
-    permission: banco.user
-
 permissions:
+  # Basic nodes
   banco.user:
     default: true
+    children:
+      banco.use.help: true
+      banco.use.balance: true
+      banco.use.balancetop: true
+      banco.use.balancechange: true
+      banco.use.pay: true
   banco.admin:
+    default: op
+    children:
+      banco.use.banco.deposit: true
+      bnaco.use.banco.set: true
+      bnaco.use.banco.withdraw: true
+      banco.use.banco.dump: true
+      banco.use.banco.info: true
+      banco.use.banco.reload: true
+  # Commands (misc)
+  banco.use.help:
+    default: true
+  banco.use.balance:
+    default: true
+  banco.use.balancetop:
+    default: true
+  banco.use.balancechange:
+    default: true
+  banco.use.pay:
+    default: true
+  # Commands (/banco)
+  banco.use.banco.deposit:
+    default: op
+  banco.use.banco.set:
+    default: op
+  banco.use.banco.withdraw:
+    default: op
+  banco.use.banco.dump:
+    default: op
+  banco.use.banco.info:
+    default: op
+  banco.use.banco.reload:
     default: op

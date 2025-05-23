@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,12 +19,13 @@ import org.jetbrains.annotations.NotNull;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import lombok.NoArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.database.MySQLConnectionSource;
+import ovh.mythmc.banco.api.accounts.database.SQLiteConnectionSource;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 @NoArgsConstructor
@@ -34,7 +35,7 @@ public final class AccountDatabase {
 
     private Dao<Account, UUID> accountsDao;
 
-    private final Map<AccountIdentifierKey, Account> cache = new HashMap<>();
+    private final Map<AccountIdentifierKey, Account> cache = new ConcurrentHashMap<>();
 
     private boolean firstBoot = false;
 
@@ -58,7 +59,12 @@ public final class AccountDatabase {
     };
 
     public void initialize(@NotNull String path) throws SQLException {
-        ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
+        //ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
+        ConnectionSource connectionSource = switch (Banco.get().getSettings().get().getDatabase().getType()) {
+            case SQLITE -> new SQLiteConnectionSource(path);
+            case MYSQL -> new MySQLConnectionSource();
+        };
+
         TableUtils.createTableIfNotExists(connectionSource, Account.class);
         accountsDao = DaoManager.createDao(connectionSource, Account.class);
 

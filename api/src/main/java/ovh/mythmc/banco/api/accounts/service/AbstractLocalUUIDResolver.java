@@ -30,6 +30,11 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
     }
 
     @Override
+    public Set<OfflinePlayerReference> references() {
+        return this.offlinePlayers;
+    }
+
+    @Override
     public @NotNull Optional<UUID> resolve(@NotNull String username) {
         return offlinePlayers.stream()
             .filter(offlinePlayer -> offlinePlayer.name().equals(username))
