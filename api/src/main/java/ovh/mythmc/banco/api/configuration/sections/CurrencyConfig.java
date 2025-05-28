@@ -53,6 +53,7 @@ public class CurrencyConfig {
             List.of("<gray>Holds <white>64x Emerald Blocks</white></gray>"), 
             1009, 
             false, 
+            4,
             "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
             null
             //List.of(

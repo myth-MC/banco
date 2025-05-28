@@ -27,6 +27,7 @@ permissions:
   banco.admin:
     default: op
     children:
+      banco.use.banco.encode: true
       banco.use.banco.deposit: true
       bnaco.use.banco.set: true
       bnaco.use.banco.withdraw: true
@@ -45,6 +46,8 @@ permissions:
   banco.use.pay:
     default: true
   # Commands (/banco)
+  banco.use.banco.encode:
+    default: op
   banco.use.banco.deposit:
     default: op
   banco.use.banco.set:

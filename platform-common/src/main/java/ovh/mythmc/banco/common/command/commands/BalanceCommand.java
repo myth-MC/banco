@@ -23,7 +23,7 @@ public final class BalanceCommand implements MainCommand {
     public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
         final var balanceCommand = commandManager.commandBuilder("balance", "bal", "money")
             .permission("banco.use.balance")
-            .commandDescription(Description.of("Allows players to view their current balance"));
+            .commandDescription(Description.of("Displays your current balance"));
 
         commandManager.command(balanceCommand
             .optional("account", AccountParser.accountParser())

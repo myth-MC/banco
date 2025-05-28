@@ -24,7 +24,7 @@ public final class BalanceChangeCommand implements MainCommand {
     public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
         final var balanceChangeCommand = commandManager.commandBuilder("balancechange", "balchange")
             .permission("banco.use.balancechange")
-            .commandDescription(Description.of("Allows players to compact their balance"));
+            .commandDescription(Description.of("Compacts your balance"));
 
         commandManager.command(balanceChangeCommand
             .handler(ctx -> {

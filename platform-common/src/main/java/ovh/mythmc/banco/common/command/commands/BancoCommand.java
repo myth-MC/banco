@@ -1,11 +1,13 @@
 package ovh.mythmc.banco.common.command.commands;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.component.DefaultValue;
 import org.incendo.cloud.description.Description;
@@ -17,9 +19,12 @@ import org.jetbrains.annotations.NotNull;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
+import ovh.mythmc.banco.api.util.ItemUtil;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
@@ -50,11 +55,38 @@ public final class BancoCommand implements MainCommand {
         commandManager.command(bancoCommand
             .literal("help", "?")
             .permission("banco.use.banco.help")
-            .commandDescription(Description.of("Shows the plugin's command structure"))
+            .commandDescription(Description.of("Displays the plugin's command structure"))
             .optional("query", StringParser.greedyStringParser(), DefaultValue.constant(""))
             .handler(ctx -> {
                 help.queryCommands(ctx.get("query"), ctx.sender());
             })
+        );
+
+        // /banco encode
+        commandManager.command(bancoCommand
+            .literal("encode", "base64")
+            .permission("banco.use.banco.encode")
+            .commandDescription(Description.of("Encodes the item in your main hand into a Base64 string"))
+            .handler(ctx -> {
+                if (!ctx.sender().isPlayer()) {
+                    return;
+                }
+
+                final var player = (Player) ctx.sender().source();
+                final ItemStack itemStack = player.getInventory().getItemInMainHand();
+
+                try {
+                    final String encodedString = ItemUtil.toBase64(itemStack);
+                    MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.encode.success",
+                        Component.text(encodedString.substring(0, 16) + "...", NamedTextColor.GRAY))
+                            .hoverEvent(HoverEvent.showText(Component.translatable("banco.commands.encode.hover")))
+                            .clickEvent(ClickEvent.copyToClipboard(encodedString)
+                        )
+                    );
+                } catch (IOException e) {
+                    MessageUtil.error(ctx.sender(), Component.text(e.getMessage(), NamedTextColor.RED));
+                }
+            })  
         );
 
         // /banco deposit

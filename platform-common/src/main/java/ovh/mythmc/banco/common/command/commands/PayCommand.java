@@ -28,7 +28,7 @@ public final class PayCommand implements MainCommand {
     public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
         final var payCommand = commandManager.commandBuilder("pay")
             .permission("banco.use.pay")
-            .commandDescription(Description.of("Transfers money to another player's account"));
+            .commandDescription(Description.of("Transfers money into another account"));
 
         commandManager.command(payCommand
             .required("target", AccountParser.accountParser())

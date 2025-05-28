@@ -1,5 +1,7 @@
 package ovh.mythmc.banco.common.command.parser;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.context.CommandInput;
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import io.leangen.geantyref.TypeToken;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
+import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
 import ovh.mythmc.banco.common.command.exception.UnknownAccountException;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
@@ -32,12 +34,8 @@ public final class AccountParser implements ArgumentParser<BancoCommandSource, A
         return new AccountParser(Mode.ALL);
     }
 
-    public static AccountParser playerOnly() {
-        return new AccountParser(Mode.PLAYER_ONLY);
-    }
-
-    public static AccountParser nonPlayerOnly() {
-        return new AccountParser(Mode.NON_PLAYER_ONLY);
+    public static AccountParser onlinePlayers() {
+        return new AccountParser(Mode.ONLINE_PLAYERS);
     }
 
     @Override
@@ -55,17 +53,12 @@ public final class AccountParser implements ArgumentParser<BancoCommandSource, A
             @NonNull CommandInput input) {
 
         return switch (mode) {
-            case PLAYER_ONLY -> Banco.get().getAccountManager().getUuidResolver().references().stream()
-                .filter(offlinePlayer -> Banco.get().getAccountManager().getByUuid(offlinePlayer.uuid()) != null)
-                .map(OfflinePlayerReference::name)
+            case ONLINE_PLAYERS -> Bukkit.getServer().getOnlinePlayers().stream()
+                .filter(player -> Banco.get().getAccountManager().getByUuid(player.getUniqueId()) != null)
+                .map(Player::getName)
                 .toList();
-            case NON_PLAYER_ONLY -> Banco.get().getAccountManager().get().stream()
-                .filter(account -> account.getName() != null && Banco.get().getAccountManager().getUuidResolver().resolveOfflinePlayer(account.getUuid()).isEmpty())
-                .map(Account::getName)
-                .toList();
-            default -> Banco.get().getAccountManager().get().stream()
-                .filter(account -> account.getName() != null)
-                .map(Account::getName)
+            default -> Banco.get().getAccountManager().getDatabase().getAccountIdentifierCache().stream()
+                .map(AccountIdentifierKey::name)
                 .toList();
         };
     }
@@ -85,8 +78,7 @@ public final class AccountParser implements ArgumentParser<BancoCommandSource, A
 
     public static enum Mode {
         ALL,
-        PLAYER_ONLY,
-        NON_PLAYER_ONLY
+        ONLINE_PLAYERS
     }
 
 }

@@ -21,7 +21,7 @@ public final class BalanceTopCommand implements MainCommand {
     public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
         final var balanceTopCommand = commandManager.commandBuilder("balancetop", "baltop")
             .permission("banco.use.balancetop")
-            .commandDescription(Description.of("Allows players to view the balance top"));
+            .commandDescription(Description.of("Displays the balance top"));
         
         commandManager.command(balanceTopCommand
             .handler(ctx -> {

@@ -75,6 +75,10 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
             if (customization().headTextureUrl() != null && material().equals(Material.PLAYER_HEAD))
                 ((SkullMeta) itemMeta).setOwnerProfile(getProfile(customization().headTextureUrl()));
 
+            // Apply max stack size
+            if (customization().maxStackSize() != null)
+                itemMeta.setMaxStackSize(customization().maxStackSize());
+
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
@@ -116,7 +120,7 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
         return material + "-" + value + "-" + customization;
     }
 
-    public record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, String headTextureUrl, List<AttributeField> attributes) {
+    public record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes) {
         
         public Boolean glowEffect() {
             if (glowEffect == null)
