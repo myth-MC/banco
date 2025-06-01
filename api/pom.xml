@@ -11,6 +11,30 @@
 
     <artifactId>banco-api</artifactId>
 
+    <build>
+        <plugins>
+            <!-- Build JavaDoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <doclint>none</doclint>
+                    <sourcepath>${project.basedir}/src;${project.basedir}/target/generated-sources/annotations</sourcepath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <repositories>
         <repository>
             <id>jitpack-repo</id>
