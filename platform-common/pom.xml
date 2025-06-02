@@ -21,6 +21,11 @@
             <id>myth-mc-snapshots</id>
             <url>https://repo.mythmc.ovh/snapshots/</url>
         </repository>
+
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -35,6 +40,13 @@
             <groupId>ovh.mythmc</groupId>
             <artifactId>social-api</artifactId>
             <version>0.5.0db2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>VaultUnlockedAPI</artifactId>
+            <version>2.11</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

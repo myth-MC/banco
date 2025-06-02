@@ -45,6 +45,19 @@ public final class AccountManager {
 
     /**
      * Creates an account
+     * @param uuid uuid of the account to create and register
+     * @param name name of the account to create and register
+     */
+    public synchronized void create(final @NotNull UUID uuid, final @NotNull String name) {
+        Account account = new Account();
+        account.setUuid(uuid);
+        account.setName(name);
+
+        create(account);
+    }
+
+    /**
+     * Creates an account
      * @param account account to create and register
      */
     public synchronized void create(final @NotNull Account account) {
