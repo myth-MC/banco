@@ -44,6 +44,9 @@ public class CurrencyConfig {
     @Comment("Worlds where banco's economy should be disabled")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
 
+    @Comment("Allows accounts to have a negative balance")
+    private boolean negativeBalance = true;
+
     @Comment({"Configure items and their respective value", "Please, put less valuable items first. You can use MiniMessage to format text"})
     private List<BancoItem> itemRegistry = List.of(
         new VanillaBancoItem(Material.EMERALD, BigDecimal.valueOf(1), null),

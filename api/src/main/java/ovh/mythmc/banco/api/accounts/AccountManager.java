@@ -229,10 +229,17 @@ public final class AccountManager {
             return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
 
         // Online players
+        if (uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
+            account.setAmount(getValueOfPlayer(account.getUuid(), true));
+            database.update(account);
+        }
+
+        /* 1.1.0
         if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
             account.setAmount(getValueOfPlayer(account.getUuid(), true));
             database.update(account);
         }
+        */
 
         // Offline players
         return account.getAmount().add(account.getTransactions());

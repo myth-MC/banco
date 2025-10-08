@@ -89,11 +89,11 @@ public final class BancoCommand implements MainCommand {
             })  
         );
 
-        // /banco deposit
+        // /banco give
         commandManager.command(bancoCommand
-            .literal("deposit")
-            .permission("banco.use.banco.deposit")
-            .commandDescription(Description.of("Deposits money into an account"))
+            .literal("give")
+            .permission("banco.use.banco.give")
+            .commandDescription(Description.of("Adds funds to an account"))
             .required("target", AccountParser.accountParser())
             .required("amount", DoubleParser.doubleParser(0))
             .handler(ctx -> {
@@ -129,16 +129,26 @@ public final class BancoCommand implements MainCommand {
             })
         );
 
-        // /banco withdraw
+        // /banco take
         commandManager.command(bancoCommand
-            .literal("withdraw")
-            .permission("banco.use.banco.withdraw")
-            .commandDescription(Description.of("Withdraws money from an account"))
+            .literal("take")
+            .permission("banco.use.banco.take")
+            .commandDescription(Description.of("Takes funds from an account"))
             .required("target", AccountParser.accountParser())
             .required("amount", DoubleParser.doubleParser(0))
             .handler(ctx -> {
                 final Account target = ctx.get("target");
                 final BigDecimal amount = BigDecimal.valueOf((double) ctx.get("amount"));
+
+                final BigDecimal accountAmount = target.amount();
+                if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && amount.compareTo(accountAmount) > 0) {
+                    MessageUtil.error(ctx.sender(), Component.translatable("banco.commands.banco.take.amount-too-high",
+                        Component.text(MessageUtil.format(amount)),
+                        Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()),
+                        Component.text(MessageUtil.format(accountAmount))
+                    ));
+                    return;
+                } 
 
                 Banco.get().getAccountManager().withdraw(target, amount);
                 MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.banco.take.success",

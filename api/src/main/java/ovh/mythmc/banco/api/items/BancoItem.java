@@ -11,9 +11,9 @@ import ovh.mythmc.banco.api.items.impl.ItemsAdderBancoItem;
 import ovh.mythmc.banco.api.items.impl.MythicMobsBancoItem;
 import ovh.mythmc.banco.api.items.impl.NexoBancoItem;
 import ovh.mythmc.banco.api.items.impl.NovaBancoItem;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 import ovh.mythmc.banco.api.items.impl.OraxenBancoItem;
 import ovh.mythmc.banco.api.items.impl.SlimefunBancoItem;
-import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 
 @Polymorphic
 @PolymorphicTypes({
