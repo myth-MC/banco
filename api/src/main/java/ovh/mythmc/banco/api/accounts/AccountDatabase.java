@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -264,14 +265,14 @@ public final class AccountDatabase {
     }
 
     private Account findCachedAccountByUuid(@NotNull UUID uuid) {
-        return cache.entrySet().stream()
+        return Set.copyOf(cache.entrySet()).stream()
             .filter(entry -> entry.getKey().uuid().equals(uuid))
             .map(entry -> entry.getValue())
             .findFirst().orElse(null);
     }
 
     private Account findCachedAccountByName(@NotNull String name) {
-        return cache.entrySet().stream()
+        return Set.copyOf(cache.entrySet()).stream()
             .filter(entry -> entry.getKey().name() != null)
             .filter(entry -> entry.getKey().name().equalsIgnoreCase(name))
             .map(entry -> entry.getValue())

@@ -79,7 +79,7 @@ public final class AccountManager {
      * @param uuid uuid of account to delete and unregister
      */
     public synchronized void delete(final @NotNull UUID uuid) {
-        delete(get(uuid));
+        delete(getByUuid(uuid));
     }
 
     /**
@@ -87,17 +87,6 @@ public final class AccountManager {
      * @return List of registered accounts
      */
     public @NotNull List<Account> get() { return database.get(); }
-
-    /**
-     * Gets a specific account by its UUID
-     * @deprecated use getByUuid(uuid) instead
-     * @param uuid UUID of the player
-     * @return an account matching the UUID or null
-     */
-    @Deprecated(forRemoval = true, since = "1.0")
-    public Account get(final @NotNull UUID uuid) {
-        return getByUuid(uuid);
-    }
 
     /**
      * Gets a specific account by its UUID
@@ -123,7 +112,7 @@ public final class AccountManager {
      * @param amount amount of money to deposit
      */
     public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        deposit(get(uuid), amount);
+        deposit(getByUuid(uuid), amount);
     }
 
     /**
@@ -147,7 +136,7 @@ public final class AccountManager {
      * @param amount amount of money to withdraw
      */
     public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        withdraw(get(uuid), amount);
+        withdraw(getByUuid(uuid), amount);
     }
 
     /**
@@ -171,7 +160,7 @@ public final class AccountManager {
      * @param amount amount of money to set
      */
     public void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(get(uuid), amount);
+        set(getByUuid(uuid), amount);
     }
 
     /**
@@ -196,7 +185,7 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        return has(get(uuid), amount);
+        return has(getByUuid(uuid), amount);
     }
 
     /**
@@ -215,7 +204,7 @@ public final class AccountManager {
      * @return Account's balance
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
-        return amount(get(uuid));
+        return amount(getByUuid(uuid));
     }
 
     /**

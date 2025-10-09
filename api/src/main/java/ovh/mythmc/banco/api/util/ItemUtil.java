@@ -20,37 +20,6 @@ import java.util.List;
 public final class ItemUtil {
 
     /**
-     * Gets an ItemStack matching BancoItem's parameters
-     * @param bancoItem BancoItem to get parameters from
-     * @param amount amount of items
-     * @return An ItemStack matching BancoItem's parameters
-     */
-    @Deprecated(since = "1.0", forRemoval = true)
-    public static ItemStack getItemStack(final @NotNull BancoItem bancoItem, final int amount) {
-        return bancoItem.asItemStack(amount);
-    }
-
-    /**
-     * Gets a BancoItem matching an ItemStack's parameters
-     * @param item an ItemStack to get parameters from
-     * @return a BancoItem matching item's parameters
-     */
-    @Deprecated(since = "1.0", forRemoval = true)
-    public static BancoItem getBancoItem(final @NotNull ItemStack item) {
-        return Banco.get().getItemManager().getByItemStack(item);
-    }
-
-    /**
-     * Checks whether an ItemStack is a valid BancoItem or not
-     * @param item an ItemStack to get parameters from
-     * @return true if a BancoItem matching item's parameters exists
-     */
-    @Deprecated(since = "1.0", forRemoval = true)
-    public static boolean isBancoItem(ItemStack item) {
-        return getBancoItem(item) != null;
-    }
-
-    /**
      * Gets a list of ItemStack valued at a specified amount
      * @param amount amount of money
      * @return A list of ItemStack valued at a specified amount

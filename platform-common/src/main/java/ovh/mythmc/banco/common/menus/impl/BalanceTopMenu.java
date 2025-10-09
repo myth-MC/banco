@@ -8,7 +8,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ovh.mythmc.banco.api.Banco;
-import ovh.mythmc.banco.api.util.PlayerUtil;
+import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
 import ovh.mythmc.banco.common.menus.BasicMenu;
 import ovh.mythmc.banco.common.menus.MenuButton;
 import ovh.mythmc.banco.common.util.MessageUtil;
@@ -32,10 +32,11 @@ public final class BalanceTopMenu extends BasicMenu {
                 if (slot >= 8)
                     break;
     
-                final OfflinePlayer player = PlayerUtil.getOfflinePlayerByUuid(entry.getKey());
-                if (player == null || !player.hasPlayedBefore())
+                final Optional<OfflinePlayerReference> optPlayerReference = Banco.get().getAccountManager().getUuidResolver().resolveOfflinePlayer(entry.getKey());
+                if (optPlayerReference.isEmpty() || !optPlayerReference.get().toOfflinePlayer().hasPlayedBefore())
                     continue;
-                    
+
+                final OfflinePlayer player = optPlayerReference.get().toOfflinePlayer();
                 String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
     
                 String itemName = String.format(Banco.get().getSettings().get().getMenus().getBalanceTop().format(),

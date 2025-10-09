@@ -27,10 +27,6 @@ public interface Banco {
 
     @NotNull BancoSettingsProvider getSettings();
 
-    @Deprecated(since = "1.0") default BancoItemRegistry getItemManager() { return getItemRegistry(); }
-
-    @Deprecated(since = "1.0") default BancoStorageRegistry getStorageManager() { return getStorageRegistry(); }
-
     @NotNull default BancoItemRegistry getItemRegistry() { return BancoItemRegistry.instance; }
 
     @NotNull default BancoStorageRegistry getStorageRegistry() { return BancoStorageRegistry.instance; }

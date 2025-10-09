@@ -36,7 +36,7 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
 
     @Override
     public @NotNull Optional<UUID> resolve(@NotNull String username) {
-        return offlinePlayers.stream()
+        return Set.copyOf(offlinePlayers).stream()
             .filter(offlinePlayer -> offlinePlayer.name().equals(username))
             .map(OfflinePlayerReference::uuid)
             .findAny();
@@ -44,7 +44,7 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
 
     @Override
     public @NotNull Optional<OfflinePlayerReference> resolveOfflinePlayer(@NotNull UUID uuid) {
-        return this.offlinePlayers.stream()
+        return Set.copyOf(this.offlinePlayers).stream()
             .filter(offlinePlayer -> offlinePlayer.uuid().equals(uuid))
             .findAny();
     }
