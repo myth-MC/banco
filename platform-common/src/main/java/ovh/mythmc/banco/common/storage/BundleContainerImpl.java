@@ -25,49 +25,55 @@ public final class BundleContainerImpl extends BancoContainer {
 
     @Override
     protected ItemStack addItem(UUID uuid, ItemStack itemStack) {
-        for (ItemStack bundle : Bukkit.getPlayer(uuid).getInventory()) {
-            if (getBundleFreeCapacity(bundle) < 1)
-                continue;
+        var player = Bukkit.getPlayer(uuid);
+        if (player == null) return itemStack;
 
-            if (itemStack.getAmount() < 1)
-                break;
+        List<ItemStack[]> containers = List.of(player.getInventory().getContents(), player.getEnderChest().getContents());
 
-            BundleMeta bundleMeta = (BundleMeta) bundle.getItemMeta();
-            int pendingAmountToAdd = itemStack.getAmount();
+        for (ItemStack[] container : containers) {
+            for (ItemStack bundle : container) {
+                if (getBundleFreeCapacity(bundle) < 1)
+                    continue;
 
-            // Attempt to add to existing stacks
-            List<ItemStack> newItemList = new ArrayList<>(bundleMeta.getItems());
-            for (int i = 0; i < newItemList.size(); i++) {
-                ItemStack bundleItemStack = newItemList.get(i);
-                if (bundleItemStack.isSimilar(itemStack) && bundleItemStack.getAmount() < bundleItemStack.getMaxStackSize()) {
-                    // Minimum between max stack size (64) and amount that we'd want to add ideally
-                    int newAmount = Math.min(bundleItemStack.getMaxStackSize(), bundleItemStack.getAmount() + itemStack.getAmount());
+                if (itemStack.getAmount() < 1)
+                    break;
 
-                    // Minimum between existing newAmount and bundle free capacity
-                    newAmount = Math.min(newAmount, Math.max(getBundleListFreeCapacity(newItemList) - newAmount, 0));
+                BundleMeta bundleMeta = (BundleMeta) bundle.getItemMeta();
+                int pendingAmountToAdd = itemStack.getAmount();
 
-                    pendingAmountToAdd = pendingAmountToAdd - (newAmount - bundleItemStack.getAmount());
-                    bundleItemStack.setAmount(newAmount);
+                // Attempt to add to existing stacks
+                List<ItemStack> newItemList = new ArrayList<>(bundleMeta.getItems());
+                for (int i = 0; i < newItemList.size(); i++) {
+                    ItemStack bundleItemStack = newItemList.get(i);
+                    if (bundleItemStack.isSimilar(itemStack) && bundleItemStack.getAmount() < bundleItemStack.getMaxStackSize()) {
+                        // Minimum between max stack size (64) and amount that we'd want to add ideally
+                        int newAmount = Math.min(bundleItemStack.getMaxStackSize(), bundleItemStack.getAmount() + itemStack.getAmount());
 
-                    itemStack.setAmount(pendingAmountToAdd);
+                        // Minimum between existing newAmount and bundle free capacity
+                        newAmount = Math.min(newAmount, Math.max(getBundleListFreeCapacity(newItemList) - newAmount, 0));
+
+                        pendingAmountToAdd -= (newAmount - bundleItemStack.getAmount());
+                        bundleItemStack.setAmount(newAmount);
+
+                        itemStack.setAmount(pendingAmountToAdd);
+                    }
                 }
+
+                // Add the remaining amount that couldn't be added to existing stacks as new ones
+                if (pendingAmountToAdd > 0) {
+                    int freeCapacity = Math.min(pendingAmountToAdd, getBundleListFreeCapacity(newItemList));
+                    itemStack.setAmount(freeCapacity);
+                    // Add to list
+                    newItemList.add(itemStack.clone());
+
+                    // Update itemStack amount
+                    itemStack.setAmount(pendingAmountToAdd - freeCapacity);
+                }
+
+                // Update bundle contents
+                bundleMeta.setItems(newItemList.stream().filter(i -> !i.getType().isAir()).toList());
+                bundle.setItemMeta(bundleMeta);
             }
-
-            // Add the remaining amount that couldn't be added to existing stacks as new ones
-            if (pendingAmountToAdd > 0) {
-                int freeCapacity = Math.min(pendingAmountToAdd, getBundleListFreeCapacity(newItemList));
-                itemStack.setAmount(freeCapacity);
-
-                // Add to list
-                newItemList.add(itemStack.clone());
-
-                // Update itemStack amount
-                itemStack.setAmount(pendingAmountToAdd - freeCapacity);
-            }
-
-            // Update bundle contents
-            bundleMeta.setItems(newItemList.stream().filter(i -> !i.getType().isAir()).toList());
-            bundle.setItemMeta(bundleMeta);
         }
 
         return itemStack;
@@ -75,24 +81,34 @@ public final class BundleContainerImpl extends BancoContainer {
 
     @Override
     protected ItemStack removeItem(UUID uuid, ItemStack itemStack) {
+        var player = Bukkit.getPlayer(uuid);
+        if (player == null) return null;
+
         ItemStack removedItem = null;
 
-        for (ItemStack bundle : Bukkit.getPlayer(uuid).getInventory()) {
-            if (bundle == null || !bundle.getType().name().contains("BUNDLE"))
-                continue;
+        List<ItemStack[]> containers = List.of(player.getInventory().getContents(), player.getEnderChest().getContents());
 
-            BundleMeta bundleMeta = (BundleMeta) bundle.getItemMeta();
-            if (!bundleMeta.getItems().contains(itemStack))
-                continue;
+        for (ItemStack[] container : containers) {
+            for (ItemStack bundle : container) {
+                if (bundle == null || !bundle.getType().name().contains("BUNDLE"))
+                    continue;
 
-            List<ItemStack> updatedItems = new ArrayList<>(bundleMeta.getItems());
-            updatedItems.remove(itemStack);
+                BundleMeta bundleMeta = (BundleMeta) bundle.getItemMeta();
+                if (!bundleMeta.getItems().contains(itemStack))
+                    continue;
 
-            bundleMeta.setItems(updatedItems);
-            bundle.setItemMeta(bundleMeta);
+                List<ItemStack> updatedItems = new ArrayList<>(bundleMeta.getItems());
+                updatedItems.remove(itemStack);
 
-            removedItem = itemStack;
-            break;
+                bundleMeta.setItems(updatedItems);
+                bundle.setItemMeta(bundleMeta);
+
+                removedItem = itemStack;
+                break;
+            }
+
+            if (removedItem != null)
+                break;
         }
 
         return removedItem;
@@ -100,8 +116,20 @@ public final class BundleContainerImpl extends BancoContainer {
 
     private List<ItemStack> getCombinedBundlesContent(UUID uuid) {
         List<ItemStack> content = new ArrayList<>();
+        var player = Bukkit.getPlayer(uuid);
+        if (player == null) return content;
 
-        for (ItemStack bundle : Bukkit.getPlayer(uuid).getInventory()) {
+        // inventory
+        for (ItemStack bundle : player.getInventory()) {
+            if (bundle == null || !bundle.getType().name().contains("BUNDLE"))
+                continue;
+
+            BundleMeta bundleMeta = (BundleMeta) bundle.getItemMeta();
+            content.addAll(bundleMeta.getItems());
+        }
+
+        // ender chest
+        for (ItemStack bundle : player.getEnderChest()) {
             if (bundle == null || !bundle.getType().name().contains("BUNDLE"))
                 continue;
 
