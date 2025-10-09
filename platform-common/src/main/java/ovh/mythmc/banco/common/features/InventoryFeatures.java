@@ -8,6 +8,7 @@ import ovh.mythmc.banco.common.storage.BundleContainerImpl;
 import ovh.mythmc.banco.common.storage.EnderChestInventoryImpl;
 import ovh.mythmc.banco.common.storage.PlayerInventoryImpl;
 import ovh.mythmc.banco.common.storage.RemainderStorageImpl;
+import ovh.mythmc.banco.common.storage.ShulkerBoxContainerImpl;
 import ovh.mythmc.gestalt.annotations.Feature;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
@@ -19,7 +20,8 @@ public final class InventoryFeatures {
     private final List<BancoStorage> storages = List.of(
         new BundleContainerImpl(),
         new PlayerInventoryImpl(),
-        new EnderChestInventoryImpl()
+        new EnderChestInventoryImpl(),
+        new ShulkerBoxContainerImpl()
     );
 
     @FeatureInitialize

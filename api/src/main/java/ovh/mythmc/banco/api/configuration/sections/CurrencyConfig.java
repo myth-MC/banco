@@ -38,6 +38,7 @@ public class CurrencyConfig {
         "BUNDLE",
         "PLAYER_INVENTORY",
         "ENDER_CHEST",
+        "SHULKER_BOX",
         "OTHER"
     );
 
