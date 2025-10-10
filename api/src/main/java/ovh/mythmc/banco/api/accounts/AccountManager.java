@@ -12,6 +12,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
 import ovh.mythmc.banco.api.accounts.service.LocalUUIDResolver;
+import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
@@ -217,18 +218,15 @@ public final class AccountManager {
         if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
             return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
 
-        // Online players
-        if (uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
-            account.setAmount(getValueOfPlayer(account.getUuid(), true));
-            database.update(account);
-        }
+        final Optional<OfflinePlayerReference> optionalOfflinePlayerReference = uuidResolver.resolveOfflinePlayer(account.getUuid());
 
-        /* 1.1.0
-        if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
+        // Update balance
+        if (optionalOfflinePlayerReference.isPresent() && // Safeguard against weird thing that apparently can happen in laggy server environments?
+            uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
+
             account.setAmount(getValueOfPlayer(account.getUuid(), true));
             database.update(account);
         }
-        */
 
         // Offline players
         return account.getAmount().add(account.getTransactions());

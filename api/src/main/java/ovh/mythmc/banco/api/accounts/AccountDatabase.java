@@ -120,8 +120,9 @@ public final class AccountDatabase {
     public void create(@NotNull Account account) {
         try {
             getDao().createIfNotExists(account);
-            // Cache name
+            // Cache name and account
             accountIdentifierCache.add(account.getIdentifier());
+            cache.put(account.getIdentifier(), account);
         } catch (SQLException e) {
             logger.error("Exception while creating account {}", e);
         }
