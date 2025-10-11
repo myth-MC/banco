@@ -38,7 +38,7 @@ public final class InfoMenu extends BasicMenu {
         addButton(3, getInfoButton(Material.STICK, "Items", Banco.get().getItemRegistry().get().size() + ""));
         addButton(4, getInfoButton(Material.CHEST, "Storages", Banco.get().getItemRegistry().get().size() + ""));
         addButton(5, getInfoButton(Material.COMPASS, "Accounts", Banco.get().getAccountManager().get().size() + " (" + Banco.get().getAccountManager().getDatabase().getCachedAccounts().size() + " cached)"));
-        addButton(6, getInfoButton(Material.CHAIN, "Transactions in Queue", BancoScheduler.get().getQueuedTransactions().size() + ""));
+        addButton(6, getInfoButton(Material.MINECART, "Transactions in Queue", BancoScheduler.get().getQueuedTransactions().size() + ""));
         if (!UpdateChecker.getLatest().equals(Banco.get().version()))
             addButton(8, getInfoButton(Material.BELL, "New version available", "v" + UpdateChecker.getLatest()));
 
