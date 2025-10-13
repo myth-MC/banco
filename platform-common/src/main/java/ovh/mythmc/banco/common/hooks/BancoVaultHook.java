@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings("deprecation")
 public class BancoVaultHook implements Economy {
 
     private final LoggerWrapper logger = new LoggerWrapper() {

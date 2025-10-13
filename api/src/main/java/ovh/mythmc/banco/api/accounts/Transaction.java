@@ -30,7 +30,7 @@ public class Transaction {
 
     public void transact() {
         // Callback
-        var callback = new BancoTransactionProcess(this);
+        final var callback = new BancoTransactionProcess(this);
         BancoTransactionProcessCallback.INSTANCE.invoke(callback);
 
         if (callback.cancelled())

@@ -1,8 +1,6 @@
 package ovh.mythmc.banco.api.util;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import lombok.experimental.UtilityClass;
@@ -13,15 +11,6 @@ import java.util.UUID;
 @UtilityClass
 @Internal
 public class PlayerUtil {
-
-    @Deprecated
-    public OfflinePlayer getOfflinePlayerByUuid(final @NotNull UUID uuid) {
-        final var optionalReference = Banco.get().getAccountManager().getUuidResolver().resolveOfflinePlayer(uuid);
-        if (optionalReference.isEmpty())
-            return null;
-
-        return optionalReference.get().toOfflinePlayer();
-    }
 
     public boolean isInBlacklistedWorld(UUID uuid) {
         final var optionalReference = Banco.get().getAccountManager().getUuidResolver().resolveOfflinePlayer(uuid);

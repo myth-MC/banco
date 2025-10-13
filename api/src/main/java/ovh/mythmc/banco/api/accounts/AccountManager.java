@@ -12,6 +12,7 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
 import ovh.mythmc.banco.api.accounts.service.LocalUUIDResolver;
+import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
@@ -45,6 +46,19 @@ public final class AccountManager {
 
     /**
      * Creates an account
+     * @param uuid uuid of the account to create and register
+     * @param name name of the account to create and register
+     */
+    public synchronized void create(final @NotNull UUID uuid, final @NotNull String name) {
+        Account account = new Account();
+        account.setUuid(uuid);
+        account.setName(name);
+
+        create(account);
+    }
+
+    /**
+     * Creates an account
      * @param account account to create and register
      */
     public synchronized void create(final @NotNull Account account) {
@@ -66,7 +80,7 @@ public final class AccountManager {
      * @param uuid uuid of account to delete and unregister
      */
     public synchronized void delete(final @NotNull UUID uuid) {
-        delete(get(uuid));
+        delete(getByUuid(uuid));
     }
 
     /**
@@ -74,17 +88,6 @@ public final class AccountManager {
      * @return List of registered accounts
      */
     public @NotNull List<Account> get() { return database.get(); }
-
-    /**
-     * Gets a specific account by its UUID
-     * @deprecated use getByUuid(uuid) instead
-     * @param uuid UUID of the player
-     * @return an account matching the UUID or null
-     */
-    @Deprecated(forRemoval = true, since = "1.0")
-    public Account get(final @NotNull UUID uuid) {
-        return getByUuid(uuid);
-    }
 
     /**
      * Gets a specific account by its UUID
@@ -110,7 +113,7 @@ public final class AccountManager {
      * @param amount amount of money to deposit
      */
     public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        deposit(get(uuid), amount);
+        deposit(getByUuid(uuid), amount);
     }
 
     /**
@@ -134,7 +137,7 @@ public final class AccountManager {
      * @param amount amount of money to withdraw
      */
     public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        withdraw(get(uuid), amount);
+        withdraw(getByUuid(uuid), amount);
     }
 
     /**
@@ -158,7 +161,7 @@ public final class AccountManager {
      * @param amount amount of money to set
      */
     public void set(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        set(get(uuid), amount);
+        set(getByUuid(uuid), amount);
     }
 
     /**
@@ -183,7 +186,7 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull UUID uuid, final @NotNull BigDecimal amount) {
-        return has(get(uuid), amount);
+        return has(getByUuid(uuid), amount);
     }
 
     /**
@@ -202,7 +205,7 @@ public final class AccountManager {
      * @return Account's balance
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
-        return amount(get(uuid));
+        return amount(getByUuid(uuid));
     }
 
     /**
@@ -215,8 +218,12 @@ public final class AccountManager {
         if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
             return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
 
-        // Online players
-        if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
+        final Optional<OfflinePlayerReference> optionalOfflinePlayerReference = uuidResolver.resolveOfflinePlayer(account.getUuid());
+
+        // Update balance
+        if (optionalOfflinePlayerReference.isPresent() && // Safeguard against weird thing that apparently can happen in laggy server environments?
+            uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
+
             account.setAmount(getValueOfPlayer(account.getUuid(), true));
             database.update(account);
         }

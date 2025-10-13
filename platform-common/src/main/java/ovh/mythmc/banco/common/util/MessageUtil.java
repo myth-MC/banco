@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.experimental.UtilityClass;
@@ -15,6 +16,13 @@ import java.text.DecimalFormat;
 
 @UtilityClass
 public class MessageUtil {
+
+    public void info(CommandSender commandSender, String message) {
+        if (commandSender instanceof Audience audience) // Paper
+            info(audience, message);
+
+        
+    }
 
     public void info(Audience audience, String message) {
         info(audience, Component.translatable(message));

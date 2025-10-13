@@ -19,10 +19,10 @@ import java.util.List;
 public class CurrencyConfig {
 
     @Comment("Currency name in singular")
-    private @NotNull String nameSingular = "Dollar";
+    private @NotNull String nameSingular = "Emerald";
 
     @Comment("Currency name in plural")
-    private @NotNull String namePlural = "Dollars";
+    private @NotNull String namePlural = "Emeralds";
 
     @Comment("Currency symbol")
     private @NotNull String symbol = "$";
@@ -33,19 +33,20 @@ public class CurrencyConfig {
     @Comment({"Whether to prevent items configured below from dropping when killing mobs", "This prevents players from building money farms, so it's recommended to keep it enabled"})
     private boolean removeDrops = true;
 
-    @Comment("Enable this if you want to give players the chance of changing lower value items for higher value ones by using /balance change")
-    private boolean changeMoney = false;
-
     @Comment("Order in which items will be added/removed from storages. You can add or remove entries to customize your setup")
     private List<String> inventoryOrder = List.of(
         "BUNDLE",
         "PLAYER_INVENTORY",
         "ENDER_CHEST",
+        "SHULKER_BOX",
         "OTHER"
     );
 
     @Comment("Worlds where banco's economy should be disabled")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
+
+    @Comment("Allows accounts to have a negative balance")
+    private boolean negativeBalance = true;
 
     @Comment({"Configure items and their respective value", "Please, put less valuable items first. You can use MiniMessage to format text"})
     private List<BancoItem> itemRegistry = List.of(
@@ -56,6 +57,7 @@ public class CurrencyConfig {
             List.of("<gray>Holds <white>64x Emerald Blocks</white></gray>"), 
             1009, 
             false, 
+            4,
             "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
             null
             //List.of(

@@ -18,7 +18,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BancoScheduler.get().runAsync(() ->{
+        BancoScheduler.get().run(() ->{
             UUID uuid = event.getPlayer().getUniqueId();
             Account account = Banco.get().getAccountManager().getByUuid(uuid);
     
@@ -35,14 +35,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        BancoScheduler.get().runAsync(() -> {
-            UUID uuid = event.getPlayer().getUniqueId();
+        UUID uuid = event.getPlayer().getUniqueId();
 
-            if (Banco.get().getAccountManager().getByUuid(uuid) == null)
-                return;
-    
-            Banco.get().getAccountManager().amount(uuid); // updates account's balance amount
-        });
+        if (Banco.get().getAccountManager().getByUuid(uuid) == null)
+            return;
+
+        Banco.get().getAccountManager().amount(uuid); // updates account's balance amount
     }
 
 }

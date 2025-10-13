@@ -55,7 +55,48 @@ dependencies:
       join-classpath: true
 
 permissions:
+  # Basic nodes
   banco.user:
     default: true
+    children:
+      banco.use.help: true
+      banco.use.balance: true
+      banco.use.balancetop: true
+      banco.use.balancechange: true
+      banco.use.pay: true
   banco.admin:
+    default: op
+    children:
+      banco.use.banco.encode: true
+      banco.use.banco.deposit: true
+      bnaco.use.banco.set: true
+      bnaco.use.banco.withdraw: true
+      banco.use.banco.dump: true
+      banco.use.banco.info: true
+      banco.use.banco.reload: true
+  # Commands (misc)
+  banco.use.help:
+    default: true
+  banco.use.balance:
+    default: true
+  banco.use.balancetop:
+    default: true
+  banco.use.balancechange:
+    default: true
+  banco.use.pay:
+    default: true
+  # Commands (/banco)
+  banco.use.banco.encode:
+    default: op
+  banco.use.banco.deposit:
+    default: op
+  banco.use.banco.set:
+    default: op
+  banco.use.banco.withdraw:
+    default: op
+  banco.use.banco.dump:
+    default: op
+  banco.use.banco.info:
+    default: op
+  banco.use.banco.reload:
     default: op

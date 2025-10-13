@@ -1,14 +1,18 @@
 package ovh.mythmc.banco.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import org.bukkit.command.PluginCommand;
 
-import ovh.mythmc.banco.bukkit.commands.BalanceCommandImpl;
-import ovh.mythmc.banco.bukkit.commands.BalanceTopCommandImpl;
-import ovh.mythmc.banco.bukkit.commands.BancoCommandImpl;
+import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.paper.LegacyPaperCommandManager;
+
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
+import ovh.mythmc.banco.common.command.BancoCommandProvider;
+import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountManager;
@@ -17,10 +21,7 @@ import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
-import ovh.mythmc.banco.bukkit.commands.PayCommandImpl;
 import ovh.mythmc.banco.bukkit.scheduler.BancoSchedulerBukkit;
-
-import java.util.*;
 
 @Getter
 public final class BancoBukkit extends BancoBootstrap {
@@ -55,7 +56,8 @@ public final class BancoBukkit extends BancoBootstrap {
     };
 
     public BancoBukkit(final @NotNull BancoBukkitPlugin plugin) {
-        super(plugin, plugin.getDataFolder());
+        super(plugin, plugin.getDataFolder(), provider(plugin));
+
         instance = this;
 
         // Register platform UUID resolver
@@ -79,7 +81,6 @@ public final class BancoBukkit extends BancoBootstrap {
         adventure = BukkitAudiences.create(getPlugin());
 
         registerListeners();
-        registerCommands();
 
         scheduler.initialize();
     }
@@ -112,23 +113,24 @@ public final class BancoBukkit extends BancoBootstrap {
         Bukkit.getPluginManager().registerEvents(uuidResolver, getPlugin());
     }
 
-    private void registerCommands() {
-        PluginCommand banco = getPlugin().getCommand("banco");
-        PluginCommand balance = getPlugin().getCommand("balance");
-        PluginCommand balanceTop = getPlugin().getCommand("balancetop");
-        PluginCommand pay = getPlugin().getCommand("pay");
-
-        Objects.requireNonNull(banco).setExecutor(new BancoCommandImpl());
-        Objects.requireNonNull(balance).setExecutor(new BalanceCommandImpl());
-        Objects.requireNonNull(balanceTop).setExecutor(new BalanceTopCommandImpl());
-        Objects.requireNonNull(pay).setExecutor(new PayCommandImpl());
-    }
-
     public static @NotNull BukkitAudiences adventure() {
         if(adventure == null) {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         }
         return adventure;
+    }
+
+    private static BancoCommandProvider provider(@NotNull JavaPlugin plugin) {
+        final var commandManager = new LegacyPaperCommandManager<BancoCommandSource>(
+            plugin, 
+            ExecutionCoordinator.simpleCoordinator(), 
+            SenderMapper.create(
+                commandSender -> new BukkitCommandSource(commandSender),
+                bancoSource -> (CommandSender) bancoSource.source()
+            )
+        );
+
+        return new BancoCommandProvider(commandManager);
     }
 
 }

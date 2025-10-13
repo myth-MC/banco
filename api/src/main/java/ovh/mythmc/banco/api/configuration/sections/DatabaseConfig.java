@@ -8,8 +8,19 @@ import lombok.Getter;
 @Getter
 public class DatabaseConfig {
 
-    @Comment("Database type (SQLITE, MYSQL or MARIADB)")
+    @Comment("Database type (SQLITE or MYSQL)")
     private DatabaseType type = DatabaseType.SQLITE;
+
+    @Comment("MySQL connection")
+    private String host = "localhost";
+
+    private int port = 3306;
+
+    private String database = "banco";
+
+    private String username = "";
+
+    private String password = "";
 
     @Comment("Time between each cache clean in minutes")
     private int cacheClearInterval = 5;
@@ -30,8 +41,7 @@ public class DatabaseConfig {
 
     public enum DatabaseType {
         SQLITE,
-        MYSQL,
-        MARIADB
+        MYSQL
     }
     
 }

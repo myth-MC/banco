@@ -82,16 +82,6 @@ public final class BancoItemRegistry {
         return getByItemStack(item) != null;
     }
 
-    /**
-     * Gets the value of an item
-     * @param item a BancoItem
-     * @param amount amount of items
-     * @return Value of BancoItem multiplied by the amount
-     */
-    @Deprecated(since = "1.0", forRemoval = true)
-    public BigDecimal value(final @NotNull BancoItem item, int amount) {
-        return item.value().multiply(BigDecimal.valueOf(amount));
-    }
 
     public boolean isLegacy() {
         return Banco.get().getSettings().get().getCurrency().getItems() != null;

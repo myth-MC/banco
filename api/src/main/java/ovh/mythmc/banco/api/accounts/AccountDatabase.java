@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,11 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import lombok.NoArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.api.accounts.database.MySQLConnectionSource;
+import ovh.mythmc.banco.api.accounts.database.SQLiteConnectionSource;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 @NoArgsConstructor
@@ -34,7 +37,11 @@ public final class AccountDatabase {
 
     private Dao<Account, UUID> accountsDao;
 
-    private final Map<AccountIdentifierKey, Account> cache = new HashMap<>();
+    private JdbcConnectionSource connectionSource;
+
+    private final Map<AccountIdentifierKey, Account> cache = new ConcurrentHashMap<>();
+
+    private final Collection<AccountIdentifierKey> accountIdentifierCache = new HashSet<>();
 
     private boolean firstBoot = false;
 
@@ -58,13 +65,17 @@ public final class AccountDatabase {
     };
 
     public void initialize(@NotNull String path) throws SQLException {
-        ConnectionSource connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path);
+        this.connectionSource = switch (Banco.get().getSettings().get().getDatabase().getType()) {
+            case SQLITE -> new SQLiteConnectionSource(path);
+            case MYSQL -> new MySQLConnectionSource();
+        };
+
         TableUtils.createTableIfNotExists(connectionSource, Account.class);
-        accountsDao = DaoManager.createDao(connectionSource, Account.class);
+        this.accountsDao = DaoManager.createDao(connectionSource, Account.class);
 
         this.path = path;
 
-        firstBoot = !Banco.get().getSettings().get().getDatabase().isInitialized() &&
+        this.firstBoot = !Banco.get().getSettings().get().getDatabase().isInitialized() &&
             Banco.get().getSettings().get().getDatabase().getDatabaseVersion() == 0;
 
         backup("backup");
@@ -75,7 +86,19 @@ public final class AccountDatabase {
         if (Banco.get().getSettings().get().isDebug())
             Banco.get().getLogger().info("Loaded a total amount of " + get().size() + " accounts! (using V3 format)");
 
-        Banco.get().getSettings().get().getDatabase().setDatabaseInitialized();
+        accountIdentifierCache.addAll(get().stream().map(Account::getIdentifier).toList());
+
+        Banco.get().getSettings().setDatabaseInitialized();
+    }
+
+    private Dao<Account, UUID> getDao() {
+        try {
+            this.connectionSource.initialize(); // Reopen connection if necessary
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+        }
+
+        return this.accountsDao;
     }
 
     public void backup(String differentiator) {
@@ -96,7 +119,10 @@ public final class AccountDatabase {
 
     public void create(@NotNull Account account) {
         try {
-            accountsDao.createIfNotExists(account);
+            getDao().createIfNotExists(account);
+            // Cache name and account
+            accountIdentifierCache.add(account.getIdentifier());
+            cache.put(account.getIdentifier(), account);
         } catch (SQLException e) {
             logger.error("Exception while creating account {}", e);
         }
@@ -104,7 +130,9 @@ public final class AccountDatabase {
 
     public void delete(@NotNull Account account) {
         try {
-            accountsDao.delete(account);
+            getDao().delete(account);
+            // Delete cached name
+            accountIdentifierCache.remove(account.getIdentifier());
         } catch (SQLException e) {
             logger.error("Exception while deleting account {}", e);
         }
@@ -142,7 +170,7 @@ public final class AccountDatabase {
 
     private void updateDatabaseEntry(@NotNull Account account) {
         try {
-            accountsDao.update(account);
+            getDao().update(account);
 
             // Clear cache value
             cache.remove(account.getIdentifier());
@@ -155,9 +183,13 @@ public final class AccountDatabase {
         return cache.values();
     }
 
+    public Collection<AccountIdentifierKey> getAccountIdentifierCache() {
+        return this.accountIdentifierCache;
+    }
+
     public List<Account> get() {
         try {
-            return accountsDao.queryForAll();
+            return getDao().queryForAll();
         } catch (SQLException e) {
             logger.error("Exception while getting every account {}", e);
         }
@@ -171,7 +203,7 @@ public final class AccountDatabase {
             return cachedAccount;
 
         try {
-            Account account = accountsDao.queryForId(uuid);
+            Account account = getDao().queryForId(uuid);
             if (account == null)
                 return null;
 
@@ -190,7 +222,7 @@ public final class AccountDatabase {
             return cachedAccount;
 
         try {
-            List<Account> accounts = accountsDao.queryBuilder()
+            List<Account> accounts = getDao().queryBuilder()
                     .where()
                     .like("name", name)
                     .query();
@@ -214,7 +246,7 @@ public final class AccountDatabase {
             return cachedAccount;
 
         try {
-            List<Account> accounts = accountsDao.queryBuilder()
+            List<Account> accounts = getDao().queryBuilder()
                     .where()
                     .like("name", name)
                     .query();
@@ -234,14 +266,14 @@ public final class AccountDatabase {
     }
 
     private Account findCachedAccountByUuid(@NotNull UUID uuid) {
-        return cache.entrySet().stream()
+        return Set.copyOf(cache.entrySet()).stream()
             .filter(entry -> entry.getKey().uuid().equals(uuid))
             .map(entry -> entry.getValue())
             .findFirst().orElse(null);
     }
 
     private Account findCachedAccountByName(@NotNull String name) {
-        return cache.entrySet().stream()
+        return Set.copyOf(cache.entrySet()).stream()
             .filter(entry -> entry.getKey().name() != null)
             .filter(entry -> entry.getKey().name().equalsIgnoreCase(name))
             .map(entry -> entry.getValue())
@@ -249,20 +281,22 @@ public final class AccountDatabase {
     }
 
     public void upgrade() {
+        // Janky fix to upgrade from v1.0.3 to v1.1.0 since the 'initialized' variable wasn't properly set to true
+        int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
+        if(oldVersion == 1) {
+            try {
+                logger.info("Upgrading database...");
+                getDao().executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
+                logger.info("Done!");
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+            }
+        } 
+
         if (!firstBoot) {
-            int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
-            if(oldVersion < 1) {
-                try {
-                    logger.info("Upgrading database...");
-                    accountsDao.executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
-                    logger.info("Done!");
-                } catch (SQLException e) {
-                    logger.error("Exception while upgrading database: {}", e);
-                }
-            } 
         }
 
-        Banco.get().getSettings().updateVersion(1);  
+        Banco.get().getSettings().updateVersion(2);  
     }
     
 }

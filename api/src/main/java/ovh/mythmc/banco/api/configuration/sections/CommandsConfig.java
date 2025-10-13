@@ -16,12 +16,17 @@ public class CommandsConfig {
 
     private String errorPrefix = "<#810909>\u274C</#810909>";
 
-    @Comment("Disabling commands will only work in Paper and its forks")
+    @Comment({"/balance - Allows players to view their current balance", "Permission: banco.use.balance (assigned by default)"})
     private SimpleCommand balance = new SimpleCommand(true);
 
-    private SimpleCommand pay = new SimpleCommand(true);
+    @Comment({"/balancechange - Allows players to compact their balance", "Permission: banco.use.balancechange (assigned by default)"})
+    private SimpleCommand balanceChange = new SimpleCommand(false);
 
+    @Comment({"/balancetop - Allows players to view the balance top", "Permission: banco.use.balancetop (assigned by default)"})
     private SimpleCommand balanceTop = new SimpleCommand(true);
+
+    @Comment({"/pay - Allows players to send money to other accounts", "Permission: banco.use.pay (assigned by default)"})
+    private SimpleCommand pay = new SimpleCommand(true);
 
     public record SimpleCommand(boolean enabled) { }
 

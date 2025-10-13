@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -22,58 +24,78 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
+import org.jetbrains.annotations.NotNull;
 
+import de.exlll.configlib.Configuration;
+import de.exlll.configlib.Ignore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
 
-public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOptions customization) implements BancoItem {
+@Configuration
+public final class VanillaBancoItem implements BancoItem {
+
+    private Material material;
+
+    private BigDecimal value;
+
+    private BancoItemOptions customization;
+
+    @Ignore
+    private ItemStack itemStack;
+
+    VanillaBancoItem() {
+    }
+
+    public VanillaBancoItem(@NotNull Material material, @NotNull BigDecimal value, @Nullable BancoItemOptions customization) {
+        this.material = material;
+        this.value = value;
+        this.customization = customization;
+    }
 
     @Override
-    public boolean match(ItemStack itemStack) {
-        // Match by basic ItemStack
-        if (itemStack.isSimilar(asItemStack()))
-            return true;
-
-        // Match by identifier
-        NamespacedKey key = Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY;
-        if (itemStack.hasItemMeta() && itemStack.getItemMeta().getPersistentDataContainer().has(key)) {
-            String itemStackIdentifier = itemStack.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
-            if (getIdentifier().equals(itemStackIdentifier))
-                return true;
-        }
-
-        return false;
+    public BigDecimal value() {
+        return this.value;
     }
 
     @Override
     public ItemStack asItemStack(int amount) {
+        if (this.itemStack != null) {
+            final var itemStack = this.itemStack.clone();
+            itemStack.setAmount(amount);
+            return itemStack;
+        }
+
         ItemStack itemStack = new ItemStack(material, amount);
 
-        if (customization() != null) {
+        if (customization != null) {
             ItemMeta itemMeta = itemStack.getItemMeta();
 
             // Apply custom display name
-            if (customization().displayName() != null)
-                itemMeta.setDisplayName(format(customization().displayName()));
+            if (customization.displayName() != null)
+                itemMeta.setDisplayName(format(customization.displayName()));
 
             // Apply lore
-            if (customization().lore() != null)
-                itemMeta.setLore(customization().lore().stream().map(this::format).toList());
+            if (customization.lore() != null)
+                itemMeta.setLore(customization.lore().stream().map(this::format).toList());
 
             // Apply custom model data
-            if (customization().customModelData() != null)
-                itemMeta.setCustomModelData(customization().customModelData());
+            if (customization.customModelData() != null)
+                itemMeta.setCustomModelData(customization.customModelData());
 
             // Apply glow effect
-            if (customization().glowEffect() != null && customization().glowEffect())
+            if (customization.glowEffect() != null && customization.glowEffect())
                 itemMeta.addEnchant(Enchantment.LOYALTY, 1, true);
 
             // Apply head texture URL
-            if (customization().headTextureUrl() != null && material().equals(Material.PLAYER_HEAD))
-                ((SkullMeta) itemMeta).setOwnerProfile(getProfile(customization().headTextureUrl()));
+            if (customization.headTextureUrl() != null && material.equals(Material.PLAYER_HEAD))
+                ((SkullMeta) itemMeta).setOwnerProfile(getProfile(customization.headTextureUrl()));
+
+            // Apply max stack size
+            if (customization.maxStackSize() != null)
+                itemMeta.setMaxStackSize(customization.maxStackSize());
 
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -82,14 +104,15 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
             itemMeta.getPersistentDataContainer().set(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
             // Apply attribute modifiers
-            if (customization().attributes() != null) {
-                customization().attributes().forEach(attribute -> itemMeta.addAttributeModifier(attribute.getAttribute(), attribute.getAttributeModifier()));
+            if (customization.attributes() != null) {
+                customization.attributes().forEach(attribute -> itemMeta.addAttributeModifier(attribute.getAttribute(), attribute.getAttributeModifier()));
             }
 
             // Apply ItemMeta
             itemStack.setItemMeta(itemMeta);
         }
 
+        this.itemStack = itemStack;
         return itemStack;
     }
 
@@ -116,7 +139,7 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
         return material + "-" + value + "-" + customization;
     }
 
-    public record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, String headTextureUrl, List<AttributeField> attributes) {
+    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes) {
         
         public Boolean glowEffect() {
             if (glowEffect == null)
@@ -137,5 +160,5 @@ public record VanillaBancoItem(Material material, BigDecimal value, BancoItemOpt
 
         }
     }
-
+    
 }
