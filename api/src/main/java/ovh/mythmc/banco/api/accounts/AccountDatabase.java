@@ -88,7 +88,7 @@ public final class AccountDatabase {
 
         accountIdentifierCache.addAll(get().stream().map(Account::getIdentifier).toList());
 
-        Banco.get().getSettings().get().getDatabase().setDatabaseInitialized();
+        Banco.get().getSettings().setDatabaseInitialized();
     }
 
     private Dao<Account, UUID> getDao() {
@@ -281,20 +281,22 @@ public final class AccountDatabase {
     }
 
     public void upgrade() {
+        // Janky fix to upgrade from v1.0.3 to v1.1.0 since the 'initialized' variable wasn't properly set to true
+        int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
+        if(oldVersion == 1) {
+            try {
+                logger.info("Upgrading database...");
+                getDao().executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
+                logger.info("Done!");
+            } catch (SQLException e) {
+                logger.error("Exception while upgrading database: {}", e);
+            }
+        } 
+
         if (!firstBoot) {
-            int oldVersion = Banco.get().getSettings().get().getDatabase().getDatabaseVersion();
-            if(oldVersion < 1) {
-                try {
-                    logger.info("Upgrading database...");
-                    getDao().executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
-                    logger.info("Done!");
-                } catch (SQLException e) {
-                    logger.error("Exception while upgrading database: {}", e);
-                }
-            } 
         }
 
-        Banco.get().getSettings().updateVersion(1);  
+        Banco.get().getSettings().updateVersion(2);  
     }
     
 }

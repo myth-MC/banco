@@ -18,7 +18,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BancoScheduler.get().runAsync(() ->{
+        BancoScheduler.get().run(() ->{
             UUID uuid = event.getPlayer().getUniqueId();
             Account account = Banco.get().getAccountManager().getByUuid(uuid);
     
