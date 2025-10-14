@@ -49,7 +49,7 @@
 * ~~[Folia](https://papermc.io/software/folia) support~~ ✅ (0.3+)
 * ~~Commands~~ ✅ (0.2+)
 * ~~Custom Model Data support~~ ✅ (0.5+)
-* MySQL support
+* ~~MySQL support~~ ✅ (1.1+)
 * ~~Update tracker~~ ✅ (0.2+)
 * ~~Baltop~~ ✅ (0.6+)
 * ~~Count Ender Chest items~~ ✅ (0.4+)
