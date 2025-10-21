@@ -5,10 +5,10 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.description.Description;
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.banco.api.Banco;
+import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
-import ovh.mythmc.banco.common.menus.MenuManager;
-import ovh.mythmc.banco.common.menus.impl.BalanceTopMenu;
 
 public final class BalanceTopCommand implements MainCommand {
 
@@ -30,7 +30,8 @@ public final class BalanceTopCommand implements MainCommand {
                     return;
                 }
 
-                MenuManager.getInstance().openInventory(new BalanceTopMenu(), (Player) ctx.sender().source());
+                ((BancoBootstrap) Banco.get()).menuDispatcher().showBalanceTop((Player) ctx.sender().source());
+                //MenuManager.getInstance().openInventory(new BalanceTopMenu(), (Player) ctx.sender().source());
             })
         );
     }

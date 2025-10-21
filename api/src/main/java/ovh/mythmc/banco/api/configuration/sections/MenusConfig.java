@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class MenusConfig {
 
-    private InfoMenu info = new InfoMenu("ʙᴀɴᴄᴏ", "§e§l%s", "§7%s");
+    private InfoMenu info = new InfoMenu("ʙᴀɴᴄᴏ", "<yellow><bold>%s</bold></yellow>", "<gray>%s</gray>");
 
-    private BalanceTopMenu balanceTop = new BalanceTopMenu("ʙᴀɴᴄᴏ", "§e§l%s §a%s §7- §a%s");
+    private BalanceTopMenu balanceTop = new BalanceTopMenu("ʙᴀɴᴄᴏ", "<yellow><bold>%s</bold></yellow> <green>%s</green> <gray>-</gray> <green>%s</green>");
 
     public record InfoMenu(String title, String keyFormat, String valueFormat) { }
 

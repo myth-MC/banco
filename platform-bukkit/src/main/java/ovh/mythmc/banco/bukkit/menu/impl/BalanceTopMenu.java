@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.menus.impl;
+package ovh.mythmc.banco.bukkit.menu.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
-import ovh.mythmc.banco.common.menus.BasicMenu;
-import ovh.mythmc.banco.common.menus.MenuButton;
+import ovh.mythmc.banco.bukkit.menu.BasicMenu;
+import ovh.mythmc.banco.bukkit.menu.MenuButton;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
 import java.math.BigDecimal;

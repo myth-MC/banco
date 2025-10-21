@@ -1,7 +1,7 @@
-package ovh.mythmc.banco.common.listeners;
+package ovh.mythmc.banco.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
-import ovh.mythmc.banco.common.menus.MenuManager;
+import ovh.mythmc.banco.bukkit.menu.MenuManager;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

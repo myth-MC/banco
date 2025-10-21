@@ -23,6 +23,7 @@ import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
 import ovh.mythmc.banco.common.features.VaultFeature;
 import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.GestaltListener;
+import ovh.mythmc.banco.common.menu.MenuDispatcher;
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.features.FeatureConstructorParams;
 import ovh.mythmc.gestalt.features.GestaltFeature;
@@ -126,6 +127,8 @@ public abstract class BancoBootstrap implements Banco {
     public abstract String version();
 
     public abstract BancoScheduler scheduler();
+
+    public abstract MenuDispatcher menuDispatcher();
 
     private void registerFeatureWithPluginParam(Class<?>... classes) {
         Arrays.stream(classes).forEach(clazz -> {

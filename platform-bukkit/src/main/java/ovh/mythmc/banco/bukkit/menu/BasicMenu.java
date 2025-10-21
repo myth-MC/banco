@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.menus;
+package ovh.mythmc.banco.bukkit.menu;
 
 import lombok.Getter;
 

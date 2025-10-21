@@ -25,11 +25,10 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.util.ItemUtil;
+import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
-import ovh.mythmc.banco.common.menus.MenuManager;
-import ovh.mythmc.banco.common.menus.impl.InfoMenu;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
@@ -206,7 +205,7 @@ public final class BancoCommand implements MainCommand {
                         Component.text(BancoScheduler.get().getQueuedTransactions().size())
                     ));
                 } else {
-                    MenuManager.getInstance().openInventory(new InfoMenu(), (Player) ctx.sender().source());
+                    ((BancoBootstrap) Banco.get()).menuDispatcher().showInfo((Player) ctx.sender().source());
                 }
             })
         );
