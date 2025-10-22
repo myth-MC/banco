@@ -1,9 +1,9 @@
 package ovh.mythmc.banco.api.accounts.service;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +12,7 @@ import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 
 public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
 
-    private final Set<OfflinePlayerReference> offlinePlayers = new HashSet<>();
+    private final Set<OfflinePlayerReference> offlinePlayers = ConcurrentHashMap.newKeySet();
 
     protected abstract Iterable<OfflinePlayerReference> serverOfflinePlayers();
 

@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -40,6 +39,8 @@ public final class AccountManager {
     public synchronized void create(final @NotNull UUID uuid) {
         Account account = new Account();
         account.setUuid(uuid);
+        account.setAmount(BigDecimal.ZERO);
+        account.setTransactions(BigDecimal.ZERO);
 
         create(account);
     }
@@ -53,6 +54,8 @@ public final class AccountManager {
         Account account = new Account();
         account.setUuid(uuid);
         account.setName(name);
+        account.setAmount(BigDecimal.ZERO);
+        account.setTransactions(BigDecimal.ZERO);
 
         create(account);
     }
@@ -215,8 +218,8 @@ public final class AccountManager {
      */
     public @NotNull BigDecimal amount(final @NotNull Account account) {
         // Fake players / accounts
-        if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
-            return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
+        //if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
+        //    return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));
 
         final Optional<OfflinePlayerReference> optionalOfflinePlayerReference = uuidResolver.resolveOfflinePlayer(account.getUuid());
 
@@ -229,7 +232,8 @@ public final class AccountManager {
         }
 
         // Offline players
-        return account.getAmount().add(account.getTransactions());
+        //return account.getAmount().add(account.getTransactions());
+        return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false)).add(account.getAmount());
     }
 
     @Internal
