@@ -22,6 +22,7 @@ import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.common.menu.MenuDispatcher;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
+import ovh.mythmc.banco.bukkit.command.BukkitCommandProvider;
 import ovh.mythmc.banco.bukkit.listener.InventoryListener;
 import ovh.mythmc.banco.bukkit.menu.BukkitMenuDispatcher;
 import ovh.mythmc.banco.bukkit.scheduler.BancoSchedulerBukkit;
@@ -143,7 +144,7 @@ public final class BancoBukkit extends BancoBootstrap {
             )
         );
 
-        return new BancoCommandProvider(commandManager);
+        return new BukkitCommandProvider(commandManager);
     }
 
 }

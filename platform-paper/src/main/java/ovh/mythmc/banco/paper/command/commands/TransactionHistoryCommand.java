@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.command.commands;
+package ovh.mythmc.banco.paper.command.commands;
 
 import org.bukkit.entity.Player;
 import org.incendo.cloud.CommandManager;
@@ -16,7 +16,7 @@ public final class TransactionHistoryCommand implements MainCommand {
 
     @Override
     public boolean canRegister() {
-        return true;
+        return Banco.get().getSettings().get().getCommands().getTransactions().enabled();
     }
 
     @Override
@@ -35,7 +35,6 @@ public final class TransactionHistoryCommand implements MainCommand {
 
                 final Account account = ctx.getOrDefault("account", Banco.get().getAccountManager().getByName(ctx.sender().name()));
                 ((BancoBootstrap) Banco.get()).menuDispatcher().showTransactionHistory((Player) ctx.sender().source(), account);
-                //MenuManager.getInstance().openInventory(new BalanceTopMenu(), (Player) ctx.sender().source());
             })
         );
     }

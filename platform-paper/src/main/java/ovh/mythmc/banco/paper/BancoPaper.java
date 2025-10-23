@@ -19,6 +19,7 @@ import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
 import ovh.mythmc.banco.common.menu.MenuDispatcher;
+import ovh.mythmc.banco.paper.command.PaperCommandProvider;
 import ovh.mythmc.banco.paper.menu.PaperMenuDispatcher;
 import ovh.mythmc.banco.paper.scheduler.BancoSchedulerPaper;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
@@ -125,7 +126,7 @@ public final class BancoPaper extends BancoBootstrap {
             )
         );
 
-        return new BancoCommandProvider(commandManager);
+        return new PaperCommandProvider(commandManager);
     }
 
 }

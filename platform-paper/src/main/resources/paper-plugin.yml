@@ -64,6 +64,7 @@ permissions:
       banco.use.balancetop: true
       banco.use.balancechange: true
       banco.use.pay: true
+      banco.use.transactions: true
   banco.admin:
     default: op
     children:
@@ -84,6 +85,8 @@ permissions:
   banco.use.balancechange:
     default: true
   banco.use.pay:
+    default: true
+  banco.use.transactions:
     default: true
   # Commands (/banco)
   banco.use.banco.encode:
