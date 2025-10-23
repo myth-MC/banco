@@ -33,6 +33,9 @@ public final class AccountManager {
     @Getter
     private final AccountDatabase database = new AccountDatabase();
 
+    @Getter
+    private final TransactionHistory transactionHistory = new TransactionHistoryImpl();
+
     /**
      * Creates an account
      * @param uuid uuid of account to create and register
@@ -118,14 +121,35 @@ public final class AccountManager {
 
     /**
      * Deposits an amount of money to an account
+     * @param uuid account uuid that will be modified
+     * @param amount amount of money to deposit
+     * @param loggable whether this transaction can be logged
+     */
+    public void deposit(final @NotNull UUID uuid, final @NotNull BigDecimal amount, final boolean loggable) {
+        deposit(getByUuid(uuid), amount, loggable);
+    }
+
+    /**
+     * Deposits an amount of money to an account
      * @param account account that will be modified
      * @param amount amount of money to deposit
      */
     public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        deposit(account, amount, true);
+    }
+
+    /**
+     * Deposits an amount of money to an account
+     * @param account account that will be modified
+     * @param amount amount of money to deposit
+     * @param loggable whether this transaction can be logged
+     */
+    public void deposit(final @NotNull Account account, final @NotNull BigDecimal amount, final boolean loggable) {
         Transaction transaction = Transaction.builder()
             .account(account)
             .amount(amount)
             .operation(Operation.DEPOSIT)
+            .loggable(loggable)
             .build();
 
         transaction.queue();
@@ -142,14 +166,35 @@ public final class AccountManager {
 
     /**
      * Withdraws an amount of money from an account
+     * @param account account uuid that will be modified
+     * @param amount amount of money to withdraw
+     * @param loggable whether this transaction can be logged
+     */
+    public void withdraw(final @NotNull UUID uuid, final @NotNull BigDecimal amount, final boolean loggable) {
+        withdraw(getByUuid(uuid), amount, loggable);
+    }
+
+    /**
+     * Withdraws an amount of money from an account
      * @param account account that will be modified
      * @param amount amount of money to withdraw
      */
     public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount) {
+        withdraw(account, amount, true);
+    }
+
+    /**
+     * Withdraws an amount of money from an account
+     * @param account account that will be modified
+     * @param amount amount of money to withdraw
+     * @param loggable whether this transaction can be logged
+     */
+    public void withdraw(final @NotNull Account account, final @NotNull BigDecimal amount, final boolean loggable) {
         Transaction transaction = Transaction.builder()
             .account(account)
             .amount(amount)
             .operation(Operation.WITHDRAW)
+            .loggable(loggable)
             .build();
 
         transaction.queue();

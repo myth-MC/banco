@@ -18,11 +18,11 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 
-public final class InfoDialog implements BasicDialog {
+public final class InfoDialog {
 
-    @Override
     public void open(@NotNull Player player) {
         final List<DialogBody> dialogBodyList = new ArrayList<>();
+        dialogBodyList.add(DialogBody.plainMessage(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getMenus().getInfo().description())));
 
         dialogBodyList.addAll(List.of(
             DialogBody.plainMessage(Component.text("Running ")

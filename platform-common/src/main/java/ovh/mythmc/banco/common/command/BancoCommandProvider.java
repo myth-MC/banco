@@ -12,6 +12,7 @@ import ovh.mythmc.banco.common.command.commands.BalanceCommand;
 import ovh.mythmc.banco.common.command.commands.BalanceTopCommand;
 import ovh.mythmc.banco.common.command.commands.BancoCommand;
 import ovh.mythmc.banco.common.command.commands.PayCommand;
+import ovh.mythmc.banco.common.command.commands.TransactionHistoryCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
 public final class BancoCommandProvider {
@@ -23,7 +24,8 @@ public final class BancoCommandProvider {
         new BalanceCommand(),
         new BalanceTopCommand(),
         new BancoCommand(),
-        new PayCommand()
+        new PayCommand(),
+        new TransactionHistoryCommand()
     );
 
     public BancoCommandProvider(final LegacyPaperCommandManager<BancoCommandSource> commandManager) {
