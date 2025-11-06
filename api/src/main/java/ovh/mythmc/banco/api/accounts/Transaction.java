@@ -81,7 +81,7 @@ public class Transaction {
 
                 // Set transactions to remaining amount
                 account.setTransactions(account.getTransactions().add(toAdd.setScale(2, RoundingMode.HALF_UP)));
-                Banco.get().getAccountManager().getDatabase().update(account);
+                Banco.get().getAccountManager().getDatabase().updateCache(account);
                 return;
             }
 
@@ -96,7 +96,7 @@ public class Transaction {
 
             // Register transaction if player is not online
             account.setTransactions(account.getTransactions().add(toAdd));
-            Banco.get().getAccountManager().getDatabase().update(account);
+            Banco.get().getAccountManager().getDatabase().updateCache(account);
         } else { // Remove amount from account
             BigDecimal toRemove = account.amount().subtract(newAmount);
             
@@ -110,7 +110,7 @@ public class Transaction {
 
                 // Set transactions to remaining amount
                 account.setTransactions(account.getTransactions().subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
-                Banco.get().getAccountManager().getDatabase().update(account);
+                Banco.get().getAccountManager().getDatabase().updateCache(account);
                 return;
             }
 
@@ -125,7 +125,7 @@ public class Transaction {
 
             // Register transaction if player is not online
             account.setTransactions(account.getTransactions().subtract(toRemove));
-            Banco.get().getAccountManager().getDatabase().update(account);
+            Banco.get().getAccountManager().getDatabase().updateCache(account);
         }
     }
 

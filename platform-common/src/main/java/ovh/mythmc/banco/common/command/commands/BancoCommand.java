@@ -221,6 +221,30 @@ public final class BancoCommand implements MainCommand {
                 MessageUtil.success(ctx.sender(), "banco.commands.banco.reload.success");
             })
         );
+
+        // Debug commands
+        if (Banco.get().getSettings().get().isDebug()) {
+            commandManager.command(bancoCommand
+                .literal("debug")
+                .literal("forcesave")
+                .optional("account", AccountParser.accountParser())
+                .permission("banco.use.banco.debug.forcesave")
+                .commandDescription(Description.of("Forces a database save"))
+                .handler(ctx -> {
+                    if (ctx.contains("account")) {
+                        final Account account = ctx.get("account");
+                        final long totalTime = Banco.get().getAccountManager().getDatabase().updateDatabaseEntry(account);
+
+                        MessageUtil.debug(ctx.sender(), String.format("Done! (took %sms)", totalTime));
+                        return;
+                    }
+
+                    // Global save
+                    final long totalTime = Banco.get().getAccountManager().getDatabase().updateAllDatabaseEntries();
+                    MessageUtil.debug(ctx.sender(), String.format("Done! (took %sms)", totalTime));
+                })
+            );
+        }
     }
 
     private static String getBancoBuildSoftware() {

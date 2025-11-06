@@ -45,6 +45,8 @@ public abstract class BancoBootstrap implements Banco {
 
     private BancoListener bancoListener;
 
+    private volatile boolean shuttingDown = false;
+
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
                           final @NotNull File dataDirectory,
                           final @NotNull BancoCommandProvider commandProvider) {
@@ -83,6 +85,12 @@ public abstract class BancoBootstrap implements Banco {
         // Load settings and messages
         reload();
 
+        // Warn about experimental options
+        if (getSettings().get().getDatabase().isAsynchronousWrites()) {
+            getLogger().warn("Asynchronous saving is enabled. This feature is experimental and may cause data loss or unexpected behavior. Use at your own risk.");
+            getLogger().warn("You can disable this option by setting 'asynchronousWrites' to 'false' in the plugin's settings.yml file.");
+        }
+
         // Register Gestalt feature listener
         Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
@@ -111,6 +119,8 @@ public abstract class BancoBootstrap implements Banco {
     public abstract void disable();
 
     public final void shutdown() {
+        this.shuttingDown = true;
+
         bancoListener.unregisterCallbacks();
 
         Banco.get().getAccountManager().getDatabase().shutdown();
@@ -122,6 +132,11 @@ public abstract class BancoBootstrap implements Banco {
         getSettings().load();
 
         Gestalt.get().enableAllFeatures("banco");
+    }
+
+    @Override
+    public final boolean isShuttingDown() {
+        return this.shuttingDown;
     }
 
     public abstract String version();

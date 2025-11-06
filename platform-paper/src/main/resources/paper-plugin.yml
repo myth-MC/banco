@@ -75,6 +75,7 @@ permissions:
       banco.use.banco.dump: true
       banco.use.banco.info: true
       banco.use.banco.reload: true
+      banco.use.banco.debug.forcesave: true
   # Commands (misc)
   banco.use.help:
     default: true
@@ -102,4 +103,6 @@ permissions:
   banco.use.banco.info:
     default: op
   banco.use.banco.reload:
+    default: op
+  banco.use.banco.debug.forcesave:
     default: op

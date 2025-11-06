@@ -270,7 +270,7 @@ public final class AccountManager {
             uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
 
             account.setAmount(getValueOfPlayer(account.getUuid(), true));
-            database.update(account);
+            database.updateCache(account);
         }
 
         // Offline players
@@ -295,7 +295,7 @@ public final class AccountManager {
     public synchronized void updateTransactions(final @NotNull Account account) {
         BigDecimal amount = account.amount();
         account.setTransactions(BigDecimal.valueOf(0));
-        database.update(account);
+        database.updateCache(account);
 
         set(account.getUuid(), amount);
     }
@@ -303,7 +303,7 @@ public final class AccountManager {
     @ApiStatus.Internal
     public void updateName(final @NotNull Account account, String newName) {
         account.setName(newName);
-        database.update(account);
+        database.updateCache(account);
     }
 
     /**
