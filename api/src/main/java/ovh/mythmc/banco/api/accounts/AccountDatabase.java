@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +41,7 @@ public final class AccountDatabase {
 
     private final Map<AccountIdentifierKey, Account> cache = new ConcurrentHashMap<>();
 
-    private final Collection<AccountIdentifierKey> accountIdentifierCache = new HashSet<>();
+    private final Set<AccountIdentifierKey> accountIdentifierCache = ConcurrentHashMap.newKeySet();
 
     private boolean firstBoot = false;
 
@@ -322,6 +321,9 @@ public final class AccountDatabase {
                 getDao().executeRaw("ALTER TABLE `accounts` ADD COLUMN name STRING;");
                 logger.info("Done!");
             } catch (SQLException e) {
+                if (e.getMessage().contains("Could not run raw execute statement ALTER TABLE `accounts` ADD COLUMN name STRING"))
+                    return;
+                    
                 logger.error("Exception while upgrading database: {}", e);
             }
         } 

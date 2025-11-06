@@ -8,9 +8,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -18,19 +16,17 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BancoScheduler.get().run(() ->{
-            UUID uuid = event.getPlayer().getUniqueId();
-            Account account = Banco.get().getAccountManager().getByUuid(uuid);
-    
-            if (account == null) {
-                account = new Account(uuid, event.getPlayer().getName(), BigDecimal.valueOf(0), BigDecimal.valueOf(0));
-                Banco.get().getAccountManager().create(account);
-            } else {
-                Banco.get().getAccountManager().updateName(account, event.getPlayer().getName());
-            }
-    
-            Banco.get().getAccountManager().updateTransactions(account);
-        });
+        UUID uuid = event.getPlayer().getUniqueId();
+        Account account = Banco.get().getAccountManager().getByUuid(uuid);
+
+        if (account == null) {
+            Banco.get().getAccountManager().create(uuid, event.getPlayer().getName());
+            account = Banco.get().getAccountManager().getByUuid(uuid);
+        } else {
+            Banco.get().getAccountManager().updateName(account, event.getPlayer().getName());
+        }
+
+        Banco.get().getAccountManager().updateTransactions(account);
     }
 
     @EventHandler
