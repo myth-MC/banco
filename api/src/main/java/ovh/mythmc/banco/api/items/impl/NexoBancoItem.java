@@ -6,9 +6,15 @@ import org.bukkit.inventory.ItemStack;
 
 import com.nexomc.nexo.api.NexoItems;
 
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 public record NexoBancoItem(String identifier, BigDecimal value) implements BancoItem {
+
+    @Override
+    public Component displayName() {
+        return NexoItems.itemFromId(identifier).getDisplayName();
+    }
 
     @Override
     public ItemStack asItemStack(int amount) {

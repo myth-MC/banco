@@ -56,6 +56,14 @@ public final class VanillaBancoItem implements BancoItem {
     }
 
     @Override
+    public Component displayName() {
+        if (this.customization != null && this.customization.displayName() != null)
+            return MiniMessage.miniMessage().deserialize(this.customization.displayName());
+
+        return Component.translatable(material.getTranslationKey());
+    }
+
+    @Override
     public BigDecimal value() {
         return this.value;
     }

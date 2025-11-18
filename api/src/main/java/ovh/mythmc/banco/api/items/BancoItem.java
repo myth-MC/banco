@@ -3,9 +3,11 @@ package ovh.mythmc.banco.api.items;
 import java.math.BigDecimal;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import de.exlll.configlib.Polymorphic;
 import de.exlll.configlib.PolymorphicTypes;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.impl.Base64BancoItem;
 import ovh.mythmc.banco.api.items.impl.ItemsAdderBancoItem;
 import ovh.mythmc.banco.api.items.impl.MythicMobsBancoItem;
@@ -28,9 +30,11 @@ import ovh.mythmc.banco.api.items.impl.SlimefunBancoItem;
 })
 public interface BancoItem {
 
-    BigDecimal value();
+    @NotNull Component displayName();
 
-    ItemStack asItemStack(int amount);
+    @NotNull BigDecimal value();
+
+    @NotNull ItemStack asItemStack(int amount);
 
     default BigDecimal value(int amount) {
         return value().multiply(BigDecimal.valueOf(amount));

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import de.exlll.configlib.Configuration;
 import de.exlll.configlib.Ignore;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.util.ItemUtil;
 
@@ -28,6 +29,14 @@ public final class Base64BancoItem implements BancoItem {
     }
 
     Base64BancoItem() {
+    }
+
+    @Override
+    public Component displayName() {
+        if (this.itemStack.getItemMeta() != null && this.itemStack.getItemMeta().getDisplayName() != null)
+            return Component.text(this.itemStack.getItemMeta().getDisplayName());
+
+        return Component.translatable(this.itemStack.getTranslationKey());
     }
     
     @Override

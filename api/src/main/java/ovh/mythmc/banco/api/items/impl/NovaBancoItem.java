@@ -4,11 +4,17 @@ import java.math.BigDecimal;
 
 import org.bukkit.inventory.ItemStack;
 
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
 import xyz.xenondevs.nova.api.Nova;
 import xyz.xenondevs.nova.api.item.NovaItem;
 
 public record NovaBancoItem(String identifier, BigDecimal value) implements BancoItem {
+
+    @Override
+    public Component displayName() {
+        return getNovaItem().getName();
+    }
 
     @Override
     public ItemStack asItemStack(int amount) {

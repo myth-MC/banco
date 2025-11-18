@@ -5,9 +5,15 @@ import java.math.BigDecimal;
 import org.bukkit.inventory.ItemStack;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 public record MythicMobsBancoItem(String identifier, BigDecimal value) implements BancoItem {
+
+    @Override
+    public Component displayName() {
+        return Component.text(asItemStack().getItemMeta().getDisplayName());
+    }
 
     @Override
     public ItemStack asItemStack(int amount) {
