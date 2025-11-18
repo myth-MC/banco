@@ -23,5 +23,9 @@ public final class BukkitMenuDispatcher implements MenuDispatcher {
     @Override
     public void showTransactionHistory(@NotNull Player player, @NotNull Account account) {
     }
+
+    @Override
+    public void showItemConverter(@NotNull Player player) {
+    }
     
 }

@@ -22,7 +22,7 @@ permissions:
       banco.use.help: true
       banco.use.balance: true
       banco.use.balancetop: true
-      banco.use.balancechange: true
+      banco.use.balanceconvert: true
       banco.use.pay: true
   banco.admin:
     default: op
@@ -42,7 +42,7 @@ permissions:
     default: true
   banco.use.balancetop:
     default: true
-  banco.use.balancechange:
+  banco.use.balanceconvert:
     default: true
   banco.use.pay:
     default: true
