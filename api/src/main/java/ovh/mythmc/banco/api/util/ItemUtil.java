@@ -43,6 +43,20 @@ public final class ItemUtil {
     }
 
     /**
+     * Calculates the maximum number of units of a given BancoItem that can be obtained
+     * from a specified total value. This is useful when the player has a total amount
+     * of money derived from different items and you want to know how many units of
+     * a specific item that total would represent.
+     *
+     * @param item   the item for which the maximum stack size is calculated.
+     * @param amount the total monetary value available.
+     * @return The maximum number of units of the specified item that can be obtained.
+     */
+    public static int getMaxUnitsFromValue(@NotNull BancoItem item, @NotNull BigDecimal amount) {
+        return amount.divide(item.value(), RoundingMode.FLOOR).intValue();
+    }
+
+    /**
      * Encodes an ItemStack into a Base64 string
      * @param itemStack ItemStack to erncode
      * @return A Base64-encoded string containing the ItemStack
