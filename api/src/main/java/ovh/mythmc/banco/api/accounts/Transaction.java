@@ -3,6 +3,8 @@ package ovh.mythmc.banco.api.accounts;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,9 @@ public class Transaction {
     private @NotNull Operation operation;
 
     private @NotNull BigDecimal amount;
+
+    @Builder.Default
+    private List<Runnable> executeAfterTransaction = new ArrayList<>();
 
     @Builder.Default
     private boolean loggable = true;

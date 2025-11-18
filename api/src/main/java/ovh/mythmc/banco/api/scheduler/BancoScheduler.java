@@ -63,10 +63,16 @@ public abstract class BancoScheduler {
                     Transaction transaction = transactionQueue.getFirst();
                     switch (Banco.get().getSettings().get().getTaskExecutionOrder()) {
                         case SYNC: 
-                            bancoScheduler.run(() -> transaction.transact());
+                            bancoScheduler.run(() -> {
+                                transaction.transact();
+                                transaction.executeAfterTransaction().forEach(Runnable::run);
+                            });
                             break;
                         case ASYNC: 
-                            bancoScheduler.runAsync(() -> transaction.transact());
+                            bancoScheduler.runAsync(() -> {
+                                transaction.transact();
+                                transaction.executeAfterTransaction().forEach(Runnable::run);
+                            });
                             break;
                     }
 
