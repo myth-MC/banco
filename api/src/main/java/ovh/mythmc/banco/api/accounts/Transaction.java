@@ -2,6 +2,8 @@ package ovh.mythmc.banco.api.accounts;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -29,23 +31,39 @@ public class Transaction {
     private @NotNull BigDecimal amount;
 
     public void transact() {
-        // Callback
+        // Best-effort logging: mark the start of this transaction. Don't let logging stop the transaction.
+        try {
+            Banco.get().getLogger().info("Transaction START - acct={} op={} amount={} thread={} time={}",
+                    account.getUuid(), operation, amount, Thread.currentThread().getName(), Instant.now());
+        } catch (Exception ignored) {
+            // logging failed - continue anyway
+        }
+
+        // Run transaction callbacks
         final var callback = new BancoTransactionProcess(this);
         BancoTransactionProcessCallback.INSTANCE.invoke(callback);
 
-        if (callback.cancelled())
+        if (callback.cancelled()) {
+            // A callback cancelled this transaction, log and stop
+            try {
+                Banco.get().getLogger().info("Transaction CANCELLED - acct={} op={} amount={} time={}", account.getUuid(), operation, amount, Instant.now());
+            } catch (Exception ignored) {}
             return;
+        }
+        // Prevent concurrent updates to the same account: synchronize on a per-account lock
+        UUID acct = account.getUuid();
+        Object lock = AccountLocks.lockFor(acct);
+        synchronized (lock) {
+            switch (operation) {
+                case DEPOSIT -> set(account.amount().add(amount));
+                case WITHDRAW -> set(account.amount().subtract(amount));
+                case SET -> set(amount);
+            }
 
-        switch (operation) {
-            case DEPOSIT -> {
-                set(account.amount().add(amount));
-            }
-            case WITHDRAW -> {
-                set(account.amount().subtract(amount));
-            }
-            case SET -> {
-                set(amount);
-            }
+            try {
+                Banco.get().getLogger().info("Transaction END   - acct={} op={} amount={} resulting={} time={}",
+                        acct, operation, amount, account.amount(), Instant.now());
+            } catch (Exception ignored) {}
         }
     }
 

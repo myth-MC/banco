@@ -16,6 +16,8 @@ import net.milkbowl.vault2.economy.EconomyResponse;
 import net.milkbowl.vault2.economy.EconomyResponse.ResponseType;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
+import ovh.mythmc.banco.api.accounts.Transaction;
+import ovh.mythmc.banco.api.accounts.Transaction.Operation;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
 public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy {
@@ -208,7 +210,15 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
         if (!has(pluginName, accountID, amount))
             return new EconomyResponse(amount, account.amount(), ResponseType.FAILURE, "Not enough funds");
 
-        Banco.get().getAccountManager().withdraw(accountID, amount);
+        // makes withdrawal synchronously so that callers (Vault/Towny) see the balance
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.WITHDRAW)
+            .build();
+
+        transaction.transact();
+
         return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
     }
 
@@ -230,7 +240,15 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         final var account = Banco.get().getAccountManager().getByUuid(accountID);
 
-        Banco.get().getAccountManager().deposit(accountID, amount);
+        // lets the deposit happen synchronously so that callers (Vault/Towny) see the balance
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.DEPOSIT)
+            .build();
+
+        transaction.transact();
+
         return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
     }
 

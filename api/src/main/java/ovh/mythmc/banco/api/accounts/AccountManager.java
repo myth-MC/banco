@@ -17,6 +17,7 @@ import ovh.mythmc.banco.api.callback.account.BancoAccountUnregister;
 import ovh.mythmc.banco.api.callback.account.BancoAccountRegisterCallback;
 import ovh.mythmc.banco.api.callback.account.BancoAccountUnregisterCallback;
 import ovh.mythmc.banco.api.storage.BancoStorage;
+import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -131,7 +132,17 @@ public final class AccountManager {
             .operation(Operation.DEPOSIT)
             .build();
 
-        transaction.queue();
+        // Decide whether to perform synchronously or queue based on account name
+        if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
+            Banco.get().getLogger().info("AccountManager: performing synchronous DEPOSIT for acct={}", account.getUuid());
+            // Remove pending queued transactions for this account to avoid stale duplicates
+            if (BancoScheduler.get() != null)
+                BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
+            transaction.transact();
+        } else {
+            Banco.get().getLogger().info("AccountManager: queueing DEPOSIT for acct={}", account.getUuid());
+            transaction.queue();
+        }
     }
 
     /**
@@ -155,7 +166,15 @@ public final class AccountManager {
             .operation(Operation.WITHDRAW)
             .build();
 
-        transaction.queue();
+        if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
+            Banco.get().getLogger().info("AccountManager: performing synchronous WITHDRAW for acct={}", account.getUuid());
+            if (BancoScheduler.get() != null)
+                BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
+            transaction.transact();
+        } else {
+            Banco.get().getLogger().info("AccountManager: queueing WITHDRAW for acct={}", account.getUuid());
+            transaction.queue();
+        }
     }
 
     /**
@@ -179,7 +198,15 @@ public final class AccountManager {
             .operation(Operation.SET)
             .build();
 
-        transaction.queue();
+        if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
+            Banco.get().getLogger().info("AccountManager: performing synchronous SET for acct={}", account.getUuid());
+            if (BancoScheduler.get() != null)
+                BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
+            transaction.transact();
+        } else {
+            Banco.get().getLogger().info("AccountManager: queueing SET for acct={}", account.getUuid());
+            transaction.queue();
+        }
     }
 
     /**
