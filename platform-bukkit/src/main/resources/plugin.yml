@@ -10,9 +10,9 @@ loadbefore:
   - Essentials
 
 libraries:
-  - net.kyori:adventure-api:4.24.0
+  - net.kyori:adventure-api:4.25.0
   - net.kyori:adventure-platform-bukkit:4.4.1
-  - net.kyori:adventure-text-minimessage:4.24.0
+  - net.kyori:adventure-text-minimessage:4.25.0
 
 permissions:
   # Basic nodes
@@ -34,6 +34,7 @@ permissions:
       banco.use.banco.dump: true
       banco.use.banco.info: true
       banco.use.banco.reload: true
+      banco.use.banco.debug.forcesave: true
   # Commands (misc)
   banco.use.help:
     default: true
@@ -59,4 +60,6 @@ permissions:
   banco.use.banco.info:
     default: op
   banco.use.banco.reload:
+    default: op
+  banco.use.banco.debug.forcesave:
     default: op

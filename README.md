@@ -56,13 +56,14 @@
 
 ### Compatibility chart
 
-|                                                         | Compatible? | Version | Notes                                        |
-|---------------------------------------------------------|-------------|---------|----------------------------------------------|
-| [PaperMC](https://papermc.io/)                          | ✅          | 1.20.6+ |                                              |
-| [PurpurMC](https://purpurmc.org/)                       | ✅          | 1.20.6+ |                                              |
-| [Spigot](https://www.spigotmc.org)                      | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
-| [Bukkit](https://bukkit.org)                            | ✅          | 1.20+   | Consider using [PaperMC](https://papermc.io) |
-| [Folia](https://papermc.io/software/folia)              | ✅          | 1.20.6+ |                                              |
+**banco** is distributed in two builds released simultaneously. The `modern` build is compatible with PaperMC and its forks starting from Minecraft 1.21.7, while the `legacy` build supports Spigot and its forks starting from Minecraft 1.20:
+
+|                 | Minecraft version | Compatible software                              | Optimized | Full feature support |
+|-----------------|-------------------|--------------------------------------------------|-----------|----------------------|
+| Modern          | 1.21.7+           | [PaperMC](https://papermc.io/), Folia, Purpur... | ✅        | ✅                  |
+| Legacy          | 1.20+             | [Spigot](https://www.spigotmc.org)               | ❌        | ❌                  |
+
+Any software not listed here is not supported and may cause unexpected errors.
 
 ### Dependencies
 
@@ -92,12 +93,3 @@ banco comes with a very simple emerald-based economy setup that can be expanded 
 * 🏷️ [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
 * 🐣 [social](https://github.com/myth-MC/social)
 * Any other plugin with Vault support, including Factions, Towny Advanced, Jobs...
-
-<hr>
-
-<a href="https://sponsor.mythmc.ovh/">
-  <img src="https://assets.mythmc.ovh/banner_godlike.png" />
-</a>
-<div align="center">
-  <p>We're sponsored by <a href="https://sponsor.mythmc.ovh/">Godlike</a>, a high performance game server hosting. Check them out!</p>
-</div>

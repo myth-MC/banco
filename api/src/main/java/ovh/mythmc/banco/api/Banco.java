@@ -21,6 +21,8 @@ public interface Banco {
      */
     String version();
 
+    boolean isShuttingDown();
+
     @NotNull AccountManager getAccountManager();
 
     @NotNull LoggerWrapper getLogger();

@@ -28,6 +28,9 @@ public class CommandsConfig {
     @Comment({"/pay - Allows players to send money to other accounts", "Permission: banco.use.pay (assigned by default)"})
     private SimpleCommand pay = new SimpleCommand(true);
 
+    @Comment({"/transactions - Allows players to see their recent transactions", "Permission: banco.use.transactions (assigned by default)"})
+    private SimpleCommand transactions = new SimpleCommand(true);
+
     public record SimpleCommand(boolean enabled) { }
 
 }

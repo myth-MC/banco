@@ -96,7 +96,7 @@ public abstract class BancoContainer implements BancoStorage {
                     BigDecimal removed = BigDecimal.valueOf(0);
                     if (value.compareTo(amount) > 0) {
                         removed = value.subtract(amount);
-                        Banco.get().getAccountManager().deposit(uuid, removed);
+                        Banco.get().getAccountManager().deposit(uuid, removed, false);
                     }
     
                     amount = amount.subtract(value.subtract(removed));

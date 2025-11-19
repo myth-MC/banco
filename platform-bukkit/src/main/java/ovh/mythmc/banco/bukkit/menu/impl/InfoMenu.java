@@ -1,4 +1,4 @@
-package ovh.mythmc.banco.common.menus.impl;
+package ovh.mythmc.banco.bukkit.menu.impl;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -11,8 +11,8 @@ import org.bukkit.profile.PlayerProfile;
 import org.bukkit.profile.PlayerTextures;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
-import ovh.mythmc.banco.common.menus.BasicMenu;
-import ovh.mythmc.banco.common.menus.MenuButton;
+import ovh.mythmc.banco.bukkit.menu.BasicMenu;
+import ovh.mythmc.banco.bukkit.menu.MenuButton;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 
 import java.net.MalformedURLException;

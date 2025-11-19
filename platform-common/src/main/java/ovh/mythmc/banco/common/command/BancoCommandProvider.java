@@ -14,9 +14,9 @@ import ovh.mythmc.banco.common.command.commands.BancoCommand;
 import ovh.mythmc.banco.common.command.commands.PayCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
-public final class BancoCommandProvider {
+public abstract class BancoCommandProvider {
 
-    private final LegacyPaperCommandManager<BancoCommandSource> commandManager;
+    protected final LegacyPaperCommandManager<BancoCommandSource> commandManager;
 
     private final Collection<MainCommand> commands = List.of(
         new BalanceChangeCommand(),
@@ -48,6 +48,12 @@ public final class BancoCommandProvider {
             if (command.canRegister())
                 command.register(commandManager);
         });
+
+        // Register platform commands
+        registerPlatformCommands();
+    }
+
+    public void registerPlatformCommands() {
     }
     
 }

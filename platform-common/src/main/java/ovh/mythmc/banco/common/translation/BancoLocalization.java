@@ -2,7 +2,7 @@ package ovh.mythmc.banco.common.translation;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.translation.GlobalTranslator;
-import net.kyori.adventure.translation.TranslationRegistry;
+import net.kyori.adventure.translation.TranslationStore;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -69,17 +70,21 @@ public final class BancoLocalization {
             }
         }
 
-        final var translator = TranslationRegistry.create(Key.key("banco", "translation-registry"));
+        final TranslationStore<MessageFormat> store = TranslationStore.messageFormat(Key.key("banco:i10n"));
 
         langs.forEach(langTag -> {
             String baseName = "i10n_" + langTag;
             Locale locale = Locale.forLanguageTag(langTag.replace("_", "-"));
-            ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale, UTF8ResourceBundleControl.get());
-            translator.registerAll(locale, override(overrides, resourceBundle), true);
+            ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale, UTF8ResourceBundleControl.utf8ResourceBundleControl());
+
+            store.registerAll(locale, override(overrides, resourceBundle).keySet(), (key) -> {
+                String format = resourceBundle.getString(key);
+                return new MessageFormat(format, locale);
+            });
         });
 
-        translator.defaultLocale(Locale.forLanguageTag(Banco.get().getSettings().get().getDefaultLanguageTag()));
-        GlobalTranslator.translator().addSource(translator);
+        store.defaultLocale(Locale.forLanguageTag(Banco.get().getSettings().get().getDefaultLanguageTag()));
+        GlobalTranslator.translator().addSource(store);
     }
 
     private ResourceBundle override(final Path overrides, final ResourceBundle bundle) {

@@ -25,11 +25,10 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.util.ItemUtil;
+import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
-import ovh.mythmc.banco.common.menus.MenuManager;
-import ovh.mythmc.banco.common.menus.impl.InfoMenu;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
@@ -206,7 +205,7 @@ public final class BancoCommand implements MainCommand {
                         Component.text(BancoScheduler.get().getQueuedTransactions().size())
                     ));
                 } else {
-                    MenuManager.getInstance().openInventory(new InfoMenu(), (Player) ctx.sender().source());
+                    ((BancoBootstrap) Banco.get()).menuDispatcher().showInfo((Player) ctx.sender().source());
                 }
             })
         );
@@ -222,6 +221,30 @@ public final class BancoCommand implements MainCommand {
                 MessageUtil.success(ctx.sender(), "banco.commands.banco.reload.success");
             })
         );
+
+        // Debug commands
+        if (Banco.get().getSettings().get().isDebug()) {
+            commandManager.command(bancoCommand
+                .literal("debug")
+                .literal("forcesave")
+                .optional("account", AccountParser.accountParser())
+                .permission("banco.use.banco.debug.forcesave")
+                .commandDescription(Description.of("Forces a database save"))
+                .handler(ctx -> {
+                    if (ctx.contains("account")) {
+                        final Account account = ctx.get("account");
+                        final long totalTime = Banco.get().getAccountManager().getDatabase().updateDatabaseEntry(account);
+
+                        MessageUtil.debug(ctx.sender(), String.format("Done! (took %sms)", totalTime));
+                        return;
+                    }
+
+                    // Global save
+                    final long totalTime = Banco.get().getAccountManager().getDatabase().updateAllDatabaseEntries();
+                    MessageUtil.debug(ctx.sender(), String.format("Done! (took %sms)", totalTime));
+                })
+            );
+        }
     }
 
     private static String getBancoBuildSoftware() {

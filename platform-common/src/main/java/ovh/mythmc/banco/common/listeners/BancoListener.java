@@ -26,6 +26,9 @@ public final class BancoListener {
         });
 
         BancoItemRegisterCallback.INSTANCE.registerListener(DEBUG_KEY, (item) -> {
+            if (!Banco.get().getSettings().get().isDebug())
+                return;
+                
             Banco.get().getLogger().info("Registered ItemStack {} with value {}",
                 item.asItemStack(),
                 item.value()

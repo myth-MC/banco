@@ -25,6 +25,9 @@ public class DatabaseConfig {
     @Comment("Time between each cache clean in minutes")
     private int cacheClearInterval = 5;
 
+    @Comment({"Whether database writes should run on a separate thread", "Don't change this unless your server has performance issues while saving data"})
+    private boolean asynchronousWrites = false;
+
     @Comment("Don't change this, you might lose all your data")
     private int databaseVersion = 0;
 

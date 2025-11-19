@@ -23,6 +23,7 @@ import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
 import ovh.mythmc.banco.common.features.VaultFeature;
 import ovh.mythmc.banco.common.listeners.BancoListener;
 import ovh.mythmc.banco.common.listeners.GestaltListener;
+import ovh.mythmc.banco.common.menu.MenuDispatcher;
 import ovh.mythmc.gestalt.Gestalt;
 import ovh.mythmc.gestalt.features.FeatureConstructorParams;
 import ovh.mythmc.gestalt.features.GestaltFeature;
@@ -43,6 +44,8 @@ public abstract class BancoBootstrap implements Banco {
     private final BancoCommandProvider commandProvider;
 
     private BancoListener bancoListener;
+
+    private volatile boolean shuttingDown = false;
 
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
                           final @NotNull File dataDirectory,
@@ -82,6 +85,12 @@ public abstract class BancoBootstrap implements Banco {
         // Load settings and messages
         reload();
 
+        // Warn about experimental options
+        if (getSettings().get().getDatabase().isAsynchronousWrites()) {
+            getLogger().warn("Asynchronous saving is enabled. This feature is experimental and may cause data loss or unexpected behavior. Use at your own risk.");
+            getLogger().warn("You can disable this option by setting 'asynchronousWrites' to 'false' in the plugin's settings.yml file.");
+        }
+
         // Register Gestalt feature listener
         Gestalt.get().getListenerRegistry().register(new GestaltListener(), true);
 
@@ -110,6 +119,8 @@ public abstract class BancoBootstrap implements Banco {
     public abstract void disable();
 
     public final void shutdown() {
+        this.shuttingDown = true;
+
         bancoListener.unregisterCallbacks();
 
         Banco.get().getAccountManager().getDatabase().shutdown();
@@ -123,9 +134,16 @@ public abstract class BancoBootstrap implements Banco {
         Gestalt.get().enableAllFeatures("banco");
     }
 
+    @Override
+    public final boolean isShuttingDown() {
+        return this.shuttingDown;
+    }
+
     public abstract String version();
 
     public abstract BancoScheduler scheduler();
+
+    public abstract MenuDispatcher menuDispatcher();
 
     private void registerFeatureWithPluginParam(Class<?>... classes) {
         Arrays.stream(classes).forEach(clazz -> {

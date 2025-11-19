@@ -20,7 +20,11 @@ import ovh.mythmc.banco.api.accounts.service.defaults.BukkitLocalUUIDResolver;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.listeners.*;
+import ovh.mythmc.banco.common.menu.MenuDispatcher;
 import ovh.mythmc.gestalt.loader.BukkitGestaltLoader;
+import ovh.mythmc.banco.bukkit.command.BukkitCommandProvider;
+import ovh.mythmc.banco.bukkit.listener.InventoryListener;
+import ovh.mythmc.banco.bukkit.menu.BukkitMenuDispatcher;
 import ovh.mythmc.banco.bukkit.scheduler.BancoSchedulerBukkit;
 
 @Getter
@@ -33,6 +37,8 @@ public final class BancoBukkit extends BancoBootstrap {
     private BukkitGestaltLoader gestalt;
 
     private final BancoScheduler scheduler = new BancoSchedulerBukkit(getPlugin());
+
+    private final MenuDispatcher menuDispatcher = new BukkitMenuDispatcher();
 
     private final BukkitLocalUUIDResolver uuidResolver;
 
@@ -97,6 +103,11 @@ public final class BancoBukkit extends BancoBootstrap {
     }
 
     @Override
+    public MenuDispatcher menuDispatcher() {
+        return menuDispatcher;
+    }
+
+    @Override
     public String version() {
         return getPlugin().getDescription().getVersion();
     }
@@ -111,6 +122,9 @@ public final class BancoBukkit extends BancoBootstrap {
 
         // UUID resolver
         Bukkit.getPluginManager().registerEvents(uuidResolver, getPlugin());
+
+        // Inventory listener
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), getPlugin());
     }
 
     public static @NotNull BukkitAudiences adventure() {
@@ -130,7 +144,7 @@ public final class BancoBukkit extends BancoBootstrap {
             )
         );
 
-        return new BancoCommandProvider(commandManager);
+        return new BukkitCommandProvider(commandManager);
     }
 
 }

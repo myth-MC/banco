@@ -1,6 +1,7 @@
-package ovh.mythmc.banco.common.menus;
+package ovh.mythmc.banco.bukkit.menu;
 
 import lombok.Getter;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
