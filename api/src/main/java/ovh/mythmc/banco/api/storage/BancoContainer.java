@@ -96,7 +96,38 @@ public abstract class BancoContainer implements BancoStorage {
                     BigDecimal removed = BigDecimal.valueOf(0);
                     if (value.compareTo(amount) > 0) {
                         removed = value.subtract(amount);
-                        Banco.get().getAccountManager().deposit(uuid, removed);
+
+                        // Try returning change to the storage that supplied the payment first.
+                        // If it doesn't fit, try other storages; any leftover is deposited.
+                        BigDecimal toReturn = removed;
+
+                        try {
+                            BigDecimal addedBack = this.add(uuid, toReturn);
+                            toReturn = toReturn.subtract(addedBack);
+                        } catch (Exception ignored) {
+                            // If adding back to this storage fails for any reason, continue to fallback
+                        }
+
+                        if (toReturn.compareTo(BigDecimal.ZERO) > 0) {
+                            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+                                if (storage == this) continue;
+
+                                try {
+                                    BigDecimal added = storage.add(uuid, toReturn);
+                                    toReturn = toReturn.subtract(added);
+                                } catch (Exception ignored) {
+                                    // Ignore and try next storage
+                                }
+
+                                if (toReturn.compareTo(BigDecimal.ZERO) <= 0) break;
+                            }
+                        }
+
+                        if (toReturn.compareTo(BigDecimal.ZERO) > 0) {
+                            // Fallback to account transactions if some remainder couldn't be placed in
+                            // any storage.
+                            Banco.get().getAccountManager().deposit(uuid, toReturn);
+                        }
                     }
     
                     amount = amount.subtract(value.subtract(removed));

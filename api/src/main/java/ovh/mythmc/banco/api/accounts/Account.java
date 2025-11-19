@@ -41,7 +41,14 @@ public class Account {
      * @return This account's balance
      */
     public BigDecimal amount() {
-        return Banco.get().getAccountManager().amount(uuid);
+        // Fetch the computed amount from the account manager
+        BigDecimal computed = Banco.get().getAccountManager().amount(uuid);
+
+        if (this.name == null || "NULL".equalsIgnoreCase(this.name)) {
+            return BigDecimal.valueOf(0).max(computed);
+        }
+
+        return computed;
     }
 
     public AccountIdentifierKey getIdentifier() {
