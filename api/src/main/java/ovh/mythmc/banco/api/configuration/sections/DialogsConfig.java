@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Configuration
 @Getter
-public class MenusConfig {
+public class DialogsConfig {
 
     private InfoMenu info = new InfoMenu("ʙᴀɴᴄᴏ", "Displays detailed information about the plugin and server environment.", "<yellow><bold>%s</bold></yellow>", "<gray>%s</gray>");
 

@@ -26,8 +26,8 @@ public final class TransactionHistoryDialog {
     public void open(@NotNull Player player, @NotNull Account account) {
         final List<DialogBody> dialogBodyList = new ArrayList<>();
         final String description = player.getUniqueId().equals(account.getUuid()) 
-            ? Banco.get().getSettings().get().getMenus().getTransactionHistory().description() 
-            : String.format(Banco.get().getSettings().get().getMenus().getTransactionHistory().othersDescription(), account.getName());
+            ? Banco.get().getSettings().get().getDialogs().getTransactionHistory().description() 
+            : String.format(Banco.get().getSettings().get().getDialogs().getTransactionHistory().othersDescription(), account.getName());
 
         dialogBodyList.add(DialogBody.plainMessage(MiniMessage.miniMessage().deserialize(description)));
 
@@ -39,7 +39,7 @@ public final class TransactionHistoryDialog {
             if (transaction.operation() == Transaction.Operation.SET)
                 continue;
 
-            final SimpleDateFormat dateFormat = new SimpleDateFormat(Banco.get().getSettings().get().getMenus().getTransactionHistory().dateFormat());
+            final SimpleDateFormat dateFormat = new SimpleDateFormat(Banco.get().getSettings().get().getDialogs().getTransactionHistory().dateFormat());
 
             final Component operationComponent = switch (transaction.operation()) {
                 case DEPOSIT -> Component.text("+", NamedTextColor.GREEN);
@@ -63,7 +63,7 @@ public final class TransactionHistoryDialog {
                 .append(Component.text("Maybe tomorrow?", NamedTextColor.GRAY).decorate(TextDecoration.ITALIC))));
 
         final Dialog dialog = Dialog.create(builder -> builder.empty()
-            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getMenus().getTransactionHistory().title()))
+            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getTransactionHistory().title()))
                 .body(dialogBodyList)
                 .build())
             .type(DialogType.notice())

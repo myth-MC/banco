@@ -34,7 +34,7 @@ public class BancoSettings {
     @Comment({"", "Configuration for commands"})
     private CommandsConfig commands = new CommandsConfig();
 
-    @Comment({"", "Configuration for menus/GUIs"})
-    private MenusConfig menus = new MenusConfig();
+    @Comment({"", "Configuration for dialogs (or chest-based GUIs in Bukkit)"})
+    private DialogsConfig dialogs = new DialogsConfig();
 
 }

@@ -25,7 +25,7 @@ public final class BalanceTopDialog {
     public void open(@NotNull Player player) {
         Banco.get().getAccountManager().getTopAsync(1024000).thenAccept(map -> {
             final List<DialogBody> dialogBodyList = new ArrayList<>();
-            dialogBodyList.add(DialogBody.plainMessage(Component.text(Banco.get().getSettings().get().getMenus().getBalanceTop().description())));
+            dialogBodyList.add(DialogBody.plainMessage(Component.text(Banco.get().getSettings().get().getDialogs().getBalanceTop().description())));
 
             int index = 0;
     
@@ -38,7 +38,7 @@ public final class BalanceTopDialog {
                     continue;
     
                 final String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
-                final String formattedText = String.format(Banco.get().getSettings().get().getMenus().getBalanceTop().format(),
+                final String formattedText = String.format(Banco.get().getSettings().get().getDialogs().getBalanceTop().format(),
                         index+1,
                         optPlayerReference.get().toOfflinePlayer().getName(),
                         balance
@@ -52,7 +52,7 @@ public final class BalanceTopDialog {
             }
     
             final Dialog dialog = Dialog.create(builder -> builder.empty()
-                .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getMenus().getBalanceTop().title()))
+                .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getBalanceTop().title()))
                     .body(dialogBodyList)
                     .build())
                 .type(DialogType.notice())
