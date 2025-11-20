@@ -56,7 +56,7 @@ public final class InfoDialog {
 
 
         final Dialog dialog = Dialog.create(builder -> builder.empty()
-            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getBalanceTop().title()))
+            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getInfo().title()))
                 .body(dialogBodyList)
                 .build())
             .type(DialogType.notice())
