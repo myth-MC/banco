@@ -22,7 +22,7 @@ public final class InfoDialog {
 
     public void open(@NotNull Player player) {
         final List<DialogBody> dialogBodyList = new ArrayList<>();
-        dialogBodyList.add(DialogBody.plainMessage(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getMenus().getInfo().description())));
+        dialogBodyList.add(DialogBody.plainMessage(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getInfo().description())));
 
         dialogBodyList.addAll(List.of(
             DialogBody.plainMessage(Component.text("Running ")
@@ -56,7 +56,7 @@ public final class InfoDialog {
 
 
         final Dialog dialog = Dialog.create(builder -> builder.empty()
-            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getMenus().getBalanceTop().title()))
+            .base(DialogBase.builder(MiniMessage.miniMessage().deserialize(Banco.get().getSettings().get().getDialogs().getBalanceTop().title()))
                 .body(dialogBodyList)
                 .build())
             .type(DialogType.notice())

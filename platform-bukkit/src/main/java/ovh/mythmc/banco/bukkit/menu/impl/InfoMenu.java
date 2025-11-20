@@ -27,7 +27,7 @@ public final class InfoMenu extends BasicMenu {
 
     @Override
     protected Inventory createInventory() {
-        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getMenus().getInfo().title());
+        return Bukkit.createInventory(null, 9, Banco.get().getSettings().get().getDialogs().getInfo().title());
     }
 
     @Override
@@ -59,8 +59,8 @@ public final class InfoMenu extends BasicMenu {
     }
 
     private MenuButton getButton(ItemStack itemStack, String key, String value) {
-        String name = String.format(Banco.get().getSettings().get().getMenus().getInfo().keyFormat(), key);
-        String lore = String.format(Banco.get().getSettings().get().getMenus().getInfo().valueFormat(), value);
+        String name = String.format(Banco.get().getSettings().get().getDialogs().getInfo().keyFormat(), key);
+        String lore = String.format(Banco.get().getSettings().get().getDialogs().getInfo().valueFormat(), value);
 
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(name);
