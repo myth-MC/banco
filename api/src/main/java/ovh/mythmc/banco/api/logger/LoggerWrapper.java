@@ -20,7 +20,7 @@ public interface LoggerWrapper {
     void error(final String message, final Object... args);
 
     default void debug(final String message, final Object... args) {
-        info(message, args);
+        info("[debug] " + message, args);
     }
 
     default String buildFullMessage(final @NotNull String msg, final Object... args) {

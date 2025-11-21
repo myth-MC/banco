@@ -16,7 +16,7 @@ public final class BancoListener {
             if (!Banco.get().getSettings().get().isDebug())
                 return;
 
-            Banco.get().getLogger().info("Transaction ({}|{}): {} - operation: {} - cancelled: {}",
+            Banco.get().getLogger().debug("Transaction ({}|{}): {} - operation: {} - cancelled: {}",
                 transaction.account().getUuid(),
                 Bukkit.getOfflinePlayer(transaction.account().getUuid()).getName(),
                 transaction.amount(),
@@ -29,7 +29,7 @@ public final class BancoListener {
             if (!Banco.get().getSettings().get().isDebug())
                 return;
                 
-            Banco.get().getLogger().info("Registered ItemStack {} with value {}",
+            Banco.get().getLogger().debug("Registered ItemStack {} with value {}",
                 item.asItemStack(),
                 item.value()
             );
