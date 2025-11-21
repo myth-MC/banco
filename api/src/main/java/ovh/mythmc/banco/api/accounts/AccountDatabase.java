@@ -83,8 +83,7 @@ public final class AccountDatabase {
 
         scheduleAutoSaver();
 
-        if (Banco.get().getSettings().get().isDebug())
-            Banco.get().getLogger().info("Loaded a total amount of " + get().size() + " accounts! (using V3 format)");
+        Banco.get().getLogger().debug("Loaded a total amount of " + get().size() + " accounts! (using V3 format)");
 
         accountIdentifierCache.addAll(get().stream().map(Account::getIdentifier).toList());
 
@@ -159,15 +158,13 @@ public final class AccountDatabase {
     public long updateAllDatabaseEntries() {
         var startTime = System.currentTimeMillis();
 
-        if (Banco.get().getSettings().get().isDebug())
-            Banco.get().getLogger().info("Updating " + cache.size() + " cached accounts...");
+        Banco.get().getLogger().debug("Updating " + cache.size() + " cached accounts...");
 
         Map.copyOf(cache).values().forEach(this::updateDatabaseEntry);
 
         final long totalTime = System.currentTimeMillis() - startTime;
 
-        if (Banco.get().getSettings().get().isDebug())
-            Banco.get().getLogger().info("Done! (took " + totalTime + "ms)");
+        Banco.get().getLogger().debug("Done! (took " + totalTime + "ms)");
 
         return totalTime;
     }
@@ -200,8 +197,7 @@ public final class AccountDatabase {
         final long startTime = System.currentTimeMillis();
 
         if (Banco.get().getSettings().get().getDatabase().isAsynchronousWrites()) {
-            if (Banco.get().getSettings().get().isDebug())
-                Banco.get().getLogger().info("Saving {} ({}) asynchronously...", account.getIdentifier().uuid(), account.getIdentifier().name());
+            Banco.get().getLogger().debug("Saving {} ({}) asynchronously...", account.getIdentifier().uuid(), account.getIdentifier().name());
 
             BancoScheduler.get().runAsync(task);
         } else {

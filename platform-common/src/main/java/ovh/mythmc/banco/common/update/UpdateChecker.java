@@ -66,7 +66,7 @@ public class UpdateChecker {
             connection = URI.create(url).toURL().openConnection();
         } catch (IOException e) {
             if (Banco.get().getSettings().get().isDebug()) {
-                logger.warn("The update checker is not available:");
+                logger.warn("Exception while checking for updates:");
                 e.printStackTrace();
             }
 
@@ -74,15 +74,13 @@ public class UpdateChecker {
         }
 
         try (Scanner scanner = new Scanner(Objects.requireNonNull(connection).getInputStream())) {
-            if (Banco.get().getSettings().get().isDebug())
-                logger.info("Checking for updates...");
+            logger.debug("Checking for updates...");
 
             String latest = scanner.next();
             setLatest(latest);
 
             if (isDevelopmentBuild(latest)) {
-                if (Banco.get().getSettings().get().isDebug())
-                    logger.warn("This server is running a development build!");
+                logger.warn("This server is running a development build!");
                 return;
             }
 
@@ -92,8 +90,7 @@ public class UpdateChecker {
                 return;
             }
 
-            if (Banco.get().getSettings().get().isDebug())
-                logger.info("No updates have been found.");
+            logger.debug("No updates have been found.");
         } catch (IOException e) {
             if (Banco.get().getSettings().get().isDebug())
                 e.printStackTrace();
