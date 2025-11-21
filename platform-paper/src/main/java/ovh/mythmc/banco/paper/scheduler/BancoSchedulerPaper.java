@@ -24,7 +24,14 @@ public final class BancoSchedulerPaper extends BancoScheduler {
             return;
         }
 
-        Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
+        try {
+            Bukkit.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
+        } catch (Throwable t) {
+            if (Banco.get().getSettings().get().isDebug()) {
+                Banco.get().getLogger().debug("Exception while running async task:");
+                t.printStackTrace(System.err);
+            }
+        }
     }
     
 }

@@ -1,8 +1,8 @@
 package ovh.mythmc.banco.common.translation;
 
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
-import net.kyori.adventure.translation.TranslationStore;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -70,17 +69,14 @@ public final class BancoLocalization {
             }
         }
 
-        final TranslationStore<MessageFormat> store = TranslationStore.messageFormat(Key.key("banco:i10n"));
+        final MiniMessageTranslationStore store = MiniMessageTranslationStore.create(Key.key("banco:i10n"));
 
         langs.forEach(langTag -> {
             String baseName = "i10n_" + langTag;
             Locale locale = Locale.forLanguageTag(langTag.replace("_", "-"));
             ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale, UTF8ResourceBundleControl.utf8ResourceBundleControl());
 
-            store.registerAll(locale, override(overrides, resourceBundle).keySet(), (key) -> {
-                String format = resourceBundle.getString(key);
-                return new MessageFormat(format, locale);
-            });
+            store.registerAll(locale, override(overrides, resourceBundle), true);
         });
 
         store.defaultLocale(Locale.forLanguageTag(Banco.get().getSettings().get().getDefaultLanguageTag()));
@@ -96,6 +92,7 @@ public final class BancoLocalization {
             for (String k : bundle.keySet()) {
                 if (overridesBundle.containsKey(k)) {
                     map.put(k, overridesBundle.getObject(k));
+                    Banco.get().getLogger().debug("Overriding language key {} for lang {}", k, bundle.getLocale());
                 } else {
                     map.put(k, bundle.getObject(k));
                 }
