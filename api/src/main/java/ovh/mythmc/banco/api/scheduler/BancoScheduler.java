@@ -2,6 +2,7 @@ package ovh.mythmc.banco.api.scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,6 +49,25 @@ public abstract class BancoScheduler {
             return;
 
         transactionQueue.add(transaction);
+    }
+
+    /**
+     * Remove any queued transactions for the given account.
+     *
+     * This is best-effort: it helps avoid old queued ops from running after we
+     * performed a synchronous transaction for the same account.
+     *
+     * @return number of removed transactions
+     */
+    public synchronized int cancelQueuedTransactionsFor(final UUID uuid) {
+        int before = transactionQueue.size();
+        transactionQueue.removeIf(t -> t.asImmutable().account().getUuid().equals(uuid));
+        int after = transactionQueue.size();
+        int removed = before - after;
+        try {
+            Banco.get().getLogger().info("BancoScheduler: removed {} queued transactions for acct={}", removed, uuid);
+        } catch (Exception ignored) {}
+        return removed;
     }
 
     public void terminate() {
