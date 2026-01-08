@@ -42,7 +42,7 @@ public class Account {
      */
     public BigDecimal amount() {
         // Fetch the computed amount from the account manager
-        BigDecimal computed = Banco.get().getAccountManager().amount(uuid);
+        BigDecimal computed = Banco.get().getAccountManager().balance(uuid);
 
         if (this.name == null || "NULL".equalsIgnoreCase(this.name)) {
             return BigDecimal.valueOf(0).max(computed);

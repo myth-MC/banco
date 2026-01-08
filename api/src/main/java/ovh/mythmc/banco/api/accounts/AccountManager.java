@@ -278,9 +278,29 @@ public final class AccountManager {
      * Gets an account's balance
      * @param uuid uuid of account to check
      * @return Account's balance
+     * @deprecated As of version 1.3.0, use {@link #balance(Account)} instead.
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
-        return amount(getByUuid(uuid));
+        return balance(getByUuid(uuid));
+    }
+
+    /**
+     * Gets an account's balance
+     * @param account account to check
+     * @return Account's balance
+     * @deprecated As of version 1.3.0, use {@link #balance(Account)} instead.
+     */
+    public @NotNull BigDecimal amount(final @NotNull Account account) {
+        return balance(account);
+    }
+
+    /**
+     * Gets an account's balance
+     * @param uuid uuid of account to check
+     * @return Account's balance
+     */
+    public @NotNull BigDecimal balance(final @NotNull UUID uuid) {
+        return balance(getByUuid(uuid));
     }
 
     /**
@@ -288,7 +308,7 @@ public final class AccountManager {
      * @param account account to check
      * @return Account's balance
      */
-    public @NotNull BigDecimal amount(final @NotNull Account account) {
+    public @NotNull BigDecimal balance(final @NotNull Account account) {
         // Fake players / accounts
         //if (!Bukkit.getOfflinePlayer(account.getUuid()).hasPlayedBefore())
         //    return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false));

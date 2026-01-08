@@ -36,7 +36,7 @@ public class PlayerListener implements Listener {
         if (Banco.get().getAccountManager().getByUuid(uuid) == null)
             return;
 
-        Banco.get().getAccountManager().amount(uuid); // updates account's balance amount
+        Banco.get().getAccountManager().balance(uuid); // updates account's balance amount
     }
 
 }
