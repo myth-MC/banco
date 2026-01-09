@@ -63,14 +63,14 @@ public class Transaction {
         Object lock = AccountLocks.lockFor(acct);
         synchronized (lock) {
             switch (operation) {
-                case DEPOSIT -> set(account.amount().add(amount));
-                case WITHDRAW -> set(account.amount().subtract(amount));
+                case DEPOSIT -> set(account.balance().add(amount));
+                case WITHDRAW -> set(account.balance().subtract(amount));
                 case SET -> set(amount);
             }
 
             try {
                 Banco.get().getLogger().info("Transaction END   - acct={} op={} amount={} resulting={} time={}",
-                        acct, operation, amount, account.amount(), Instant.now());
+                        acct, operation, amount, account.balance(), Instant.now());
             } catch (Exception ignored) {}
         }
 
@@ -87,12 +87,12 @@ public class Transaction {
     }
 
     private void set(@NotNull BigDecimal newAmount) {
-        if (account.amount().compareTo(newAmount) == 0)
+        if (account.balance().compareTo(newAmount) == 0)
             return;
 
-        if (account.amount().compareTo(newAmount) < 0) { // Add amount to account
+        if (account.balance().compareTo(newAmount) < 0) { // Add amount to account
             account.setTransactions(BigDecimal.valueOf(0));
-            BigDecimal toAdd = newAmount.subtract(account.amount());
+            BigDecimal toAdd = newAmount.subtract(account.balance());
 
             // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {
@@ -120,7 +120,7 @@ public class Transaction {
             account.setTransactions(account.getTransactions().add(toAdd));
             Banco.get().getAccountManager().getDatabase().updateCache(account);
         } else { // Remove amount from account
-            BigDecimal toRemove = account.amount().subtract(newAmount);
+            BigDecimal toRemove = account.balance().subtract(newAmount);
             
             // Online accounts
             if (Bukkit.getOfflinePlayer(account.getUuid()).isOnline()) {

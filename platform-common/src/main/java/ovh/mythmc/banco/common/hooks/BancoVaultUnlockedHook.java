@@ -171,7 +171,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
     @Override
     public @NotNull BigDecimal getBalance(@NotNull String pluginName, @NotNull UUID accountID) {
-        return Banco.get().getAccountManager().getByUuid(accountID).amount();
+        return Banco.get().getAccountManager().getByUuid(accountID).balance();
     }
 
     @Override
@@ -208,7 +208,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         final var account = Banco.get().getAccountManager().getByUuid(accountID);
         if (!has(pluginName, accountID, amount))
-            return new EconomyResponse(amount, account.amount(), ResponseType.FAILURE, "Not enough funds");
+            return new EconomyResponse(amount, account.balance(), ResponseType.FAILURE, "Not enough funds");
 
         // makes withdrawal synchronously so that callers (Vault/Towny) see the balance
         Transaction transaction = Transaction.builder()
@@ -219,7 +219,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         transaction.transact();
 
-        return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, account.balance(), ResponseType.SUCCESS, "");
     }
 
     @Override
@@ -249,7 +249,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         transaction.transact();
 
-        return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
+        return new EconomyResponse(amount, account.balance(), ResponseType.SUCCESS, "");
     }
 
     @Override

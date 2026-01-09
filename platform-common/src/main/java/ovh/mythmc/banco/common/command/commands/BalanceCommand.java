@@ -36,13 +36,13 @@ public final class BalanceCommand implements MainCommand {
                 final Account account = ctx.getOrDefault("account", Banco.get().getAccountManager().getByName(ctx.sender().name()));
                 if (!ctx.contains("account")) {
                     MessageUtil.info(ctx.sender(), Component.translatable("banco.commands.balance",
-                        Component.text(MessageUtil.format(account.amount())),
+                        Component.text(MessageUtil.format(account.balance())),
                         Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
                     );
                 } else {
                     MessageUtil.info(ctx.sender(), Component.translatable("banco.commands.balance.others",
                         Component.text(account.getName()),
-                        Component.text(MessageUtil.format(account.amount())),
+                        Component.text(MessageUtil.format(account.balance())),
                         Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
                     );
                 }

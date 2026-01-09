@@ -34,7 +34,7 @@ public final class BancoSocialHook {
                 return null;
 
             String playerName = context.user().name();
-            String formattedAmount = MessageUtil.format(account.amount());
+            String formattedAmount = MessageUtil.format(account.balance());
             String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
 
             return Component.text(formattedAmount + currencySymbol, NamedTextColor.LIGHT_PURPLE)

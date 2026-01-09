@@ -139,7 +139,7 @@ public final class BancoCommand implements MainCommand {
                 final Account target = ctx.get("target");
                 final BigDecimal amount = BigDecimal.valueOf((double) ctx.get("amount"));
 
-                final BigDecimal accountAmount = target.amount();
+                final BigDecimal accountAmount = target.balance();
                 if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && amount.compareTo(accountAmount) > 0) {
                     MessageUtil.error(ctx.sender(), Component.translatable("banco.commands.banco.take.amount-too-high",
                         Component.text(MessageUtil.format(amount)),

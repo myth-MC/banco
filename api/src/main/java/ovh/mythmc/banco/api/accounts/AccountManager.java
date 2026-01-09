@@ -43,7 +43,7 @@ public final class AccountManager {
     public synchronized void create(final @NotNull UUID uuid) {
         Account account = new Account();
         account.setUuid(uuid);
-        account.setAmount(BigDecimal.ZERO);
+        account.setBalance(BigDecimal.ZERO);
         account.setTransactions(BigDecimal.ZERO);
 
         create(account);
@@ -58,7 +58,7 @@ public final class AccountManager {
         Account account = new Account();
         account.setUuid(uuid);
         account.setName(name);
-        account.setAmount(BigDecimal.ZERO);
+        account.setBalance(BigDecimal.ZERO);
         account.setTransactions(BigDecimal.ZERO);
 
         create(account);
@@ -271,14 +271,14 @@ public final class AccountManager {
      * @return true if account has more than the specified amount
      */
     public boolean has(final @NotNull Account account, final @NotNull BigDecimal amount) {
-        return account.amount().compareTo(amount) >= 0;
+        return account.balance().compareTo(amount) >= 0;
     }
 
     /**
      * Gets an account's balance
      * @param uuid uuid of account to check
      * @return Account's balance
-     * @deprecated As of version 1.3.0, use {@link #balance(Account)} instead.
+     * @deprecated As of version 1.3.0, use {@link #balance(UUID)} instead.
      */
     public @NotNull BigDecimal amount(final @NotNull UUID uuid) {
         return balance(getByUuid(uuid));
@@ -319,13 +319,13 @@ public final class AccountManager {
         if (optionalOfflinePlayerReference.isPresent() && // Safeguard against weird thing that apparently can happen in laggy server environments?
             uuidResolver.resolveOfflinePlayer(account.getUuid()).get().toOfflinePlayer().isOnline()) {
 
-            account.setAmount(getValueOfPlayer(account.getUuid(), true));
+            account.setBalance(getValueOfPlayer(account.getUuid(), true));
             database.updateCache(account);
         }
 
         // Offline players
         //return account.getAmount().add(account.getTransactions());
-        return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false)).add(account.getAmount());
+        return account.getTransactions().add(getValueOfPlayer(account.getUuid(), false)).add(account.getBalance());
     }
 
     @Internal
@@ -344,7 +344,7 @@ public final class AccountManager {
 
     @ApiStatus.Internal
     public synchronized void updateTransactions(final @NotNull Account account) {
-        BigDecimal amount = account.amount();
+        BigDecimal amount = account.balance();
         account.setTransactions(BigDecimal.valueOf(0));
         database.updateCache(account);
 
@@ -376,7 +376,7 @@ public final class AccountManager {
     public LinkedHashMap<UUID, BigDecimal> getTop(int limit) {
         Map<UUID, BigDecimal> values = new LinkedHashMap<>();
         for (Account account : get()) {
-            values.put(account.getUuid(), account.amount());
+            values.put(account.getUuid(), account.balance());
         }
 
         return values.entrySet().stream()

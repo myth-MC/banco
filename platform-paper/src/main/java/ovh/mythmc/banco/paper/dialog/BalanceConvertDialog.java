@@ -75,14 +75,14 @@ public final class BalanceConvertDialog {
 
     private static boolean showConverter(@NotNull Player player, @NotNull BancoItem item) {
         final Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
-        final int maxAmount = ItemUtil.getMaxUnitsFromValue(item, account.amount());
+        final int maxAmount = ItemUtil.getMaxUnitsFromValue(item, account.balance());
 
         return maxAmount > 0;
     }
 
     private static Dialog getSpecificConverter(@NotNull Player player, @NotNull BancoItem item) {
         final Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
-        final int maxAmount = Math.min(ItemUtil.getMaxUnitsFromValue(item, account.amount()), Banco.get().getSettings().get().getCommands().getBalanceConvert().maxConvertibleAmount());
+        final int maxAmount = Math.min(ItemUtil.getMaxUnitsFromValue(item, account.balance()), Banco.get().getSettings().get().getCommands().getBalanceConvert().maxConvertibleAmount());
 
         final String description = Banco.get().getSettings().get().getDialogs().getBalanceConvert().itemDescription();
 
@@ -152,7 +152,7 @@ public final class BalanceConvertDialog {
                 ActionButton.builder(Component.translatable("gui.proceed"))
                     .action(DialogAction.staticAction(ClickEvent.callback(audience -> {
                         final Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
-                        final BigDecimal amount = account.amount();
+                        final BigDecimal amount = account.balance();
 
                         Banco.get().getAccountManager().withdraw(account, amount);
                         Banco.get().getAccountManager().deposit(account, amount);
@@ -167,7 +167,7 @@ public final class BalanceConvertDialog {
         final String compactWarning = Banco.get().getSettings().get().getDialogs().getBalanceConvert().compactWarning();
         
         final Account account = Banco.get().getAccountManager().getByUuid(player.getUniqueId());
-        final List<ItemStack> itemStackList = ItemUtil.convertAmountToItems(account.amount());
+        final List<ItemStack> itemStackList = ItemUtil.convertAmountToItems(account.balance());
         final List<DialogBody> dialogBodyList = new ArrayList<>(List.of(
             DialogBody.plainMessage(MiniMessage.miniMessage().deserialize(compactWarning))
         ));

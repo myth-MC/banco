@@ -11,6 +11,8 @@ import ovh.mythmc.banco.api.Banco;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -30,17 +32,13 @@ public class Account {
     @DatabaseField
     private String name;
 
-    @DatabaseField(defaultValue = "0.0")
-    private BigDecimal amount;
+    @DatabaseField(defaultValue = "0.0", columnName = "amount")
+    private BigDecimal balance;
 
     @DatabaseField(defaultValue = "0.0")
     private BigDecimal transactions;
 
-    /**
-     * Returns this account's balance
-     * @return This account's balance
-     */
-    public BigDecimal amount() {
+    public @NotNull BigDecimal balance() {
         // Fetch the computed amount from the account manager
         BigDecimal computed = Banco.get().getAccountManager().balance(uuid);
 
@@ -51,12 +49,21 @@ public class Account {
         return computed;
     }
 
+    /**
+     * Returns this account's balance
+     * @return This account's balance
+     * @deprecated As of version 1.3.0, use {@link #balance()} instead.
+     */
+    public BigDecimal amount() {
+        return balance();
+    }
+
     public AccountIdentifierKey getIdentifier() {
         return AccountIdentifierKey.of(uuid, name);
     }
     
-    protected void setAmount(BigDecimal amount) {
-        this.amount = BigDecimal.valueOf(0).max(amount);
+    protected void setBalance(BigDecimal amount) {
+        this.balance = BigDecimal.valueOf(0).max(amount);
     }
 
 }
