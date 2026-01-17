@@ -2,7 +2,10 @@ package ovh.mythmc.banco.common.command.commands;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 
 import org.bukkit.Bukkit;
@@ -29,6 +32,12 @@ import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
+import ovh.mythmc.banco.common.debug.ServerLog;
+import ovh.mythmc.banco.common.debug.ServerLogBuilder;
+import ovh.mythmc.banco.common.debug.ServerLogHandler;
+import ovh.mythmc.banco.common.debug.parser.ServerLogResponseParser;
+import ovh.mythmc.banco.common.debug.serializer.GsonServerLogSerializer;
+import ovh.mythmc.banco.common.debug.transport.HttpServerLogTransport;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
@@ -245,6 +254,81 @@ public final class BancoCommand implements MainCommand {
                 })
             );
         }
+
+        commandManager.command(bancoCommand
+            .literal("debug")
+            .literal("report")
+            .permission("banco.use.banco.debug.report")
+            .flag(CommandFlag.builder("exclude-plugin-list"))
+            .flag(CommandFlag.builder("exclude-plugin-settings"))
+            .handler(ctx -> {
+                final boolean excludePluginList = ctx.flags().isPresent("exclude-plugin-list");
+                final boolean excludePluginSettings = ctx.flags().isPresent("exclude-plugin-settings");
+
+                ServerLogBuilder logBuilder = ServerLog.builder()
+                    .requester(ctx.sender().name())
+                    .pluginName("banco")
+                    .pluginVersion(Banco.get().version() + "-" + getBancoBuildSoftware())
+                    .serverPort(Bukkit.getPort())
+                    .serverVersion(Bukkit.getVersion().substring(0, Bukkit.getVersion().indexOf("-")))
+                    .serverSoftware(Bukkit.getName())
+                    .onlineMode(Bukkit.getOnlineMode());
+
+                if (!excludePluginList)
+                    logBuilder = logBuilder.addExtra("serverPlugins", Arrays.asList(Bukkit.getPluginManager().getPlugins()).stream()
+                        .map(plugin -> plugin.getDescription().getName() + " " + plugin.getDescription().getVersion())
+                        .toList());
+
+                if (!excludePluginSettings)
+                    logBuilder = logBuilder.addExtra("pluginSettingsYaml", getPluginSettingsYaml());
+
+                final ServerLogHandler handler = ServerLogHandler.builder()
+                    .provider(logBuilder)
+                    .serializer(GsonServerLogSerializer.get())
+                    .transport(HttpServerLogTransport.get())
+                    .responseParser(ServerLogResponseParser.get())
+                    .build();
+
+                handler.handleAsync().thenAccept(result -> {
+                    result.ifSuccessOrElse(() -> {
+                        Component message = Component.text("Your report has been generated. Code: ")
+                            .append(Component.text(result.parsedResponse().get().logId().get(), NamedTextColor.YELLOW)
+                                .clickEvent(ClickEvent.copyToClipboard(result.parsedResponse().get().logId().get())))
+                            .appendSpace()
+                            .clickEvent(ClickEvent.openUrl("https://debug.mythmc.ovh/search"));
+    
+                        Component hoverEvent = Component.empty();
+                        if (!excludePluginList)
+                            hoverEvent = hoverEvent
+                                .append(Component.text("Your report includes a full list of all your server plugins. ")
+                                .append(Component.text("You can disable this by using flag ")
+                                .append(Component.text("--exclude-plugin-list", NamedTextColor.GRAY))
+                                .append(Component.text(" while building the command."))))
+                                .appendNewline()
+                                .appendNewline();
+    
+                        if (!excludePluginSettings)
+                            hoverEvent = hoverEvent
+                                .append(Component.text("Your report includes a copy of banco's settings. ")
+                                .append(Component.text("You can disable this by using flag ")
+                                .append(Component.text("--exclude-plugin-settings", NamedTextColor.GRAY))
+                                .append(Component.text(" while building the command."))))
+                                .appendNewline()
+                                .appendNewline();
+    
+                        hoverEvent = hoverEvent.append(Component.text("Reports are a beta feature. Please, report any issues in our GitHub repo or Discord server.", NamedTextColor.GRAY));
+                        final Component warning = MessageUtil.getWarnPrefix().hoverEvent(hoverEvent);
+    
+                        message = message.append(warning);
+    
+                        MessageUtil.debug(ctx.sender(), message);
+                    }, () -> {
+                        MessageUtil.error(ctx.sender(), result.message().orElse(result.parsedResponse().get().raw().body()));
+                    });
+                });
+            })
+
+        );
     }
 
     private static String getBancoBuildSoftware() {
@@ -255,6 +339,16 @@ public final class BancoCommand implements MainCommand {
         }
 
         return "bukkit";
+    }
+
+    // todo: move to another class
+    private static String getPluginSettingsYaml() {
+        try {
+            return Base64.getEncoder().encodeToString(Files.readAllBytes(Banco.get().getSettings().getSettingsFilePath()));
+        } catch (IOException e) { 
+            e.printStackTrace(System.err);
+            return null;
+        }
     }
     
 }

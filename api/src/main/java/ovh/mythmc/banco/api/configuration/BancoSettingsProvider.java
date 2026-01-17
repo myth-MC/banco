@@ -45,6 +45,10 @@ public final class BancoSettingsProvider {
         YamlConfigurations.save(settingsFilePath, BancoSettings.class, this.settings, this.properties);
     }
 
+    public final Path getSettingsFilePath() {
+        return this.settingsFilePath;
+    }
+
     public BancoSettings get() { return settings; }
 
 }

@@ -4,6 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MathUtil {
 
+    private MathUtil() { }
+
     public static boolean isDouble(final @NotNull String input) {
         try {
             Double.parseDouble(input);
