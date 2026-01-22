@@ -166,7 +166,7 @@ public final class BancoCommand implements MainCommand {
             .handler(ctx -> {
                 final var dateFormat = new SimpleDateFormat("MMddyyyyHHmm");
                 final var dateAsString = dateFormat.format(new Date());
-                Banco.get().getAccountManager().getDatabase().backup(dateAsString);
+                Banco.get().getAccountManager().getDatabase().performBackup(dateAsString);
 
                 MessageUtil.debug(ctx.sender(), "Database has been dumped into accounts.db." + dateAsString + "!");
             })

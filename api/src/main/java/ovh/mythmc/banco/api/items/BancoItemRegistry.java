@@ -12,79 +12,154 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Registry for managing currency items.
+ * <p>
+ * This registry maintains a list of all registered currency items that can be used
+ * in the Banco system. Items are registered in order, and this order determines
+ * their priority when converting amounts to items.
+ * </p>
+ *
+ * @since 1.0.0
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BancoItemRegistry {
 
+    /**
+     * The singleton instance of the item registry.
+     */
     public static final BancoItemRegistry instance = new BancoItemRegistry();
+
+    /**
+     * The namespaced key used to identify custom Banco items.
+     */
+    public static final NamespacedKey CUSTOM_ITEM_IDENTIFIER_KEY = new NamespacedKey("banco", "identifier");
 
     private final List<BancoItem> itemList = new ArrayList<>();
 
-    public final NamespacedKey CUSTOM_ITEM_IDENTIFIER_KEY = new NamespacedKey("banco", "identifier");
-
-
     /**
-     * Registers a BancoItem
-     * @param items item to register
+     * Registers one or more currency items.
+     * <p>
+     * This method invokes the item registration callback before adding items to the registry,
+     * allowing plugins to modify or cancel the registration.
+     * </p>
+     *
+     * @param items the items to register
+     * @throws IllegalArgumentException if items is null or contains null elements
      */
     public void register(@NotNull BancoItem... items) {
+        if (items == null) {
+            throw new IllegalArgumentException("Items array cannot be null");
+        }
+
         Arrays.asList(items).forEach(bancoItem -> {
-            var callback = new BancoItemRegister(bancoItem);
+            if (bancoItem == null) {
+                throw new IllegalArgumentException("Item cannot be null");
+            }
+
+            final var callback = new BancoItemRegister(bancoItem);
             BancoItemRegisterCallback.INSTANCE.invoke(callback, result -> itemList.add(result.bancoItem()));
         });
     }
 
     /**
-     * Unregisters a BancoItem
-     * @param items item to unregister
+     * Unregisters one or more currency items.
+     * <p>
+     * This method invokes the item unregistration callback before removing items from the registry,
+     * allowing plugins to perform cleanup operations.
+     * </p>
+     *
+     * @param items the items to unregister
+     * @throws IllegalArgumentException if items is null or contains null elements
      */
-    public void unregister(final @NotNull BancoItem... items) {
+    public void unregister(@NotNull BancoItem... items) {
+        if (items == null) {
+            throw new IllegalArgumentException("Items array cannot be null");
+        }
+
         Arrays.asList(items).forEach(bancoItem -> {
-            var callback = new BancoItemUnregister(bancoItem);
+            if (bancoItem == null) {
+                throw new IllegalArgumentException("Item cannot be null");
+            }
+
+            final var callback = new BancoItemUnregister(bancoItem);
             BancoItemUnregisterCallback.INSTANCE.invoke(callback, result -> itemList.remove(result.bancoItem()));
         });
     }
 
+    /**
+     * Clears all registered items from the registry.
+     * <p>
+     * This method is marked as internal and should only be called by the plugin itself.
+     * </p>
+     */
     @ApiStatus.Internal
-    public void clear() { itemList.clear(); }
+    public void clear() {
+        itemList.clear();
+    }
 
     /**
-     * Returns a list of registered items
-     * @return A list with every registered items
+     * Gets all registered currency items.
+     * <p>
+     * The items are returned in registration order, which determines their priority
+     * when converting amounts to items.
+     * </p>
+     *
+     * @return an unmodifiable list of all registered items
      */
-    public List<BancoItem> get() { return List.copyOf(itemList); }
+    @NotNull
+    public List<BancoItem> get() {
+        return Collections.unmodifiableList(itemList);
+    }
 
     /**
-     * Gets a specific BancoItem
-     * @param itemStack ItemStack that should match a BancoItem
-     * @return A BancoItem matching parameters or null
+     * Gets a currency item that matches the given ItemStack.
+     *
+     * @param itemStack the ItemStack to match
+     * @return the matching BancoItem, or null if no match is found
+     * @throws IllegalArgumentException if itemStack is null
      */
-    public BancoItem getByItemStack(final @NotNull ItemStack itemStack) {
-        for (BancoItem item : get()) {
-            if (item.match(itemStack))
+    @Nullable
+    public BancoItem getByItemStack(@NotNull ItemStack itemStack) {
+        if (itemStack == null) {
+            throw new IllegalArgumentException("ItemStack cannot be null");
+        }
+
+        for (final BancoItem item : get()) {
+            if (item.match(itemStack)) {
                 return item;
+            }
         }
 
         return null;
     }
 
     /**
-     * Checks whether an ItemStack is a valid BancoItem or not
-     * @param item an ItemStack to get parameters from
-     * @return true if a BancoItem matching item's parameters exists
+     * Checks whether an ItemStack is a valid currency item.
+     *
+     * @param item the ItemStack to check
+     * @return true if the ItemStack matches a registered currency item, false otherwise
      */
-    public boolean isValid(ItemStack item) {
-        return getByItemStack(item) != null;
+    public boolean isValid(@Nullable ItemStack item) {
+        return item != null && getByItemStack(item) != null;
     }
 
-
+    /**
+     * Checks whether the registry is using legacy currency configuration.
+     * <p>
+     * Legacy mode indicates that currency items are configured in the old format.
+     * </p>
+     *
+     * @return true if using legacy configuration, false otherwise
+     */
     public boolean isLegacy() {
         return Banco.get().getSettings().get().getCurrency().getItems() != null;
     }
-
 }

@@ -2,6 +2,7 @@ package ovh.mythmc.banco.api.storage;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
@@ -13,44 +14,67 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * A container which provides a list of ItemStack
+ * Abstract base class for storage systems that use ItemStacks as containers.
+ * <p>
+ * This class provides a foundation for storage implementations that store currency
+ * as physical ItemStacks. It handles the conversion between currency amounts and
+ * ItemStacks, and manages the distribution of items across storage containers.
+ * </p>
+ *
+ * @since 1.0.0
  */
 public abstract class BancoContainer implements BancoStorage {
 
     /**
+     * Gets all ItemStacks from the container for the specified account.
      *
-     * @param uuid UUID of the account to get this BancoContainer from
-     * @return A list of ItemStack
+     * @param uuid UUID of the account to get items from
+     * @return a collection of ItemStacks in the container
+     * @throws IllegalArgumentException if uuid is null
      */
-    protected abstract Collection<ItemStack> get(UUID uuid);
+    @NotNull
+    protected abstract Collection<ItemStack> get(@NotNull UUID uuid);
 
     /**
+     * Adds an ItemStack to the container for the specified account.
      *
-     * @param uuid UUID of the account to get this BancoContainer from
+     * @param uuid UUID of the account
      * @param itemStack ItemStack to add
-     * @return Remaining ItemStack
+     * @return the remaining ItemStack that couldn't be added, or null if all was added
+     * @throws IllegalArgumentException if uuid is null or itemStack is null
      */
-    protected abstract ItemStack addItem(UUID uuid, ItemStack itemStack);
+    @Nullable
+    protected abstract ItemStack addItem(@NotNull UUID uuid, @NotNull ItemStack itemStack);
 
     /**
+     * Removes an ItemStack from the container for the specified account.
      *
-     * @param uuid UUID of the account to get this BancoContainer from
+     * @param uuid UUID of the account
      * @param itemStack ItemStack to remove
-     * @return ItemStack that could not be removed
+     * @return the ItemStack that couldn't be removed, or null if all was removed
+     * @throws IllegalArgumentException if uuid is null or itemStack is null
      */
-    protected abstract ItemStack removeItem(UUID uuid, ItemStack itemStack);
+    @Nullable
+    protected abstract ItemStack removeItem(@NotNull UUID uuid, @NotNull ItemStack itemStack);
 
     @Override
-    public @NotNull BigDecimal value(UUID uuid) {
-        BigDecimal value = BigDecimal.valueOf(0);
+    @NotNull
+    public BigDecimal value(@NotNull UUID uuid) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
 
-        for (ItemStack item : get(uuid)) {
-            if (item == null)
-                continue;
+        BigDecimal value = BigDecimal.ZERO;
 
-            BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(item);
-            if (bancoItem == null)
+        for (final ItemStack item : get(uuid)) {
+            if (item == null) {
                 continue;
+            }
+
+            final BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(item);
+            if (bancoItem == null) {
+                continue;
+            }
 
             value = value.add(bancoItem.value(item.getAmount()));
         }
@@ -59,41 +83,65 @@ public abstract class BancoContainer implements BancoStorage {
     }
 
     @Override
-    public @NotNull BigDecimal add(UUID uuid, BigDecimal amount) {
-        BigDecimal amountGiven = BigDecimal.valueOf(0);
+    @NotNull
+    public BigDecimal add(@NotNull UUID uuid, @NotNull BigDecimal amount) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
+        if (amount == null) {
+            throw new IllegalArgumentException("Amount cannot be null");
+        }
 
-        for (ItemStack itemStack : ItemUtil.convertAmountToItems(amount)) {
-            BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(itemStack);
+        BigDecimal amountGiven = BigDecimal.ZERO;
+
+        for (final ItemStack itemStack : ItemUtil.convertAmountToItems(amount)) {
+            final BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(itemStack);
+            if (bancoItem == null) {
+                continue;
+            }
+
             amountGiven = amountGiven.add(bancoItem.value(itemStack.getAmount()));
 
-            ItemStack remainderItemStack = addItem(uuid, itemStack);
-            if (remainderItemStack == null)
+            final ItemStack remainderItemStack = addItem(uuid, itemStack);
+            if (remainderItemStack == null) {
                 continue;
+            }
 
-            BancoItem remainderBancoItem = Banco.get().getItemRegistry().getByItemStack(remainderItemStack);
-            if (remainderBancoItem != null)
+            final BancoItem remainderBancoItem = Banco.get().getItemRegistry().getByItemStack(remainderItemStack);
+            if (remainderBancoItem != null) {
                 amountGiven = amountGiven.subtract(remainderBancoItem.value(remainderItemStack.getAmount()));
+            }
         }
 
         return amountGiven;
     }
 
     @Override
-    public @NotNull BigDecimal remove(UUID uuid, BigDecimal amount) {
-        for (BancoItem bancoItem : Banco.get().getItemRegistry().get()) {
-            for (ItemStack item : get(uuid)) {
-                if (item == null || !Objects.equals(Banco.get().getItemRegistry().getByItemStack(item), bancoItem)) 
-                    continue;
+    @NotNull
+    public BigDecimal remove(@NotNull UUID uuid, @NotNull BigDecimal amount) {
+        if (uuid == null) {
+            throw new IllegalArgumentException("UUID cannot be null");
+        }
+        if (amount == null) {
+            throw new IllegalArgumentException("Amount cannot be null");
+        }
 
-                if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) 
+        for (final BancoItem bancoItem : Banco.get().getItemRegistry().get()) {
+            for (final ItemStack item : get(uuid)) {
+                if (item == null || !Objects.equals(Banco.get().getItemRegistry().getByItemStack(item), bancoItem)) {
                     continue;
-    
-                BigDecimal value = bancoItem.value(item.getAmount());
-    
-                if (value.compareTo(BigDecimal.valueOf(0)) > 0) {
+                }
+
+                if (amount.compareTo(BigDecimal.valueOf(0.01)) < 0) {
+                    continue;
+                }
+
+                final BigDecimal value = bancoItem.value(item.getAmount());
+
+                if (value.compareTo(BigDecimal.ZERO) > 0) {
                     removeItem(uuid, item);
 
-                    BigDecimal removed = BigDecimal.valueOf(0);
+                    BigDecimal removed = BigDecimal.ZERO;
                     if (value.compareTo(amount) > 0) {
                         removed = value.subtract(amount);
 
@@ -102,24 +150,28 @@ public abstract class BancoContainer implements BancoStorage {
                         BigDecimal toReturn = removed;
 
                         try {
-                            BigDecimal addedBack = this.add(uuid, toReturn);
+                            final BigDecimal addedBack = this.add(uuid, toReturn);
                             toReturn = toReturn.subtract(addedBack);
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
                             // If adding back to this storage fails for any reason, continue to fallback
                         }
 
                         if (toReturn.compareTo(BigDecimal.ZERO) > 0) {
-                            for (BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
-                                if (storage == this) continue;
+                            for (final BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
+                                if (storage == this) {
+                                    continue;
+                                }
 
                                 try {
-                                    BigDecimal added = storage.add(uuid, toReturn);
+                                    final BigDecimal added = storage.add(uuid, toReturn);
                                     toReturn = toReturn.subtract(added);
-                                } catch (Exception ignored) {
+                                } catch (Exception e) {
                                     // Ignore and try next storage
                                 }
 
-                                if (toReturn.compareTo(BigDecimal.ZERO) <= 0) break;
+                                if (toReturn.compareTo(BigDecimal.ZERO) <= 0) {
+                                    break;
+                                }
                             }
                         }
 
@@ -129,15 +181,12 @@ public abstract class BancoContainer implements BancoStorage {
                             Banco.get().getAccountManager().deposit(uuid, toReturn, false);
                         }
                     }
-    
-                    amount = amount.subtract(value.subtract(removed));
 
+                    amount = amount.subtract(value.subtract(removed));
                 }
             }
         }
 
         return amount;
     }
-
 }
-

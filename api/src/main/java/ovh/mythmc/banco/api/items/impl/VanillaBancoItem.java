@@ -33,6 +33,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.items.BancoItemRegistry;
 
 @Configuration
 public final class VanillaBancoItem implements BancoItem {
@@ -108,8 +109,9 @@ public final class VanillaBancoItem implements BancoItem {
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-            // Store item identifier in PDC
-            itemMeta.getPersistentDataContainer().set(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
+            Banco.get().getItemRegistry();
+			// Store item identifier in PDC
+            itemMeta.getPersistentDataContainer().set(BancoItemRegistry.CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
             // Apply attribute modifiers
             if (customization.attributes() != null) {
