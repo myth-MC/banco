@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 
+import ovh.mythmc.banco.api.logger.LoggerWrapper;
+
 /**
  * SQLite connection source implementation.
  * <p>
@@ -25,7 +27,8 @@ public final class SQLiteConnectionSource extends JdbcConnectionSource {
      * @throws SQLException if the connection cannot be established
      * @throws IllegalArgumentException if path is null or empty
      */
-    public SQLiteConnectionSource(@NotNull String path) throws SQLException {
+    public SQLiteConnectionSource(@NotNull LoggerWrapper loggerWrapper, @NotNull String path) throws SQLException {
         super(CONNECTION_URL_PREFIX + path);
+        loggerWrapper.debug("Established SQLite connection with path {}", path);
     }
 }

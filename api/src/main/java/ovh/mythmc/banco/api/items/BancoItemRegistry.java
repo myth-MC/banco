@@ -29,7 +29,6 @@ import java.util.List;
  *
  * @since 1.0.0
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BancoItemRegistry {
 
     /**
@@ -43,6 +42,9 @@ public final class BancoItemRegistry {
     public static final NamespacedKey CUSTOM_ITEM_IDENTIFIER_KEY = new NamespacedKey("banco", "identifier");
 
     private final List<BancoItem> itemList = new ArrayList<>();
+
+    private BancoItemRegistry() {
+    }
 
     /**
      * Registers one or more currency items.

@@ -31,20 +31,25 @@ import ovh.mythmc.gestalt.features.GestaltFeature;
 import java.io.File;
 import java.util.Arrays;
 
-@Getter
 @RequiredArgsConstructor
 public abstract class BancoBootstrap implements Banco {
 
+    @Getter
     private JavaPlugin plugin;
 
+    @Getter
     private final BancoSettingsProvider settings;
 
+    @Getter
     private final File dataDirectory;
 
+    @Getter
     private final BancoCommandProvider commandProvider;
 
+    @Getter
     private BancoListener bancoListener;
 
+    @Getter
     private volatile boolean shuttingDown = false;
 
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
@@ -132,11 +137,6 @@ public abstract class BancoBootstrap implements Banco {
         getSettings().load();
 
         Gestalt.get().enableAllFeatures("banco");
-    }
-
-    @Override
-    public final boolean isShuttingDown() {
-        return this.shuttingDown;
     }
 
     public abstract String version();

@@ -28,7 +28,9 @@ import com.j256.ormlite.table.TableUtils;
 import lombok.NoArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.database.MySQLConnectionSource;
+import ovh.mythmc.banco.api.accounts.database.PostgreSQLConnectionSource;
 import ovh.mythmc.banco.api.accounts.database.SQLiteConnectionSource;
+import ovh.mythmc.banco.api.configuration.sections.DatabaseConfig;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 
@@ -101,8 +103,9 @@ public final class AccountDatabase {
 
         try {
             this.connectionSource = switch (Banco.get().getSettings().get().getDatabase().getType()) {
-                case SQLITE -> new SQLiteConnectionSource(path);
-                case MYSQL -> new MySQLConnectionSource();
+                case SQLITE -> new SQLiteConnectionSource(logger, path);
+                case MYSQL -> new MySQLConnectionSource(logger);
+                case POSTGRESQL -> new PostgreSQLConnectionSource(logger);
             };
 
             TableUtils.createTableIfNotExists(connectionSource, Account.class);
@@ -113,7 +116,9 @@ public final class AccountDatabase {
             final var databaseConfig = Banco.get().getSettings().get().getDatabase();
             this.firstBoot = !databaseConfig.isInitialized() && databaseConfig.getDatabaseVersion() == 0;
 
-            performBackup(BACKUP_SUFFIX_PREFIX);
+            if (databaseConfig.getType().equals(DatabaseConfig.DatabaseType.SQLITE)) {
+                performBackup(BACKUP_SUFFIX_PREFIX);
+            }
             upgrade();
 
             scheduleAutoSaver();
@@ -211,9 +216,13 @@ public final class AccountDatabase {
      * Shuts down the database, saving all pending changes.
      */
     public void shutdown() {
+        /*
         if (!shutdown.compareAndSet(false, true)) {
             return; // Already shut down
         }
+        */
+        if (shutdown.get())
+            return;
 
         try {
             updateAllDatabaseEntries();
@@ -235,6 +244,8 @@ public final class AccountDatabase {
                     logger.error("Error closing database connection: {}", e);
                 }
             }
+
+            shutdown.set(true);
         }
     }
 
@@ -355,7 +366,7 @@ public final class AccountDatabase {
 
         final long startTime = System.currentTimeMillis();
 
-        if (Banco.get().getSettings().get().getDatabase().isAsynchronousWrites()) {
+        if (writeAsynchronously()) {
             logger.debug("Saving {} ({}) asynchronously...",
                 account.getIdentifier().uuid(),
                 account.getIdentifier().name());
@@ -586,5 +597,17 @@ public final class AccountDatabase {
      */
     public boolean isShutdown() {
         return shutdown.get();
+    }
+
+    /**
+     * Checks if the database writes data asynchronously.
+     *
+     * @return true if asynchronous, false otherwise
+     */
+    private static boolean writeAsynchronously() {
+        return switch (Banco.get().getSettings().get().getDatabase().getType()) {
+            case SQLITE -> Banco.get().getSettings().get().getDatabase().isAsynchronousWrites();
+            default -> true;
+        };
     }
 }

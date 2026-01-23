@@ -6,7 +6,7 @@
     <parent>
         <groupId>ovh.mythmc</groupId>
         <artifactId>banco</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.0-2</version>
     </parent>
 
     <artifactId>banco-api</artifactId>
@@ -20,12 +20,12 @@
                 <version>3.11.2</version>
                 <configuration>
                     <doclint>none</doclint>
-                    <sourcepath>${project.basedir}/src;${project.basedir}/target/generated-sources/annotations</sourcepath>
+                    <sourcepath>${project.basedir}/target/generated-sources/annotations;${project.basedir}/src</sourcepath>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <phase>package</phase>
+                        <phase>javadoc</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -169,6 +169,12 @@
             <version>master-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+<dependency>
+  <groupId>org.postgresql</groupId>
+  <artifactId>postgresql</artifactId>
+  <version>42.7.9</version>
+</dependency>
     </dependencies>
 
 </project>
