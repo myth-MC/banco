@@ -1,6 +1,7 @@
 package ovh.mythmc.banco.common.command.commands;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.description.Description;
@@ -67,10 +68,21 @@ public final class MigrateCommand implements MainCommand {
 
                 List<String> worldNameList = Banco.get().getSettings().get().getMigration().getWorlds();
 
-                MessageUtil.warn(ctx.sender(), "banco.commands.bancomigrate.warning.1", Component.text(MigrationFeature.migrator().get().pluginName()));
-                MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.2");
-                MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.worlds", Component.text(worldNameList.toString(), NamedTextColor.GRAY));
-                MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.confirm", Component.text("/bancomigrate --confirm", NamedTextColor.GRAY));
+                MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.checking-requirements");
+                CompletableFuture.runAsync(() -> {
+                    final int bancoDatabaseSize = Banco.get().getAccountManager().get().size();
+                    Component databaseSizeWarning = Component.empty();
+                    if (bancoDatabaseSize > 3) {
+                        databaseSizeWarning = Component.text(" ").append(MessageUtil.getWarnPrefix())
+                            .hoverEvent(Component.translatable("banco.commands.bancomigrate.warning.database-entries.hover"));
+                    }
+
+                    MessageUtil.warn(ctx.sender(), "banco.commands.bancomigrate.warning.1", Component.text(MigrationFeature.migrator().get().pluginName()));
+                    MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.2");
+                    MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.worlds", Component.text(worldNameList.toString(), NamedTextColor.GRAY));
+                    MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.database-entries", Component.text(bancoDatabaseSize, NamedTextColor.GRAY).append(databaseSizeWarning));
+                    MessageUtil.info(ctx.sender(), "banco.commands.bancomigrate.warning.confirm", Component.text("/bancomigrate --confirm", NamedTextColor.GRAY));
+                });
             })
         );
     }

@@ -91,7 +91,7 @@ public class MessageUtil {
         return format.format(value);
     }
 
-    private Component getPrefix(String configPrefix) {
+    private static Component getPrefix(String configPrefix) {
         Component prefix = Component.empty();
         if (configPrefix != null && !configPrefix.isEmpty())
             prefix = MiniMessage.miniMessage().deserialize(configPrefix + " ");
@@ -99,23 +99,23 @@ public class MessageUtil {
         return prefix;
     }
 
-    private Component getInfoPrefix() {
+    public static Component getInfoPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getInfoPrefix());
     }
 
-    private Component getWarnPrefix() {
+    public static Component getWarnPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getWarnPrefix());
     }
 
-    private Component getSuccessPrefix() {
+    public static Component getSuccessPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getSuccessPrefix());
     }
 
-    private Component getErrorPrefix() {
+    public static Component getErrorPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getErrorPrefix());
     }
 
-    private Component getDebugPrefix() {
+    public static Component getDebugPrefix() {
         return getPrefix("<#2cc83c>\uD83E\uDEB2</#2cc83c>");
     }
 
