@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 
 import net.milkbowl.vault2.economy.AccountPermission;
@@ -18,14 +21,43 @@ import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
 import ovh.mythmc.banco.api.accounts.Transaction;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
+import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy {
+public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy, BancoEconomyHook {
+
+    private final LoggerWrapper logger = new LoggerWrapper() {
+        @Override
+        public void info(final String message, final Object... args) {
+            Banco.get().getLogger().info("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void warn(final String message, final Object... args) {
+            Banco.get().getLogger().warn("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void error(final String message, final Object... args) {
+            Banco.get().getLogger().error("[vault-impl] " + message, args);
+        }
+    };
 
     private boolean enabled = false;
 
     public BancoVaultUnlockedHook() {
         this.enabled = true;
+    }
+    
+    @Override
+    public void hook(Plugin plugin) {
+        Bukkit.getServer().getServicesManager().register(net.milkbowl.vault2.economy.Economy.class, this, plugin, ServicePriority.Highest);
+        logger.info("Hooked with VaultUnlocked " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
+    }
+
+    @Override
+    public void unhook() {
+        Bukkit.getServer().getServicesManager().unregister(net.milkbowl.vault2.economy.Economy.class, this);
     }
 
     @Override
@@ -166,7 +198,8 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
     @Override
     public boolean accountSupportsCurrency(@NotNull String plugin, @NotNull UUID accountID, @NotNull String currency,
             @NotNull String world) {
-        return accountSupportsCurrency(plugin, accountID, currency);
+        return accountSupportsCurrency(plugin, accountID, currency)
+            && !Banco.get().getSettings().get().getCurrency().getBlacklistedWorlds().contains(world);
     }
 
     @Override

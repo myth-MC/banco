@@ -170,11 +170,12 @@
             <scope>provided</scope>
         </dependency>
 
-<dependency>
-  <groupId>org.postgresql</groupId>
-  <artifactId>postgresql</artifactId>
-  <version>42.7.9</version>
-</dependency>
+        <!-- PostgreSQL connector -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.9</version>
+        </dependency>
     </dependencies>
 
 </project>

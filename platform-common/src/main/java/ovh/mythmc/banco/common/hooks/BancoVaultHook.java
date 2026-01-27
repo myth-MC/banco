@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("deprecation")
-public class BancoVaultHook implements Economy {
+public class BancoVaultHook implements Economy, BancoEconomyHook {
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -39,11 +39,13 @@ public class BancoVaultHook implements Economy {
         }
     };
 
+    @Override
     public void hook(Plugin plugin) {
         Bukkit.getServer().getServicesManager().register(net.milkbowl.vault.economy.Economy.class, this, plugin, ServicePriority.Highest);
         logger.info("Hooked with Vault " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
     }
 
+    @Override
     public void unhook() {
         Bukkit.getServicesManager().unregister(Economy.class, this);
     }
