@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.common.hooks.BancoVaultHook;
 import ovh.mythmc.gestalt.annotations.Feature;
+import ovh.mythmc.gestalt.annotations.conditions.FeatureConditionBoolean;
 import ovh.mythmc.gestalt.annotations.status.FeatureDisable;
 import ovh.mythmc.gestalt.annotations.status.FeatureEnable;
 import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
@@ -20,6 +21,11 @@ public final class VaultFeature {
     @FeatureInitialize
     public void initialize() {
         vaultImpl = new BancoVaultHook();
+    }
+
+    @FeatureConditionBoolean
+    public boolean canBeEnabled() {
+        return !MigrationFeature.ACTIVE;
     }
     
     @FeatureEnable
