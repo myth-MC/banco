@@ -5,6 +5,7 @@ authors:
 version: '${project.version}'
 api-version: '1.21.7'
 
+loader: ovh.mythmc.banco.paper.BancoPaperLoader
 main: ovh.mythmc.banco.paper.BancoPaperPlugin
 folia-supported: true
 

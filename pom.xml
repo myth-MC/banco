@@ -51,41 +51,6 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>de.exlll</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.de.exlll</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.snakeyaml</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.org.snakeyaml</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.org.bstats</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.j256</pattern>
-                            <shadedPattern>ovh.mythmc.banco.libs.com.j256</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 

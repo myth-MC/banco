@@ -175,6 +175,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.9</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
