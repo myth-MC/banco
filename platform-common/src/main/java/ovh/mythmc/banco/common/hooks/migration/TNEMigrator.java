@@ -8,9 +8,9 @@ import java.util.concurrent.CompletableFuture;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.tnemc.core.EconomyManager;
 import net.tnemc.core.TNECore;
-import net.tnemc.core.api.TNEAPI;
+import net.tnemc.core.currency.Currency;
+import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
 
 public class TNEMigrator implements Migrator {
@@ -25,12 +25,20 @@ public class TNEMigrator implements Migrator {
         return CompletableFuture.supplyAsync(() -> {
             Map<AccountIdentifierKey, BigDecimal> accountMap = new HashMap<>();
 
-            TNEAPI api = TNECore.api();
+            Currency defaultCurrency = TNECore.eco().currency().defaultCurrency();
 
-            EconomyManager.instance().account().getAccounts().values().forEach(account -> {
+            TNECore.eco().account().getAccounts().values().forEach(account -> {
                 UUID uuid = account.getIdentifier();
                 String name = account.getName();
-                BigDecimal balance = account.getHoldingsTotal("world", api.getDefaultCurrency().getUid());
+                BigDecimal balance = BigDecimal.ZERO;
+
+                for (String worldName : Banco.get().getSettings().get().getMigration().getWorlds()) {
+                    BigDecimal worldHoldingsTotal = account.getHoldingsTotal(worldName, defaultCurrency.getUid());
+                    if (worldHoldingsTotal == null)
+                        continue;
+
+                    balance = balance.add(account.getHoldingsTotal(worldName, defaultCurrency.getUid()));
+                }
     
                 accountMap.put(AccountIdentifierKey.of(uuid, name), balance);
             });

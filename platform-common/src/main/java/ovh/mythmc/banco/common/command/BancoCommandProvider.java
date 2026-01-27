@@ -10,6 +10,7 @@ import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import ovh.mythmc.banco.common.command.commands.BalanceCommand;
 import ovh.mythmc.banco.common.command.commands.BalanceTopCommand;
 import ovh.mythmc.banco.common.command.commands.BancoCommand;
+import ovh.mythmc.banco.common.command.commands.MigrateCommand;
 import ovh.mythmc.banco.common.command.commands.PayCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
@@ -21,6 +22,7 @@ public abstract class BancoCommandProvider {
         new BalanceCommand(),
         new BalanceTopCommand(),
         new BancoCommand(),
+        new MigrateCommand(),
         new PayCommand()
     );
 

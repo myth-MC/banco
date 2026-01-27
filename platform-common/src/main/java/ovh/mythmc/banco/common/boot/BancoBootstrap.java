@@ -18,6 +18,7 @@ import ovh.mythmc.banco.common.features.InventoryFeatures;
 import ovh.mythmc.banco.common.features.ItemFeatures;
 import ovh.mythmc.banco.common.features.LocalizationFeature;
 import ovh.mythmc.banco.common.features.MetricsFeature;
+import ovh.mythmc.banco.common.features.MigrationFeature;
 import ovh.mythmc.banco.common.features.PlaceholderAPIFeature;
 import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
 import ovh.mythmc.banco.common.features.VaultFeature;
@@ -78,7 +79,8 @@ public abstract class BancoBootstrap implements Banco {
             InventoryFeatures.class,
             ItemFeatures.class,
             PlaceholderAPIFeature.class,
-            UpdateCheckerFeature.class
+            UpdateCheckerFeature.class,
+            MigrationFeature.class
         );
 
         registerFeatureWithPluginParam(

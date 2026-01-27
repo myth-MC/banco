@@ -170,7 +170,7 @@ public abstract class BancoScheduler {
 
         try {
             if (removed > 0) {
-                Banco.get().getLogger().info("BancoScheduler: removed {} queued transactions for acct={}", removed, uuid);
+                Banco.get().getLogger().debug("BancoScheduler: removed {} queued transactions for acct={}", removed, uuid);
             }
         } catch (Exception ignored) {
             // Logging failed - continue anyway

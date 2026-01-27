@@ -22,11 +22,11 @@ public class BancoSettings {
     @Comment({"Task execution type (use SYNC in small servers or switch to ASYNC in larger ones)", "Do note that ASYNC may introduce unexpected behavior"})
     private ExecutionOrder taskExecutionOrder = ExecutionOrder.SYNC;
 
-    @Comment({"Set to 'true' to enable the migration from another Vault provider:", "1. Back up your current economy database", "2. Configure your item registry", "3. Shut down the server and set 'vaultMigration' to true", "4. Start your server and wait for the process to complete", "5. Shut down the server", "6. Uninstall the old economy provider and set 'vaultMigration' to false", "7. Start the server and make sure everything works as expected"})
-    private boolean vaultMigration = false;
-
     @Comment({"", "Configuration for currency"})
     private CurrencyConfig currency = new CurrencyConfig();
+
+    @Comment({"", "Configuration for migrations"})
+    private MigrationConfig migration = new MigrationConfig();
 
     @Comment({"", "Configuration for the database"})
     private DatabaseConfig database = new DatabaseConfig();
