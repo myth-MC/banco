@@ -153,9 +153,11 @@ public final class AccountDatabase {
             throw new IllegalStateException("Database has not been initialized");
         }
 
+        /*
         if (shutdown.get()) {
             throw new IllegalStateException("Database has been shut down");
         }
+             */
 
         try {
             if (connectionSource != null) {
@@ -216,20 +218,16 @@ public final class AccountDatabase {
      * Shuts down the database, saving all pending changes.
      */
     public void shutdown() {
-        /*
         if (!shutdown.compareAndSet(false, true)) {
             return; // Already shut down
         }
-        */
-        if (shutdown.get())
-            return;
 
         try {
             updateAllDatabaseEntries();
         } finally {
             asyncScheduler.shutdown();
             try {
-                if (!asyncScheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                if (!asyncScheduler.awaitTermination(1, TimeUnit.SECONDS)) {
                     asyncScheduler.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -244,8 +242,6 @@ public final class AccountDatabase {
                     logger.error("Error closing database connection: {}", e);
                 }
             }
-
-            shutdown.set(true);
         }
     }
 
@@ -306,6 +302,7 @@ public final class AccountDatabase {
      * Schedules automatic saving of cached accounts at configured intervals.
      */
     private void scheduleAutoSaver() {
+        // Don't schedule if database is shut down
         if (shutdown.get()) {
             return;
         }
@@ -313,10 +310,6 @@ public final class AccountDatabase {
         final long intervalMinutes = Banco.get().getSettings().get().getDatabase().getCacheClearInterval();
 
         asyncScheduler.schedule(() -> {
-            if (shutdown.get()) {
-                return;
-            }
-
             updateAllDatabaseEntries();
             scheduleAutoSaver(); // Schedule next iteration
         }, intervalMinutes, TimeUnit.MINUTES);
@@ -366,7 +359,7 @@ public final class AccountDatabase {
 
         final long startTime = System.currentTimeMillis();
 
-        if (writeAsynchronously()) {
+        if (writeAsynchronously() && !isShutdown()) {
             logger.debug("Saving {} ({}) asynchronously...",
                 account.getIdentifier().uuid(),
                 account.getIdentifier().name());
