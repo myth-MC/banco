@@ -266,14 +266,14 @@ public final class AccountManager {
 
         // Decide whether to perform synchronously or queue based on account name
         if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
-            Banco.get().getLogger().info("AccountManager: performing synchronous DEPOSIT for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: performing synchronous DEPOSIT for acct={}", account.getUuid());
             // Remove pending queued transactions for this account to avoid stale duplicates
             if (BancoScheduler.get() != null) {
                 BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
             }
             transaction.transact();
         } else {
-            Banco.get().getLogger().info("AccountManager: queueing DEPOSIT for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: queueing DEPOSIT for acct={}", account.getUuid());
             transaction.queue();
         }
     }
@@ -360,13 +360,13 @@ public final class AccountManager {
             .build();
 
         if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
-            Banco.get().getLogger().info("AccountManager: performing synchronous WITHDRAW for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: performing synchronous WITHDRAW for acct={}", account.getUuid());
             if (BancoScheduler.get() != null) {
                 BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
             }
             transaction.transact();
         } else {
-            Banco.get().getLogger().info("AccountManager: queueing WITHDRAW for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: queueing WITHDRAW for acct={}", account.getUuid());
             transaction.queue();
         }
     }
@@ -418,13 +418,13 @@ public final class AccountManager {
             .build();
 
         if (account.getName() == null || "NULL".equalsIgnoreCase(account.getName())) {
-            Banco.get().getLogger().info("AccountManager: performing synchronous SET for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: performing synchronous SET for acct={}", account.getUuid());
             if (BancoScheduler.get() != null) {
                 BancoScheduler.get().cancelQueuedTransactionsFor(account.getUuid());
             }
             transaction.transact();
         } else {
-            Banco.get().getLogger().info("AccountManager: queueing SET for acct={}", account.getUuid());
+            Banco.get().getLogger().debug("AccountManager: queueing SET for acct={}", account.getUuid());
             transaction.queue();
         }
     }

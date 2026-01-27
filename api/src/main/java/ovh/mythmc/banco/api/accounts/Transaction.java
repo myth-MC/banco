@@ -65,7 +65,7 @@ public class Transaction {
     public void transact() {
         // Best-effort logging: mark the start of this transaction
         try {
-            Banco.get().getLogger().info("Transaction START - acct={} op={} amount={} thread={} time={}",
+            Banco.get().getLogger().debug("Transaction START - acct={} op={} amount={} thread={} time={}",
                 account.getUuid(), operation, amount, Thread.currentThread().getName(), Instant.now());
         } catch (Exception ignored) {
             // Logging failed - continue anyway
@@ -78,7 +78,7 @@ public class Transaction {
         if (callback.cancelled()) {
             // A callback cancelled this transaction, log and stop
             try {
-                Banco.get().getLogger().info("Transaction CANCELLED - acct={} op={} amount={} time={}",
+                Banco.get().getLogger().debug("Transaction CANCELLED - acct={} op={} amount={} time={}",
                     account.getUuid(), operation, amount, Instant.now());
             } catch (Exception ignored) {
                 // Logging failed - continue anyway
@@ -97,7 +97,7 @@ public class Transaction {
             }
 
             try {
-                Banco.get().getLogger().info("Transaction END   - acct={} op={} amount={} resulting={} time={}",
+                Banco.get().getLogger().debug("Transaction END   - acct={} op={} amount={} resulting={} time={}",
                     accountUuid, operation, amount, account.balance(), Instant.now());
             } catch (Exception ignored) {
                 // Logging failed - continue anyway
