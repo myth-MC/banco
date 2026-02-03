@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import lombok.experimental.UtilityClass;
 import ovh.mythmc.banco.api.Banco;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,6 +39,11 @@ public class PlayerUtil {
             throw new IllegalArgumentException("UUID cannot be null");
         }
 
+        final List<String> blacklistedWorlds = Banco.get().getSettings().get().getCurrency().getBlacklistedWorlds();
+        if (blacklistedWorlds.isEmpty() || blacklistedWorlds.size() == 1 && blacklistedWorlds.contains("exampleWorldName")) {
+            return false;
+        }
+
         final var optionalReference = Banco.get().getAccountManager().getUuidResolver().resolveOfflinePlayer(uuid);
         if (optionalReference.isEmpty()) {
             return false;
@@ -54,6 +60,6 @@ public class PlayerUtil {
         }
 
         final String worldName = player.getWorld().getName();
-        return Banco.get().getSettings().get().getCurrency().getBlacklistedWorlds().contains(worldName);
+        return blacklistedWorlds.contains(worldName);
     }
 }

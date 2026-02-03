@@ -1,7 +1,6 @@
 package ovh.mythmc.banco.api.accounts.service;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,14 +19,6 @@ import org.jetbrains.annotations.NotNull;
  * @since 1.0.0
  */
 public interface LocalUUIDResolver {
-
-    /**
-     * Gets all cached offline player references.
-     *
-     * @return an unmodifiable set of all cached offline player references
-     */
-    @NotNull
-    Set<OfflinePlayerReference> references();
 
     /**
      * Resolves a username to a UUID.

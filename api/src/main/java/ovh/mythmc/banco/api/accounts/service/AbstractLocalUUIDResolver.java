@@ -1,8 +1,7 @@
 package ovh.mythmc.banco.api.accounts.service;
 
-import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +22,8 @@ import ovh.mythmc.banco.api.scheduler.BancoScheduler;
  */
 public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
 
-    private final Set<OfflinePlayerReference> offlinePlayers = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, OfflinePlayerReference> offlinePlayers = new ConcurrentHashMap<>();
+    private final Map<String, UUID> uuidMap = new ConcurrentHashMap<>();
 
     /**
      * Gets the offline players from the server.
@@ -52,7 +52,10 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
         scheduler.run(() -> {
             scheduler.runAsync(() -> {
                 try {
-                    serverOfflinePlayers().forEach(offlinePlayers::add);
+                    serverOfflinePlayers().forEach(offlinePlayer -> {
+                        offlinePlayers.put(offlinePlayer.uuid(), offlinePlayer);
+                        uuidMap.put(offlinePlayer.name(), offlinePlayer.uuid());
+                    });
                     Banco.get().getLogger().info("Cached {} offline players!", offlinePlayers.size());
                 } catch (Exception e) {
                     Banco.get().getLogger().error("Error caching offline players: {}", e);
@@ -63,21 +66,12 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
 
     @Override
     @NotNull
-    public Set<OfflinePlayerReference> references() {
-        return Collections.unmodifiableSet(offlinePlayers);
-    }
-
-    @Override
-    @NotNull
     public Optional<UUID> resolve(@NotNull String username) {
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be null or empty");
         }
 
-        return Set.copyOf(offlinePlayers).stream()
-            .filter(offlinePlayer -> username.equals(offlinePlayer.name()))
-            .map(OfflinePlayerReference::uuid)
-            .findAny();
+        return Optional.ofNullable(uuidMap.get(username));
     }
 
     @Override
@@ -87,9 +81,7 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
             throw new IllegalArgumentException("UUID cannot be null");
         }
 
-        return Set.copyOf(this.offlinePlayers).stream()
-            .filter(offlinePlayer -> offlinePlayer.uuid().equals(uuid))
-            .findAny();
+        return Optional.ofNullable(offlinePlayers.get(uuid));
     }
 
     /**
@@ -103,7 +95,15 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
         if (offlinePlayer == null) {
             throw new IllegalArgumentException("Offline player reference cannot be null");
         }
-        return this.offlinePlayers.add(offlinePlayer);
+
+        if (offlinePlayers.containsKey(offlinePlayer.uuid()) || uuidMap.containsKey(offlinePlayer.name())) {
+            return false;
+        }
+
+        offlinePlayers.put(offlinePlayer.uuid(), offlinePlayer);
+        uuidMap.put(offlinePlayer.name(), offlinePlayer.uuid());
+
+        return true;
     }
 
     /**
@@ -117,7 +117,14 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
         if (uuid == null) {
             throw new IllegalArgumentException("UUID cannot be null");
         }
-        return this.offlinePlayers.removeIf(offlinePlayer -> offlinePlayer.uuid().equals(uuid));
+        
+        final var removedOfflinePlayer = offlinePlayers.remove(uuid);
+        if (removedOfflinePlayer != null) {
+            uuidMap.remove(removedOfflinePlayer.name());
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -145,8 +152,8 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
         if (uuid == null) {
             throw new IllegalArgumentException("UUID cannot be null");
         }
-        return this.offlinePlayers.stream()
-            .anyMatch(offlinePlayer -> offlinePlayer.uuid().equals(uuid));
+
+        return this.offlinePlayers.containsKey(uuid);
     }
 
     /**
@@ -173,15 +180,17 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
      * @return true if the reference was added/updated, false otherwise
      * @throws IllegalArgumentException if offlinePlayer is null
      */
-    protected boolean update(final @NotNull OfflinePlayerReference offlinePlayer) {
+    protected void update(final @NotNull OfflinePlayerReference offlinePlayer) {
         if (offlinePlayer == null) {
             throw new IllegalArgumentException("Offline player reference cannot be null");
         }
 
-        if (has(offlinePlayer)) {
-            remove(offlinePlayer);
-        }
+        OfflinePlayerReference old = offlinePlayers.put(offlinePlayer.uuid(), offlinePlayer);
 
-        return add(offlinePlayer);
+        if (old != null && !old.name().equals(offlinePlayer.name())) {
+            uuidMap.remove(old.name());
+        }
+    
+        uuidMap.put(offlinePlayer.name(), offlinePlayer.uuid());
     }
 }
