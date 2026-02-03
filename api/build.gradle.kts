@@ -36,3 +36,18 @@ tasks.register<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
     from(tasks.javadoc)
 }
+
+tasks.javadoc {
+    options {
+        (this as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(tasks["javadocJar"])
+        }
+    }
+}

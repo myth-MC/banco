@@ -95,7 +95,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-*/build
+*/build/
+build/*
 */target
 
 pom.xml.tag

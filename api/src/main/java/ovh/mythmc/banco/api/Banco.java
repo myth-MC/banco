@@ -10,16 +10,14 @@ import ovh.mythmc.banco.api.logger.LoggerWrapper;
 
 /**
  * Main API interface for the Banco plugin.
- * <p>
  * This interface provides access to all major components of the Banco system:
  * <ul>
- *   <li>Account management</li>
- *   <li>Item registry</li>
- *   <li>Storage registry</li>
- *   <li>Configuration settings</li>
- *   <li>Logging</li>
+ * <li>Account management</li>
+ * <li>Item registry</li>
+ * <li>Storage registry</li>
+ * <li>Configuration settings</li>
+ * <li>Logging</li>
  * </ul>
- * </p>
  * <p>
  * To get an instance of this interface, use {@link #get()}.
  * </p>
@@ -31,7 +29,8 @@ public interface Banco {
     /**
      * Gets the Banco instance.
      * <p>
-     * This method returns the singleton instance of Banco that was set by the plugin.
+     * This method returns the singleton instance of Banco that was set by the
+     * plugin.
      * </p>
      *
      * @return the Banco instance
@@ -45,7 +44,8 @@ public interface Banco {
     /**
      * Reloads the plugin configuration and settings.
      * <p>
-     * This method is marked as internal and should only be called by the plugin itself.
+     * This method is marked as internal and should only be called by the plugin
+     * itself.
      * </p>
      */
     @ApiStatus.Internal
@@ -116,7 +116,8 @@ public interface Banco {
     /**
      * Gets the storage registry.
      * <p>
-     * The storage registry manages all registered storage systems for holding currency.
+     * The storage registry manages all registered storage systems for holding
+     * currency.
      * </p>
      *
      * @return the storage registry

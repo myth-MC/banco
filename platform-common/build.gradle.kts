@@ -8,3 +8,11 @@ dependencies {
     compileOnly("net.milkbowl.vault:VaultUnlockedAPI:2.11")
     compileOnly("net.tnemc:EconomyCore:0.1.4.0")
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}

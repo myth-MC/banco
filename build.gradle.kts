@@ -24,9 +24,27 @@ allprojects {
 
 subprojects {
     apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    }
+    
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = "mythMcReleases"
+                url = uri(if (version.toString().endsWith("-SNAPSHOT")) 
+                    "https://repo.mythmc.ovh/snapshots/" 
+                else 
+                    "https://repo.mythmc.ovh/releases/")
+                
+                credentials {
+                    username = project.findProperty("mythMcUser") as String? ?: System.getenv("MYTHMC_USER")
+                    password = project.findProperty("mythMcPassword") as String? ?: System.getenv("MYTHMC_PASSWORD")
+                }
+            }
+        }
     }
 
     dependencies {

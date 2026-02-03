@@ -22,3 +22,11 @@ tasks.shadowJar {
     relocate("org.apiguardian", "ovh.mythmc.banco.libs.org.apiguardian")
     relocate("org.checkerframework", "ovh.mythmc.banco.libs.org.checkerframework")
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            artifact(tasks.shadowJar)
+        }
+    }
+}
