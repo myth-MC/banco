@@ -26,6 +26,7 @@ tasks.shadowJar {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            artifactId = "banco-platform-paper"
             artifact(tasks.shadowJar)
         }
     }

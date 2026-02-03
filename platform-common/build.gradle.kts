@@ -12,6 +12,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            artifactId = "banco-common"
             from(components["java"])
         }
     }

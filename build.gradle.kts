@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "ovh.mythmc"
-    version = "1.3.0-2"
+    version = "1.3.0-db3"
 
     repositories {
         mavenCentral()
@@ -34,7 +34,7 @@ subprojects {
         repositories {
             maven {
                 name = "mythMcReleases"
-                url = uri(if (version.toString().endsWith("-SNAPSHOT")) 
+                url = uri(if (version.toString().contains("-db")) 
                     "https://repo.mythmc.ovh/snapshots/" 
                 else 
                     "https://repo.mythmc.ovh/releases/")

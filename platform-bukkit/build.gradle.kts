@@ -27,6 +27,7 @@ tasks.shadowJar {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            artifactId = "banco-platform-bukkit"
             artifact(tasks.shadowJar)
         }
     }

@@ -46,6 +46,7 @@ tasks.javadoc {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            artifactId = "banco-api"
             from(components["java"])
             artifact(tasks["javadocJar"])
         }
