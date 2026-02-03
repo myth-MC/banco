@@ -95,7 +95,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-target/
+*/build
+*/target
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -108,6 +109,8 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 .flattened-pom.xml
+
+.gradle/*
 
 # Common working directory
 run/
