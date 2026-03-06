@@ -14,6 +14,11 @@ import ovh.mythmc.banco.api.util.ItemUtil;
 
 public final class RemainderStorageImpl implements BancoStorage {
 
+    public static final RemainderStorageImpl INSTANCE = new RemainderStorageImpl();
+
+    private RemainderStorageImpl() {
+    }
+
     @Override
     public BigDecimal value(UUID uuid) {
         return BigDecimal.valueOf(0);

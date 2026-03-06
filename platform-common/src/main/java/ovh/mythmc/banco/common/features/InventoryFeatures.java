@@ -18,15 +18,15 @@ import ovh.mythmc.gestalt.annotations.status.FeatureInitialize;
 public final class InventoryFeatures {
 
     private final List<BancoStorage> storages = List.of(
-        new BundleContainerImpl(),
-        new PlayerInventoryImpl(),
-        new EnderChestInventoryImpl(),
-        new ShulkerBoxContainerImpl()
+        BundleContainerImpl.INSTANCE,
+        PlayerInventoryImpl.INSTANCE,
+        EnderChestInventoryImpl.INSTANCE,
+        ShulkerBoxContainerImpl.INSTANCE
     );
 
     @FeatureInitialize
     public void initialize() {
-        Banco.get().getStorageRegistry().setRemainderStorage(new RemainderStorageImpl());
+        Banco.get().getStorageRegistry().setRemainderStorage(RemainderStorageImpl.INSTANCE);
     }
 
     @FeatureEnable

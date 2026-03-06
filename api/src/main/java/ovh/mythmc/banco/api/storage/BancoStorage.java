@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.banco.api.Banco;
+
 /**
  * Represents a storage system for holding currency items.
  * <p>
@@ -33,6 +35,16 @@ public interface BancoStorage {
     @NotNull
     default String friendlyName() {
         return "OTHER";
+    }
+
+    /**
+     * Determines whether this storage is registered by calling the
+     * {@link ovh.mythmc.banco.api.storage.BancoStorageRegistry}.
+     * @return {@code true} if registered, or {@code false} otherwise
+     */
+    default boolean isActive() {
+        return Banco.get().getStorageRegistry().getByOrder().stream()
+            .anyMatch(storage -> storage.friendlyName().equals(friendlyName()));
     }
 
     /**

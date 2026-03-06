@@ -9,6 +9,11 @@ import java.util.UUID;
 
 public final class PlayerInventoryImpl extends BancoInventory {
 
+    public static final PlayerInventoryImpl INSTANCE = new PlayerInventoryImpl();
+
+    private PlayerInventoryImpl() {
+    }
+
     @Override
     public String friendlyName() {
         return "PLAYER_INVENTORY";
