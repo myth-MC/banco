@@ -126,6 +126,10 @@ public final class VanillaBancoItem implements BancoItem {
         return itemStack;
     }
 
+    public BancoItemOptions customization() {
+        return this.customization;
+    }
+
     private PlayerProfile getProfile(String textureUrl) {
         PlayerProfile profile = Bukkit.createPlayerProfile(UUID.nameUUIDFromBytes(textureUrl.getBytes())); // Get a new player profile
         PlayerTextures textures = profile.getTextures();
@@ -149,7 +153,7 @@ public final class VanillaBancoItem implements BancoItem {
         return material + "-" + value + "-" + customization;
     }
 
-    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes) {
+    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes, Boolean restrictInteractions) {
         
         public Boolean glowEffect() {
             if (glowEffect == null)

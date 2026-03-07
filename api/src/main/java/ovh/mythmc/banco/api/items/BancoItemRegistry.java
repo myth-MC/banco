@@ -1,13 +1,12 @@
 package ovh.mythmc.banco.api.items;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.callback.item.BancoItemRegister;
 import ovh.mythmc.banco.api.callback.item.BancoItemUnregister;
 import ovh.mythmc.banco.api.callback.item.BancoItemRegisterCallback;
 import ovh.mythmc.banco.api.callback.item.BancoItemUnregisterCallback;
 
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -129,9 +128,9 @@ public final class BancoItemRegistry {
      * @throws IllegalArgumentException if itemStack is null
      */
     @Nullable
-    public BancoItem getByItemStack(@NotNull ItemStack itemStack) {
-        if (itemStack == null) {
-            throw new IllegalArgumentException("ItemStack cannot be null");
+    public BancoItem getByItemStack(ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() == Material.AIR) {
+            return null;
         }
 
         for (final BancoItem item : get()) {

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -150,4 +151,26 @@ public final class ItemUtil {
             return (ItemStack) dataInput.readObject();
         }
     }
+
+    /**
+     * Determines whether a {@link BancoItem} is able to interact with other blocks
+     * or entities.
+     * @param bancoItem the {@link BancoItem} to check
+     * @return          {@code true} if the item is able to interact, or {@code false}
+     *                  otherwise
+     */
+    public static boolean isInteractable(@NotNull BancoItem bancoItem) {
+        if (bancoItem instanceof VanillaBancoItem item) {
+            if (item.customization() == null)
+                return true;
+
+            if (item.customization().restrictInteractions() == null)
+                return true;
+
+            return !item.customization().restrictInteractions();
+        }
+
+        return true;
+    }
+
 }
