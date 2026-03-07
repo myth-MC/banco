@@ -66,11 +66,11 @@ subprojects {
         compileOnly("ovh.mythmc:callbacks-lib:0.1.2")
         annotationProcessor("ovh.mythmc:callbacks-lib:0.1.2")
         
-        compileOnly("ovh.mythmc:gestalt-api:0.2.2")
+        compileOnly("ovh.mythmc:gestalt-api:0.3.2")
 
         // Compile / implementation (from root pom)
         implementation("org.bstats:bstats-bukkit:3.0.2")
-        implementation("ovh.mythmc:gestalt-loader:0.2.2")
+        implementation("ovh.mythmc:gestalt-loader:0.3.2")
         implementation("com.j256.ormlite:ormlite-core:6.1")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
         implementation("org.incendo:cloud-paper:2.0.0-beta.13")
