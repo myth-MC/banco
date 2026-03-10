@@ -168,7 +168,6 @@ public class Transaction {
      * @param currentBalance the current balance
      */
     private void handleDeposit(@NotNull BigDecimal newAmount, @NotNull BigDecimal currentBalance) {
-        account.setTransactions(BigDecimal.ZERO);
         BigDecimal toAdd = newAmount.subtract(currentBalance);
 
         final boolean isOnline = Bukkit.getOfflinePlayer(account.getUuid()).isOnline();
