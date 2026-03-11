@@ -7,9 +7,15 @@ import org.bukkit.inventory.ItemStack;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
+import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 public record OraxenBancoItem(String identifier, BigDecimal value) implements BancoItem {
+
+    @Override
+    public Component displayName() {
+        return Component.text(getItemBuilder().getDisplayName());
+    }
 
     @Override
     public boolean match(ItemStack itemStack) {

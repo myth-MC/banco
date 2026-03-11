@@ -24,7 +24,6 @@ import ovh.mythmc.banco.paper.menu.PaperMenuDispatcher;
 import ovh.mythmc.banco.paper.scheduler.BancoSchedulerPaper;
 import ovh.mythmc.gestalt.loader.PaperGestaltLoader;
 
-@Getter
 public final class BancoPaper extends BancoBootstrap {
 
     public static BancoPaper instance;
@@ -37,8 +36,10 @@ public final class BancoPaper extends BancoBootstrap {
 
     private final BukkitLocalUUIDResolver uuidResolver;
 
+    @Getter
     private final AccountManager accountManager;
 
+    @Getter
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
         public void info(String message, Object... args) {

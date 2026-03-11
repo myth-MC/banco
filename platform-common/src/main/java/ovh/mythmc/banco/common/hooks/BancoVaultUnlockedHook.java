@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 
 import net.milkbowl.vault2.economy.AccountPermission;
@@ -16,14 +19,45 @@ import net.milkbowl.vault2.economy.EconomyResponse;
 import net.milkbowl.vault2.economy.EconomyResponse.ResponseType;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
+import ovh.mythmc.banco.api.accounts.Transaction;
+import ovh.mythmc.banco.api.accounts.Transaction.Operation;
+import ovh.mythmc.banco.api.logger.LoggerWrapper;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy {
+public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy, BancoEconomyHook {
+
+    private final LoggerWrapper logger = new LoggerWrapper() {
+        @Override
+        public void info(final String message, final Object... args) {
+            Banco.get().getLogger().info("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void warn(final String message, final Object... args) {
+            Banco.get().getLogger().warn("[vault-impl] " + message, args);
+        }
+
+        @Override
+        public void error(final String message, final Object... args) {
+            Banco.get().getLogger().error("[vault-impl] " + message, args);
+        }
+    };
 
     private boolean enabled = false;
 
     public BancoVaultUnlockedHook() {
         this.enabled = true;
+    }
+    
+    @Override
+    public void hook(Plugin plugin) {
+        Bukkit.getServer().getServicesManager().register(net.milkbowl.vault2.economy.Economy.class, this, plugin, ServicePriority.Highest);
+        logger.info("Hooked with VaultUnlocked " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
+    }
+
+    @Override
+    public void unhook() {
+        Bukkit.getServer().getServicesManager().unregister(net.milkbowl.vault2.economy.Economy.class, this);
     }
 
     @Override
@@ -164,12 +198,13 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
     @Override
     public boolean accountSupportsCurrency(@NotNull String plugin, @NotNull UUID accountID, @NotNull String currency,
             @NotNull String world) {
-        return accountSupportsCurrency(plugin, accountID, currency);
+        return accountSupportsCurrency(plugin, accountID, currency)
+            && !Banco.get().getSettings().get().getCurrency().getBlacklistedWorlds().contains(world);
     }
 
     @Override
     public @NotNull BigDecimal getBalance(@NotNull String pluginName, @NotNull UUID accountID) {
-        return Banco.get().getAccountManager().getByUuid(accountID).amount();
+        return Banco.get().getAccountManager().getByUuid(accountID).balance();
     }
 
     @Override
@@ -206,10 +241,18 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         final var account = Banco.get().getAccountManager().getByUuid(accountID);
         if (!has(pluginName, accountID, amount))
-            return new EconomyResponse(amount, account.amount(), ResponseType.FAILURE, "Not enough funds");
+            return new EconomyResponse(amount, account.balance(), ResponseType.FAILURE, "Not enough funds");
 
-        Banco.get().getAccountManager().withdraw(accountID, amount);
-        return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
+        // makes withdrawal synchronously so that callers (Vault/Towny) see the balance
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.WITHDRAW)
+            .build();
+
+        transaction.transact();
+
+        return new EconomyResponse(amount, account.balance(), ResponseType.SUCCESS, "");
     }
 
     @Override
@@ -230,8 +273,16 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
         final var account = Banco.get().getAccountManager().getByUuid(accountID);
 
-        Banco.get().getAccountManager().deposit(accountID, amount);
-        return new EconomyResponse(amount, account.amount(), ResponseType.SUCCESS, "");
+        // lets the deposit happen synchronously so that callers (Vault/Towny) see the balance
+        Transaction transaction = Transaction.builder()
+            .account(account)
+            .amount(amount)
+            .operation(Operation.DEPOSIT)
+            .build();
+
+        transaction.transact();
+
+        return new EconomyResponse(amount, account.balance(), ResponseType.SUCCESS, "");
     }
 
     @Override

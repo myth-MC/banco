@@ -7,8 +7,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import de.exlll.configlib.Configuration;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.With;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import ovh.mythmc.banco.api.items.BancoItem;
 
 import java.math.BigDecimal;
@@ -24,13 +28,35 @@ import java.util.List;
  * @param value value of this item
  */
 @With(AccessLevel.PACKAGE)
-public record LegacyBancoItem(@NotNull String name,
-                        String displayName,
-                        List<String> lore,
-                        Integer customModelData,
-                        Boolean glowEffect,
-                        @NotNull BigDecimal value) implements BancoItem {
-                            
+@AllArgsConstructor
+@Configuration
+public final class LegacyBancoItem implements BancoItem {
+
+    private @NotNull String name;
+
+    private Component displayName;
+
+    private List<String> lore;
+
+    private Integer customModelData;
+
+    private Boolean glowEffect;
+
+    private @NotNull BigDecimal value;
+
+    LegacyBancoItem() {
+    }
+
+    @Override
+    public Component displayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public BigDecimal value() {
+        return this.value;
+    }
+
     @Override
     public ItemStack asItemStack(int amount) {
         ItemStack itemStack = new ItemStack(Material.valueOf(name), amount);
@@ -39,7 +65,7 @@ public record LegacyBancoItem(@NotNull String name,
 
         // Apply custom display name
         if (displayName != null)
-            itemMeta.setDisplayName(displayName);
+            itemMeta.setDisplayName(PlainTextComponentSerializer.plainText().serialize(displayName));
 
         // Apply lore
         if (lore != null)
@@ -61,5 +87,5 @@ public record LegacyBancoItem(@NotNull String name,
 
         return itemStack;
     }
-
+    
 }

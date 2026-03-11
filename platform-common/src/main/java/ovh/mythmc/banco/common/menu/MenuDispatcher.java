@@ -12,5 +12,7 @@ public interface MenuDispatcher {
     void showInfo(@NotNull Player player);
 
     void showTransactionHistory(@NotNull Player player, @NotNull Account account);
+
+    void showItemConverter(@NotNull Player player);
     
 }

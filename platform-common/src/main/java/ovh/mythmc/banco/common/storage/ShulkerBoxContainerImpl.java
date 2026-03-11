@@ -16,6 +16,11 @@ import java.util.*;
  */
 public final class ShulkerBoxContainerImpl extends BancoContainer {
 
+    public static final ShulkerBoxContainerImpl INSTANCE = new ShulkerBoxContainerImpl();
+
+    private ShulkerBoxContainerImpl() {
+    }
+
     @Override
     public String friendlyName() {
         return "SHULKER_BOX";
@@ -27,8 +32,10 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null) return allItems;
 
-        allItems.addAll(getItemsFromShulkers(player.getInventory().getContents()));
-        allItems.addAll(getItemsFromShulkers(player.getEnderChest().getContents()));
+        if (PlayerInventoryImpl.INSTANCE.isActive())
+            allItems.addAll(getItemsFromShulkers(player.getInventory().getContents()));
+        if (EnderChestInventoryImpl.INSTANCE.isActive())
+            allItems.addAll(getItemsFromShulkers(player.getEnderChest().getContents()));
 
         return allItems;
     }
@@ -40,11 +47,15 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null) return itemStack;
 
-        itemStack = addToShulkers(player.getInventory().getContents(), itemStack);
-        if (itemStack == null || itemStack.getAmount() <= 0)
-            return null;
+        if (PlayerInventoryImpl.INSTANCE.isActive()) {
+            itemStack = addToShulkers(player.getInventory().getContents(), itemStack);
+            if (itemStack == null || itemStack.getAmount() <= 0)
+                return null;
+        }
 
-        itemStack = addToShulkers(player.getEnderChest().getContents(), itemStack);
+        if (EnderChestInventoryImpl.INSTANCE.isActive())
+            itemStack = addToShulkers(player.getEnderChest().getContents(), itemStack);
+
         return itemStack;
     }
 
@@ -55,15 +66,19 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null) return itemStack;
 
-        itemStack = removeFromShulkers(player.getInventory().getContents(), itemStack);
-        if (itemStack == null || itemStack.getAmount() <= 0)
-            return null;
+        if (PlayerInventoryImpl.INSTANCE.isActive()) {
+            itemStack = removeFromShulkers(player.getInventory().getContents(), itemStack);
+            if (itemStack == null || itemStack.getAmount() <= 0)
+                return null;
+        }
 
-        itemStack = removeFromShulkers(player.getEnderChest().getContents(), itemStack);
+        if (EnderChestInventoryImpl.INSTANCE.isActive())
+            itemStack = removeFromShulkers(player.getEnderChest().getContents(), itemStack);
+
         return itemStack;
     }
 
-    private ItemStack addToShulkers(ItemStack[] stacks, ItemStack itemStack) {
+    private static ItemStack addToShulkers(ItemStack[] stacks, ItemStack itemStack) {
         if (itemStack == null) return null;
 
         for (ItemStack shulker : stacks) {
@@ -89,7 +104,7 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         return itemStack;
     }
 
-    private ItemStack removeFromShulkers(ItemStack[] stacks, ItemStack itemStack) {
+    private static ItemStack removeFromShulkers(ItemStack[] stacks, ItemStack itemStack) {
         if (itemStack == null) return null;
 
         int toRemove = itemStack.getAmount();
@@ -127,7 +142,7 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         return remainder;
     }
 
-    private Collection<ItemStack> getItemsFromShulkers(ItemStack[] stacks) {
+    private static Collection<ItemStack> getItemsFromShulkers(ItemStack[] stacks) {
         List<ItemStack> items = new ArrayList<>();
         for (ItemStack shulker : stacks) {
             BlockStateMeta meta = getShulkerMeta(shulker);
@@ -144,12 +159,12 @@ public final class ShulkerBoxContainerImpl extends BancoContainer {
         return items;
     }
 
-    private boolean isShulkerBox(ItemStack item) {
+    private static boolean isShulkerBox(ItemStack item) {
         if (item == null || item.getType() == Material.AIR) return false;
         return item.getType().name().endsWith("SHULKER_BOX");
     }
 
-    private BlockStateMeta getShulkerMeta(ItemStack shulker) {
+    private static BlockStateMeta getShulkerMeta(ItemStack shulker) {
         if (shulker == null || !isShulkerBox(shulker)) return null;
         try {
             var meta = shulker.getItemMeta();

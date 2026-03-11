@@ -10,6 +10,11 @@ import java.util.UUID;
 
 public final class EnderChestInventoryImpl extends BancoInventory {
 
+    public static final EnderChestInventoryImpl INSTANCE = new EnderChestInventoryImpl();
+
+    private EnderChestInventoryImpl() {
+    }
+
     @Override
     public String friendlyName() {
         return "ENDER_CHEST";

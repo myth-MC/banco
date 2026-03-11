@@ -10,6 +10,7 @@ loadbefore:
   - Essentials
 
 libraries:
+  - org.postgresql:postgresql:42.7.9
   - net.kyori:adventure-api:4.25.0
   - net.kyori:adventure-platform-bukkit:4.4.1
   - net.kyori:adventure-text-minimessage:4.25.0
@@ -22,11 +23,12 @@ permissions:
       banco.use.help: true
       banco.use.balance: true
       banco.use.balancetop: true
-      banco.use.balancechange: true
+      banco.use.balanceconvert: true
       banco.use.pay: true
   banco.admin:
     default: op
     children:
+      banco.use.bancomigrate: true
       banco.use.banco.encode: true
       banco.use.banco.deposit: true
       bnaco.use.banco.set: true
@@ -42,10 +44,12 @@ permissions:
     default: true
   banco.use.balancetop:
     default: true
-  banco.use.balancechange:
+  banco.use.balanceconvert:
     default: true
   banco.use.pay:
     default: true
+  banco.use.bancomigrate:
+    default: op
   # Commands (/banco)
   banco.use.banco.encode:
     default: op

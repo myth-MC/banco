@@ -3,6 +3,8 @@ package ovh.mythmc.banco.api.logger;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import ovh.mythmc.banco.api.Banco;
+
 import java.lang.reflect.Array;
 
 @ApiStatus.Internal
@@ -20,7 +22,8 @@ public interface LoggerWrapper {
     void error(final String message, final Object... args);
 
     default void debug(final String message, final Object... args) {
-        info("[debug] " + message, args);
+        if (Banco.get().getSettings().get().isDebug())
+            info("[debug] " + message, args);
     }
 
     default String buildFullMessage(final @NotNull String msg, final Object... args) {

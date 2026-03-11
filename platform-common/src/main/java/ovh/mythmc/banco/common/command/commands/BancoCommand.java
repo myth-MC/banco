@@ -139,7 +139,7 @@ public final class BancoCommand implements MainCommand {
                 final Account target = ctx.get("target");
                 final BigDecimal amount = BigDecimal.valueOf((double) ctx.get("amount"));
 
-                final BigDecimal accountAmount = target.amount();
+                final BigDecimal accountAmount = target.balance();
                 if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && amount.compareTo(accountAmount) > 0) {
                     MessageUtil.error(ctx.sender(), Component.translatable("banco.commands.banco.take.amount-too-high",
                         Component.text(MessageUtil.format(amount)),
@@ -166,7 +166,7 @@ public final class BancoCommand implements MainCommand {
             .handler(ctx -> {
                 final var dateFormat = new SimpleDateFormat("MMddyyyyHHmm");
                 final var dateAsString = dateFormat.format(new Date());
-                Banco.get().getAccountManager().getDatabase().backup(dateAsString);
+                Banco.get().getAccountManager().getDatabase().performBackup(dateAsString);
 
                 MessageUtil.debug(ctx.sender(), "Database has been dumped into accounts.db." + dateAsString + "!");
             })

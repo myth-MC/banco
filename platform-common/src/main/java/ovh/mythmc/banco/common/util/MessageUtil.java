@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import lombok.experimental.UtilityClass;
@@ -17,11 +16,8 @@ import java.text.DecimalFormat;
 @UtilityClass
 public class MessageUtil {
 
-    public void info(CommandSender commandSender, String message) {
-        if (commandSender instanceof Audience audience) // Paper
-            info(audience, message);
-
-        
+    public void info(Audience audience, String message, Component... placeholders) {
+        info(audience, Component.translatable(message, placeholders));
     }
 
     public void info(Audience audience, String message) {
@@ -34,6 +30,10 @@ public class MessageUtil {
         );
     }
 
+    public void warn(Audience audience, String message, Component... placeholders) {
+        warn(audience, Component.translatable(message, placeholders));
+    }
+
     public void warn(Audience audience, String message) {
         warn(audience, Component.translatable(message));
     }
@@ -42,6 +42,10 @@ public class MessageUtil {
         audience.sendMessage(getWarnPrefix()
             .append(message.color(NamedTextColor.WHITE))
         );
+    }
+
+    public void success(Audience audience, String message, Component... placeholders) {
+        success(audience, Component.translatable(message, placeholders));
     }
 
     public void success(Audience audience, String message) {
@@ -54,6 +58,10 @@ public class MessageUtil {
         );
     }
 
+    public void error(Audience audience, String message, Component... placeholders) {
+        error(audience, Component.translatable(message, placeholders));
+    }
+
     public void error(Audience audience, String message) {
         error(audience, Component.translatable(message));
     }
@@ -62,6 +70,10 @@ public class MessageUtil {
         audience.sendMessage(getErrorPrefix()
             .append(message.color(NamedTextColor.WHITE))
         );
+    }
+
+    public void debug(Audience audience, String message, Component... placeholders) { 
+        debug(audience, Component.translatable(message, placeholders)); 
     }
 
     public void debug(Audience audience, String message) { 
@@ -79,7 +91,7 @@ public class MessageUtil {
         return format.format(value);
     }
 
-    private Component getPrefix(String configPrefix) {
+    private static Component getPrefix(String configPrefix) {
         Component prefix = Component.empty();
         if (configPrefix != null && !configPrefix.isEmpty())
             prefix = MiniMessage.miniMessage().deserialize(configPrefix + " ");
@@ -87,23 +99,23 @@ public class MessageUtil {
         return prefix;
     }
 
-    private Component getInfoPrefix() {
+    public static Component getInfoPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getInfoPrefix());
     }
 
-    private Component getWarnPrefix() {
+    public static Component getWarnPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getWarnPrefix());
     }
 
-    private Component getSuccessPrefix() {
+    public static Component getSuccessPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getSuccessPrefix());
     }
 
-    private Component getErrorPrefix() {
+    public static Component getErrorPrefix() {
         return getPrefix(Banco.get().getSettings().get().getCommands().getErrorPrefix());
     }
 
-    private Component getDebugPrefix() {
+    public static Component getDebugPrefix() {
         return getPrefix("<#2cc83c>\uD83E\uDEB2</#2cc83c>");
     }
 

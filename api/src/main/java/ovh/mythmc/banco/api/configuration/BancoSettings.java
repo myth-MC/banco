@@ -25,6 +25,9 @@ public class BancoSettings {
     @Comment({"", "Configuration for currency"})
     private CurrencyConfig currency = new CurrencyConfig();
 
+    @Comment({"", "Configuration for migrations"})
+    private MigrationConfig migration = new MigrationConfig();
+
     @Comment({"", "Configuration for the database"})
     private DatabaseConfig database = new DatabaseConfig();
 
