@@ -24,7 +24,7 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractable(bancoItem))
+        if (!ItemUtil.isInteractive(bancoItem))
             event.setResult(null);
     }
 
@@ -41,7 +41,7 @@ public class InteractionListener implements Listener {
             if (bancoItem == null)
                 return;
 
-            if (!ItemUtil.isInteractable(bancoItem)) {
+            if (!ItemUtil.isInteractive(bancoItem)) {
                 event.getInventory().setResult(null);
                 break;
             }
@@ -54,7 +54,7 @@ public class InteractionListener implements Listener {
         if (bancoItem == null) 
             return;
 
-        if (!ItemUtil.isInteractable(bancoItem)) {
+        if (!ItemUtil.isInteractive(bancoItem)) {
             event.setCancelled(true);
         }
     }
@@ -65,7 +65,7 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractable(bancoItem)) {
+        if (!ItemUtil.isInteractive(bancoItem)) {
             event.setCancelled(true);
         }
     }
@@ -77,7 +77,7 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractable(bancoItem)) {
+        if (!ItemUtil.isInteractive(bancoItem)) {
             event.setCancelled(true);
         }
     }
@@ -88,7 +88,7 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractable(bancoItem)) {
+        if (!ItemUtil.isInteractive(bancoItem)) {
             event.setCancelled(true);
         }
     }   

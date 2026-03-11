@@ -159,7 +159,7 @@ public final class ItemUtil {
      * @return          {@code true} if the item is able to interact, or {@code false}
      *                  otherwise
      */
-    public static boolean isInteractable(@NotNull BancoItem bancoItem) {
+    public static boolean isInteractive(@NotNull BancoItem bancoItem) {
         if (bancoItem instanceof VanillaBancoItem item) {
             if (item.customization() == null)
                 return true;
