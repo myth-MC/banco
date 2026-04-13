@@ -28,7 +28,6 @@ dependencies {
         exclude(group = "org.bstats", module = "bstats-bukkit")
     }
     
-    compileOnly("com.github.Slimefun:Slimefun4:master-SNAPSHOT")
     compileOnly("org.postgresql:postgresql:42.7.9")
 }
 

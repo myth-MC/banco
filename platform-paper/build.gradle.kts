@@ -7,7 +7,7 @@ base.archivesName.set("banco-modern")
 
 dependencies {
     implementation(project(":platform-common"))
-    compileOnly("io.papermc.paper:paper-api:1.21.7-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 }
 
 tasks.shadowJar {

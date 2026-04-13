@@ -73,8 +73,8 @@ subprojects {
         implementation("ovh.mythmc:gestalt-loader:0.3.2")
         implementation("com.j256.ormlite:ormlite-core:6.1")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-        implementation("org.incendo:cloud-paper:2.0.0-beta.13")
-        implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.13")
+        implementation("org.incendo:cloud-paper:2.0.0-beta.15")
+        implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.15")
     }
     
     tasks.withType<JavaCompile> {

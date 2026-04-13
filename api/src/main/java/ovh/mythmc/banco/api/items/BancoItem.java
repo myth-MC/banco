@@ -15,7 +15,6 @@ import ovh.mythmc.banco.api.items.impl.NexoBancoItem;
 import ovh.mythmc.banco.api.items.impl.NovaBancoItem;
 import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 import ovh.mythmc.banco.api.items.impl.OraxenBancoItem;
-import ovh.mythmc.banco.api.items.impl.SlimefunBancoItem;
 
 /**
  * Represents a currency item in the Banco system.
@@ -43,8 +42,7 @@ import ovh.mythmc.banco.api.items.impl.SlimefunBancoItem;
     @PolymorphicTypes.Type(type = OraxenBancoItem.class, alias = "oraxen"),
     @PolymorphicTypes.Type(type = MythicMobsBancoItem.class, alias = "mythicmobs"),
     @PolymorphicTypes.Type(type = NovaBancoItem.class, alias = "nova"),
-    @PolymorphicTypes.Type(type = NexoBancoItem.class, alias = "nexo"),
-    @PolymorphicTypes.Type(type = SlimefunBancoItem.class, alias = "slimefun")
+    @PolymorphicTypes.Type(type = NexoBancoItem.class, alias = "nexo")
 })
 public interface BancoItem {
 
