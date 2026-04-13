@@ -49,7 +49,7 @@ public final class PayCommand implements MainCommand {
                 }
 
                 // Not enough funds
-                if (Banco.get().getAccountManager().amount(source).compareTo(amount) < 0) {
+                if (Banco.get().getAccountManager().balance(source).compareTo(amount) < 0) {
                     MessageUtil.error(ctx.sender(), "banco.errors.not-enough-funds");
                     return;
                 }

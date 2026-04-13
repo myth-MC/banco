@@ -7,10 +7,10 @@ import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.caption.CaptionProvider;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
-import ovh.mythmc.banco.common.command.commands.BalanceChangeCommand;
 import ovh.mythmc.banco.common.command.commands.BalanceCommand;
 import ovh.mythmc.banco.common.command.commands.BalanceTopCommand;
 import ovh.mythmc.banco.common.command.commands.BancoCommand;
+import ovh.mythmc.banco.common.command.commands.MigrateCommand;
 import ovh.mythmc.banco.common.command.commands.PayCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
@@ -19,10 +19,10 @@ public abstract class BancoCommandProvider {
     protected final LegacyPaperCommandManager<BancoCommandSource> commandManager;
 
     private final Collection<MainCommand> commands = List.of(
-        new BalanceChangeCommand(),
         new BalanceCommand(),
         new BalanceTopCommand(),
         new BancoCommand(),
+        new MigrateCommand(),
         new PayCommand()
     );
 

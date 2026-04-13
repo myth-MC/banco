@@ -8,11 +8,13 @@ import org.incendo.cloud.paper.LegacyPaperCommandManager;
 import ovh.mythmc.banco.common.command.BancoCommandProvider;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
+import ovh.mythmc.banco.paper.command.commands.BalanceConvertCommand;
 import ovh.mythmc.banco.paper.command.commands.TransactionHistoryCommand;
 
 public final class PaperCommandProvider extends BancoCommandProvider {
 
     private final Collection<MainCommand> platformCommands = List.of(
+        new BalanceConvertCommand(),
         new TransactionHistoryCommand()
     );
 

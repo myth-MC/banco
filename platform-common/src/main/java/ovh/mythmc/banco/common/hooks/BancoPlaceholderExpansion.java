@@ -41,7 +41,7 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
             return null;
 
         if (params.equalsIgnoreCase("balance")) {
-            return MessageUtil.format(account.amount());
+            return MessageUtil.format(account.balance());
         } else if (params.equalsIgnoreCase("symbol")) {
             return Banco.get().getSettings().get().getCurrency().getSymbol();
         } else if (params.equalsIgnoreCase("name_plural")) {

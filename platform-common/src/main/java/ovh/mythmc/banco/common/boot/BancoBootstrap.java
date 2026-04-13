@@ -14,10 +14,12 @@ import ovh.mythmc.banco.api.BancoSupplier;
 import ovh.mythmc.banco.api.configuration.BancoSettingsProvider;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.common.command.BancoCommandProvider;
+import ovh.mythmc.banco.common.features.InteractionRestrictionFeature;
 import ovh.mythmc.banco.common.features.InventoryFeatures;
 import ovh.mythmc.banco.common.features.ItemFeatures;
 import ovh.mythmc.banco.common.features.LocalizationFeature;
 import ovh.mythmc.banco.common.features.MetricsFeature;
+import ovh.mythmc.banco.common.features.MigrationFeature;
 import ovh.mythmc.banco.common.features.PlaceholderAPIFeature;
 import ovh.mythmc.banco.common.features.UpdateCheckerFeature;
 import ovh.mythmc.banco.common.features.VaultFeature;
@@ -31,20 +33,25 @@ import ovh.mythmc.gestalt.features.GestaltFeature;
 import java.io.File;
 import java.util.Arrays;
 
-@Getter
 @RequiredArgsConstructor
 public abstract class BancoBootstrap implements Banco {
 
+    @Getter
     private JavaPlugin plugin;
 
+    @Getter
     private final BancoSettingsProvider settings;
 
+    @Getter
     private final File dataDirectory;
 
+    @Getter
     private final BancoCommandProvider commandProvider;
 
+    @Getter
     private BancoListener bancoListener;
 
+    @Getter
     private volatile boolean shuttingDown = false;
 
     public BancoBootstrap(final @NotNull JavaPlugin plugin,
@@ -73,10 +80,12 @@ public abstract class BancoBootstrap implements Banco {
             InventoryFeatures.class,
             ItemFeatures.class,
             PlaceholderAPIFeature.class,
-            UpdateCheckerFeature.class
+            UpdateCheckerFeature.class,
+            MigrationFeature.class
         );
 
         registerFeatureWithPluginParam(
+            InteractionRestrictionFeature.class,
             LocalizationFeature.class, 
             MetricsFeature.class, 
             VaultFeature.class
@@ -132,11 +141,6 @@ public abstract class BancoBootstrap implements Banco {
         getSettings().load();
 
         Gestalt.get().enableAllFeatures("banco");
-    }
-
-    @Override
-    public final boolean isShuttingDown() {
-        return this.shuttingDown;
     }
 
     public abstract String version();

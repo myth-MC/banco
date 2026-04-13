@@ -19,9 +19,6 @@ public class CommandsConfig {
     @Comment({"/balance - Allows players to view their current balance", "Permission: banco.use.balance (assigned by default)"})
     private SimpleCommand balance = new SimpleCommand(true);
 
-    @Comment({"/balancechange - Allows players to compact their balance", "Permission: banco.use.balancechange (assigned by default)"})
-    private SimpleCommand balanceChange = new SimpleCommand(false);
-
     @Comment({"/balancetop - Allows players to view the balance top", "Permission: banco.use.balancetop (assigned by default)"})
     private SimpleCommand balanceTop = new SimpleCommand(true);
 
@@ -31,6 +28,11 @@ public class CommandsConfig {
     @Comment({"/transactions - Allows players to see their recent transactions", "Permission: banco.use.transactions (assigned by default)"})
     private SimpleCommand transactions = new SimpleCommand(true);
 
+    @Comment({"/balanceconvert - Allows players to convert their balance into the equivalent amount of any item", "Permission: banco.use.balanceconvert (assigned by default)"})
+    private BalanceConvertCommand balanceConvert = new BalanceConvertCommand(true, 512);
+    
     public record SimpleCommand(boolean enabled) { }
+
+    public record BalanceConvertCommand(boolean enabled, int maxConvertibleAmount) { }
 
 }

@@ -33,6 +33,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.items.BancoItemRegistry;
 
 @Configuration
 public final class VanillaBancoItem implements BancoItem {
@@ -53,6 +54,14 @@ public final class VanillaBancoItem implements BancoItem {
         this.material = material;
         this.value = value;
         this.customization = customization;
+    }
+
+    @Override
+    public Component displayName() {
+        if (this.customization != null && this.customization.displayName() != null)
+            return MiniMessage.miniMessage().deserialize(this.customization.displayName());
+
+        return Component.translatable(material.getTranslationKey());
     }
 
     @Override
@@ -100,8 +109,9 @@ public final class VanillaBancoItem implements BancoItem {
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-            // Store item identifier in PDC
-            itemMeta.getPersistentDataContainer().set(Banco.get().getItemRegistry().CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
+            Banco.get().getItemRegistry();
+			// Store item identifier in PDC
+            itemMeta.getPersistentDataContainer().set(BancoItemRegistry.CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
             // Apply attribute modifiers
             if (customization.attributes() != null) {
@@ -114,6 +124,10 @@ public final class VanillaBancoItem implements BancoItem {
 
         this.itemStack = itemStack;
         return itemStack;
+    }
+
+    public BancoItemOptions customization() {
+        return this.customization;
     }
 
     private PlayerProfile getProfile(String textureUrl) {
@@ -139,7 +153,7 @@ public final class VanillaBancoItem implements BancoItem {
         return material + "-" + value + "-" + customization;
     }
 
-    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes) {
+    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes, Boolean restrictInteractions) {
         
         public Boolean glowEffect() {
             if (glowEffect == null)

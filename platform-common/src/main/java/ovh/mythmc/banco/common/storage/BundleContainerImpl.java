@@ -16,6 +16,11 @@ import java.util.UUID;
 
 public final class BundleContainerImpl extends BancoContainer {
 
+    public static final BundleContainerImpl INSTANCE = new BundleContainerImpl();
+
+    private BundleContainerImpl() {
+    }
+
     @Override
     public String friendlyName() {
         return "BUNDLE";
@@ -27,8 +32,10 @@ public final class BundleContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null) return items;
 
-        items.addAll(getBundlesContent(player.getInventory().getContents()));
-        items.addAll(getBundlesContent(player.getEnderChest().getContents()));
+        if (PlayerInventoryImpl.INSTANCE.isActive())
+            items.addAll(getBundlesContent(player.getInventory().getContents()));
+        if (EnderChestInventoryImpl.INSTANCE.isActive())
+            items.addAll(getBundlesContent(player.getEnderChest().getContents()));
         return items;
     }
 
@@ -37,10 +44,15 @@ public final class BundleContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null || itemStack == null) return itemStack;
 
-        itemStack = addToBundlesInContainer(player.getInventory().getContents(), itemStack);
-        if (itemStack == null || itemStack.getAmount() <= 0) return null;
+        if (PlayerInventoryImpl.INSTANCE.isActive()) {
+            itemStack = addToBundlesInContainer(player.getInventory().getContents(), itemStack);
+            if (itemStack == null || itemStack.getAmount() <= 0) return null;
+        }
 
-        itemStack = addToBundlesInContainer(player.getEnderChest().getContents(), itemStack);
+        if (EnderChestInventoryImpl.INSTANCE.isActive()) {
+            itemStack = addToBundlesInContainer(player.getEnderChest().getContents(), itemStack);
+        }
+        
         return (itemStack == null || itemStack.getAmount() <= 0) ? null : itemStack;
     }
 
@@ -49,14 +61,19 @@ public final class BundleContainerImpl extends BancoContainer {
         var player = Bukkit.getPlayer(uuid);
         if (player == null || itemStack == null) return null;
 
-        itemStack = removeFromBundlesInContainer(player.getInventory().getContents(), itemStack);
-        if (itemStack == null || itemStack.getAmount() <= 0) return null;
+        if (PlayerInventoryImpl.INSTANCE.isActive()) {
+            itemStack = removeFromBundlesInContainer(player.getInventory().getContents(), itemStack);
+            if (itemStack == null || itemStack.getAmount() <= 0) return null;
+        }
 
-        itemStack = removeFromBundlesInContainer(player.getEnderChest().getContents(), itemStack);
+        if (EnderChestInventoryImpl.INSTANCE.isActive()) {
+            itemStack = removeFromBundlesInContainer(player.getEnderChest().getContents(), itemStack);
+        }
+    
         return (itemStack == null || itemStack.getAmount() <= 0) ? null : itemStack;
     }
 
-    private List<ItemStack> getBundlesContent(ItemStack[] container) {
+    private static List<ItemStack> getBundlesContent(ItemStack[] container) {
         List<ItemStack> content = new ArrayList<>();
 
         for (ItemStack item : container) {
@@ -81,7 +98,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return content;
     }
 
-    private ItemStack addToBundlesInContainer(ItemStack[] container, ItemStack itemStack) {
+    private static ItemStack addToBundlesInContainer(ItemStack[] container, ItemStack itemStack) {
         for (ItemStack item : container) {
             if (item == null || item.getType().isAir()) continue;
 
@@ -109,7 +126,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return itemStack;
     }
 
-    private ItemStack removeFromBundlesInContainer(ItemStack[] container, ItemStack target) {
+    private static ItemStack removeFromBundlesInContainer(ItemStack[] container, ItemStack target) {
         for (ItemStack item : container) {
             if (item == null || item.getType().isAir()) continue;
 
@@ -136,7 +153,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return target;
     }
 
-    private ItemStack addItemToBundleStack(ItemStack bundleItem, ItemStack toAdd) {
+    private static ItemStack addItemToBundleStack(ItemStack bundleItem, ItemStack toAdd) {
         BundleMeta meta = (BundleMeta) bundleItem.getItemMeta();
         if (meta == null) return toAdd;
 
@@ -145,7 +162,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return result;
     }
 
-    private boolean removeItemFromBundleStack(ItemStack bundleItem, ItemStack toRemove) {
+    private static boolean removeItemFromBundleStack(ItemStack bundleItem, ItemStack toRemove) {
         BundleMeta meta = (BundleMeta) bundleItem.getItemMeta();
         if (meta == null) return false;
 
@@ -154,7 +171,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return removed;
     }
 
-    private ItemStack addItemToBundleMeta(BundleMeta meta, ItemStack itemStack) {
+    private static ItemStack addItemToBundleMeta(BundleMeta meta, ItemStack itemStack) {
         if (itemStack == null) return null;
         List<ItemStack> contents = new ArrayList<>(meta.getItems());
         int pending = itemStack.getAmount();
@@ -186,7 +203,7 @@ public final class BundleContainerImpl extends BancoContainer {
         return remainder;
     }
 
-    private boolean removeItemFromBundleMeta(BundleMeta meta, ItemStack target) {
+    private static boolean removeItemFromBundleMeta(BundleMeta meta, ItemStack target) {
         List<ItemStack> contents = new ArrayList<>(meta.getItems());
         for (int i = 0; i < contents.size(); i++) {
             ItemStack inside = contents.get(i);
@@ -202,20 +219,20 @@ public final class BundleContainerImpl extends BancoContainer {
         return false;
     }
 
-    private List<ItemStack> getItemsFromBundle(BundleMeta meta) {
+    private static List<ItemStack> getItemsFromBundle(BundleMeta meta) {
         return new ArrayList<>(meta.getItems());
     }
 
-    private boolean isBundle(ItemStack item) {
+    private static boolean isBundle(ItemStack item) {
         return item != null && item.getType().name().contains("BUNDLE");
     }
 
-    private boolean isShulkerBox(ItemStack item) {
+    private static boolean isShulkerBox(ItemStack item) {
         if (item == null || item.getType() == Material.AIR) return false;
         return item.getType().name().endsWith("SHULKER_BOX");
     }
 
-    private BlockStateMeta getShulkerMeta(ItemStack item) {
+    private static BlockStateMeta getShulkerMeta(ItemStack item) {
         if (!isShulkerBox(item)) return null;
         try {
             var meta = item.getItemMeta();
@@ -229,7 +246,7 @@ public final class BundleContainerImpl extends BancoContainer {
         }
     }
 
-    private int getBundleListFreeCapacity(List<ItemStack> contents) {
+    private static int getBundleListFreeCapacity(List<ItemStack> contents) {
         int free = 64;
         for (ItemStack i : contents) free -= i.getAmount();
         return Math.max(free, 0);
