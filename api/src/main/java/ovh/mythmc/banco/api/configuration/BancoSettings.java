@@ -22,6 +22,9 @@ public class BancoSettings {
     @Comment({"Task execution type (use SYNC in small servers or switch to ASYNC in larger ones)", "Do note that ASYNC may introduce unexpected behavior"})
     private ExecutionOrder taskExecutionOrder = ExecutionOrder.SYNC;
 
+    @Comment("If using VaultUnlocked, this will enable support for Vault's legacy API")
+    private boolean legacyVaultSupport = true;
+
     @Comment({"", "Configuration for currency"})
     private CurrencyConfig currency = new CurrencyConfig();
 

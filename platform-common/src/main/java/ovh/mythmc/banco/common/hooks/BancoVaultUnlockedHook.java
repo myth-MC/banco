@@ -43,6 +43,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
         }
     };
 
+    private final BancoVaultHook legacyVaultHook = new BancoVaultHook();
     private boolean enabled = false;
 
     public BancoVaultUnlockedHook() {
@@ -53,6 +54,11 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
     public void hook(Plugin plugin) {
         Bukkit.getServer().getServicesManager().register(net.milkbowl.vault2.economy.Economy.class, this, plugin, ServicePriority.Highest);
         logger.info("Hooked with VaultUnlocked " + Bukkit.getPluginManager().getPlugin("Vault").getDescription().getVersion());
+
+        if (Banco.get().getSettings().get().isLegacyVaultSupport()) {
+            logger.info("Enabling legacy Vault API support...");
+            legacyVaultHook.hook(plugin);
+        }
     }
 
     @Override
