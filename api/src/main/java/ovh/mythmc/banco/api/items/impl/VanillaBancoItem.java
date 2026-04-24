@@ -150,7 +150,9 @@ public final class VanillaBancoItem implements BancoItem {
     } 
 
     private String getIdentifier() {
-        return material + "-" + value + "-" + customization;
+        String base = material + "-" + value + "-" + customization;
+        String horribleFix = base.replace(", restrictInteractions=null", "");
+        return horribleFix;
     }
 
     public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes, Boolean restrictInteractions) {
