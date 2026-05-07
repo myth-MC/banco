@@ -1,10 +1,13 @@
 package ovh.mythmc.banco.api.items.impl;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -31,7 +34,6 @@ import de.exlll.configlib.Ignore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.items.BancoItemRegistry;
 
@@ -46,6 +48,9 @@ public final class VanillaBancoItem implements BancoItem {
 
     @Ignore
     private ItemStack itemStack;
+
+    @Ignore
+    private String identifier;
 
     VanillaBancoItem() {
     }
@@ -78,10 +83,9 @@ public final class VanillaBancoItem implements BancoItem {
         }
 
         ItemStack itemStack = new ItemStack(material, amount);
+        ItemMeta itemMeta = itemStack.getItemMeta();
 
         if (customization != null) {
-            ItemMeta itemMeta = itemStack.getItemMeta();
-
             // Apply custom display name
             if (customization.displayName() != null)
                 itemMeta.setDisplayName(format(customization.displayName()));
@@ -109,14 +113,13 @@ public final class VanillaBancoItem implements BancoItem {
             // Hide enchantments (used for glow effect)
             itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
-            Banco.get().getItemRegistry();
-			// Store item identifier in PDC
-            itemMeta.getPersistentDataContainer().set(BancoItemRegistry.CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
-
             // Apply attribute modifiers
             if (customization.attributes() != null) {
                 customization.attributes().forEach(attribute -> itemMeta.addAttributeModifier(attribute.getAttribute(), attribute.getAttributeModifier()));
             }
+
+            // Store item identifier in PDC
+            itemMeta.getPersistentDataContainer().set(BancoItemRegistry.CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING, getIdentifier());
 
             // Apply ItemMeta
             itemStack.setItemMeta(itemMeta);
@@ -124,6 +127,40 @@ public final class VanillaBancoItem implements BancoItem {
 
         this.itemStack = itemStack;
         return itemStack;
+    }
+
+    @Override
+    public boolean match(@NotNull ItemStack itemStack) {
+        if (itemStack == null || itemStack.getType() != material) {
+            return false;
+        }
+
+        if (!itemStack.hasItemMeta()) {
+            return customization == null;
+        }
+
+        final ItemMeta meta = itemStack.getItemMeta();
+        final String itemIdentifier = meta.getPersistentDataContainer().get(BancoItemRegistry.CUSTOM_ITEM_IDENTIFIER_KEY, PersistentDataType.STRING);
+
+        if (itemIdentifier != null) {
+            if (itemIdentifier.equals(getIdentifier())) {
+                return true;
+            }
+
+            // Legacy comparison support:
+            // Prior to v1.3.3, the identifier string was generated getting the string value of "customization",
+            // which was way more restrictive
+            String legacy = material + "-" + value + "-" + customization;
+            return itemIdentifier.equals(legacy.replace(", restrictInteractions=null", ""));
+        }
+
+        // Fallback for legacy items or items without PDC
+        if (customization == null) {
+            // Check if it's similar to a plain ItemStack of this material
+            return itemStack.isSimilar(new ItemStack(material));
+        }
+
+        return false;
     }
 
     public BancoItemOptions customization() {
@@ -150,13 +187,42 @@ public final class VanillaBancoItem implements BancoItem {
     } 
 
     private String getIdentifier() {
-        String base = material + "-" + value + "-" + customization;
-        String horribleFix = base.replace(", restrictInteractions=null", "");
-        return horribleFix;
+        if (this.identifier != null) {
+            return this.identifier;
+        }
+
+        if (customization == null) {
+            return this.identifier = material.name() + ":" + value.toPlainString();
+        }
+
+        return this.identifier = material.name() + ":" + value.toPlainString() + ":" + customization.getSignature();
     }
 
-    public static record BancoItemOptions(String displayName, List<String> lore, Integer customModelData, Boolean glowEffect, Integer maxStackSize, String headTextureUrl, List<AttributeField> attributes, Boolean restrictInteractions) {
-        
+    public static record BancoItemOptions(
+        String displayName, 
+        List<String> lore, 
+        Integer customModelData, 
+        Boolean glowEffect, 
+        Integer maxStackSize, 
+        String headTextureUrl, 
+        List<AttributeField> attributes, 
+        Boolean restrictInteractions
+    ) implements Serializable {
+
+        public String getSignature() {
+            final Map<String, Object> components = new TreeMap<>();
+            if (displayName != null) components.put("name", displayName);
+            if (lore != null && !lore.isEmpty()) components.put("lore", lore);
+            if (customModelData != null) components.put("model", customModelData);
+            if (glowEffect != null && glowEffect) components.put("glow", true);
+            if (maxStackSize != null) components.put("stack", maxStackSize);
+            if (headTextureUrl != null) components.put("head", headTextureUrl);
+            if (attributes != null && !attributes.isEmpty()) components.put("attr", attributes);
+            if (restrictInteractions != null && restrictInteractions) components.put("restrict", true);
+            
+            return Integer.toHexString(components.hashCode());
+        }
+
         public Boolean glowEffect() {
             if (glowEffect == null)
                 return false;
@@ -164,7 +230,7 @@ public final class VanillaBancoItem implements BancoItem {
             return glowEffect;
         }
 
-        public record AttributeField(String key, double amount, AttributeModifier.Operation operation, String group) {
+        public record AttributeField(String key, double amount, AttributeModifier.Operation operation, String group) implements Serializable {
             
             public Attribute getAttribute() {
                 return Registry.ATTRIBUTE.get(NamespacedKey.fromString(key));
@@ -175,6 +241,7 @@ public final class VanillaBancoItem implements BancoItem {
             }
 
         }
+
     }
     
 }
