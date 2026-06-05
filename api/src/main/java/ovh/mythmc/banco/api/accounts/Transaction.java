@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
+
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import java.util.List;
 import java.util.UUID;
 
@@ -181,8 +183,7 @@ public class Transaction {
             }
 
             // Store remaining as pending transaction
-            account.setTransactions(account.getTransactions()
-                .add(toAdd.setScale(2, RoundingMode.HALF_UP)));
+            account.setTransactions(account.getTransactions().add(MoneyUtil.normalize(toAdd)));
         } else {
             // Offline players: only add to storage systems that support offline players
             for (final BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
@@ -222,8 +223,7 @@ public class Transaction {
             }
 
             // Adjust pending transactions
-            account.setTransactions(account.getTransactions()
-                .subtract(toRemove.setScale(2, RoundingMode.HALF_UP)));
+            account.setTransactions(account.getTransactions().subtract(MoneyUtil.normalize(toRemove)));
         } else {
             // Offline players: only remove from storage systems that support offline players
             for (final BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {

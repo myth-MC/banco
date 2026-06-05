@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Configuration
@@ -29,6 +30,15 @@ public class CurrencyConfig {
 
     @Comment("How money should be displayed (default = 1,451.34)")
     private @NotNull String format = "#,###.##";
+
+    @Comment("Number of decimal places to round to")
+    private int scale = 2;
+
+    @Comment({
+        "Rounding mode to use when normalizing money values",
+        "https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html"
+    })
+    private RoundingMode roundingMode = RoundingMode.HALF_UP;
 
     @Comment({"Whether to prevent items configured below from dropping when killing mobs", "This prevents players from building money farms, so it's recommended to keep it enabled"})
     private boolean removeDrops = true;

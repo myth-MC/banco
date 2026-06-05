@@ -86,6 +86,7 @@ public class Account {
      * @return the account's current balance
      */
     @NotNull
+    @Deprecated
     public BigDecimal amount() {
         return balance();
     }
