@@ -18,6 +18,7 @@ tasks.shadowJar {
     relocate("de.exlll", "ovh.mythmc.banco.libs.de.exlll")
     relocate("org.snakeyaml", "ovh.mythmc.banco.libs.org.snakeyaml")
     relocate("org.bstats", "ovh.mythmc.banco.libs.org.bstats")
+    relocate("dev.faststats", "ovh.mythmc.banco.libs.dev.faststats")
     relocate("com.j256", "ovh.mythmc.banco.libs.com.j256")
     relocate("io.leangen", "ovh.mythmc.banco.libs.io.leangen")
     relocate("org.apiguardian", "ovh.mythmc.banco.libs.org.apiguardian")
