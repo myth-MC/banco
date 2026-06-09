@@ -7,6 +7,7 @@ import ovh.mythmc.banco.api.items.BancoItem;
 import ovh.mythmc.banco.api.items.impl.LegacyBancoItem;
 import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 import ovh.mythmc.banco.api.items.impl.VanillaBancoItem.BancoItemOptions;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem.BancoItemOptions.RestrictedInteraction;
 
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +85,10 @@ public class CurrencyConfig {
             4,
             "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
             null,
-            true
+            List.of(
+                RestrictedInteraction.ALL
+            ),
+            null
             //List.of(
             //    new BancoItemOptions.AttributeField("minecraft:movement_speed", -0.0025, AttributeModifier.Operation.ADD_NUMBER, "ANY")
             //)

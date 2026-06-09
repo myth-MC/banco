@@ -153,12 +153,14 @@ public final class ItemUtil {
     }
 
     /**
+     * @deprecated As of banco-api v1.4.0, use {@link BancoItem#customization()} with the new {@link RestrictedInteraction} class instead.
      * Determines whether a {@link BancoItem} is able to interact with other blocks
      * or entities.
      * @param bancoItem the {@link BancoItem} to check
      * @return          {@code true} if the item is able to interact, or {@code false}
      *                  otherwise
      */
+    @Deprecated(forRemoval = true, since = "1.4.0")
     public static boolean isInteractive(@NotNull BancoItem bancoItem) {
         if (bancoItem instanceof VanillaBancoItem item) {
             if (item.customization() == null)

@@ -13,7 +13,8 @@ import org.bukkit.inventory.ItemStack;
 
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.items.BancoItem;
-import ovh.mythmc.banco.api.util.ItemUtil;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem.BancoItemOptions.RestrictedInteraction;
 
 public class InteractionListener implements Listener {
 
@@ -24,8 +25,11 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractive(bancoItem))
-            event.setResult(null);
+        if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+            if (vanillaBancoItem.isRestricted(RestrictedInteraction.ANVIL)) {
+                event.setResult(null);
+            }
+        }
     }
 
     @EventHandler
@@ -41,9 +45,11 @@ public class InteractionListener implements Listener {
             if (bancoItem == null)
                 return;
 
-            if (!ItemUtil.isInteractive(bancoItem)) {
-                event.getInventory().setResult(null);
-                break;
+            if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+                if (vanillaBancoItem.isRestricted(RestrictedInteraction.CRAFTING_TABLE)) {
+                    event.getInventory().setResult(null);
+                    break;
+                }
             }
         }
     }
@@ -54,8 +60,10 @@ public class InteractionListener implements Listener {
         if (bancoItem == null) 
             return;
 
-        if (!ItemUtil.isInteractive(bancoItem)) {
-            event.setCancelled(true);
+        if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+            if (vanillaBancoItem.isRestricted(RestrictedInteraction.ENCHANTMENT_TABLE)) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -65,8 +73,10 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractive(bancoItem)) {
-            event.setCancelled(true);
+        if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+            if (vanillaBancoItem.isRestricted(RestrictedInteraction.INTERACT)) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -77,8 +87,10 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractive(bancoItem)) {
-            event.setCancelled(true);
+        if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+            if (vanillaBancoItem.isRestricted(RestrictedInteraction.INTERACT_WITH_ENTITY)) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -88,8 +100,10 @@ public class InteractionListener implements Listener {
         if (bancoItem == null)
             return;
 
-        if (!ItemUtil.isInteractive(bancoItem)) {
-            event.setCancelled(true);
+        if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+            if (vanillaBancoItem.isRestricted(RestrictedInteraction.CONSUME)) {
+                event.setCancelled(true);
+            }
         }
     }   
     
