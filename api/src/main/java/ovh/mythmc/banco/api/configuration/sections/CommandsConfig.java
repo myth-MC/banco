@@ -16,10 +16,10 @@ public class CommandsConfig {
 
     private String errorPrefix = "<#810909>\u274C</#810909>";
 
-    @Comment({"/balance - Allows players to view their current balance", "Permission: banco.use.balance (assigned by default)"})
+    @Comment({"/balance - Allows players to see their current balance", "Permission: banco.use.balance (assigned by default)"})
     private SimpleCommand balance = new SimpleCommand(true);
 
-    @Comment({"/balancetop - Allows players to view the balance top", "Permission: banco.use.balancetop (assigned by default)"})
+    @Comment({"/balancetop - Allows players to see the balance top", "Permission: banco.use.balancetop (assigned by default)"})
     private SimpleCommand balanceTop = new SimpleCommand(true);
 
     @Comment({"/pay - Allows players to send money to other accounts", "Permission: banco.use.pay (assigned by default)"})

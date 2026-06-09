@@ -12,6 +12,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
@@ -58,16 +59,14 @@ public final class PayCommand implements MainCommand {
                 Banco.get().getAccountManager().deposit(target, amount);
 
                 MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.pay.success",
-                        Component.text(MessageUtil.format(amount)),
-                        Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()),
+                        MoneyUtil.format(amount),
                         Component.text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
                 );
 
                 if (Bukkit.getOfflinePlayer(target.getUuid()).isOnline()) {
                     MessageUtil.info((Audience) Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), Component.translatable("banco.commands.pay.received",
                         Component.text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
-                        Component.text(MessageUtil.format(amount)),
-                        Component.text(Banco.get().getSettings().get().getCurrency().getSymbol())
+                        MoneyUtil.format(amount)
                     ));
                 }
             })

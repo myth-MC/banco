@@ -7,7 +7,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.social.api.Social;
 import ovh.mythmc.social.api.reaction.Reaction;
 import ovh.mythmc.social.api.util.registry.NamespacedRegistryKey;
@@ -36,10 +36,10 @@ public final class BancoSocialHook {
                 return Component.empty();
 
             String playerName = context.user().username();
-            String formattedAmount = MessageUtil.format(account.balance());
-            String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
+            //String formattedAmount = MessageUtil.format(account.balance());
+            //String currencySymbol = Banco.get().getSettings().get().getCurrency().getSymbol();
 
-            return Component.text(formattedAmount + currencySymbol, NamedTextColor.LIGHT_PURPLE)
+            return MoneyUtil.format(account.balance()).color(NamedTextColor.LIGHT_PURPLE)
                 .clickEvent(ClickEvent.runCommand("/banco:balance " + playerName));
         });
     }

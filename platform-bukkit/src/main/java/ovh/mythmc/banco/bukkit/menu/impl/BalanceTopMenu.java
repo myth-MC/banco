@@ -7,16 +7,20 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.banco.bukkit.menu.BasicMenu;
 import ovh.mythmc.banco.bukkit.menu.MenuButton;
-import ovh.mythmc.banco.common.util.MessageUtil;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public final class BalanceTopMenu extends BasicMenu {
+
+    private static LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     @Override
     protected Inventory createInventory() {
@@ -37,9 +41,9 @@ public final class BalanceTopMenu extends BasicMenu {
                     continue;
 
                 final OfflinePlayer player = optPlayerReference.get().toOfflinePlayer();
-                String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
+                String balance = LEGACY_COMPONENT_SERIALIZER.serialize(MoneyUtil.format(entry.getValue()));
     
-                String itemName = String.format(Banco.get().getSettings().get().getDialogs().getBalanceTop().format(),
+                String itemName = String.format(Banco.get().getSettings().get().getDialogs().getBalanceTop().entryFormat(),
                         slot+1,
                         player.getName(),
                         balance

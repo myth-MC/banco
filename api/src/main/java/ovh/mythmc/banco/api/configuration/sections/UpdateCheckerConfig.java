@@ -8,10 +8,10 @@ import lombok.Getter;
 @Getter
 public class UpdateCheckerConfig {
 
-    @Comment("Whether the update checker should be enabled")
+    @Comment("Set to 'true' to enable the update checker. The plugin will check for updates every 'intervalInHours' hours and notify the console if a new version is available")
     private boolean enabled = true;
 
-    @Comment("Interval of hours between each check")
+    @Comment("Interval of hours between each check for updates")
     private int intervalInHours = 6;
 
 }

@@ -5,16 +5,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import org.jetbrains.annotations.NotNull;
-
 import lombok.experimental.UtilityClass;
 import ovh.mythmc.banco.api.Banco;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-
 @UtilityClass
 public class MessageUtil {
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     public void info(Audience audience, String message, Component... placeholders) {
         info(audience, Component.translatable(message, placeholders));
@@ -86,15 +83,10 @@ public class MessageUtil {
         );
     }
 
-    public String format(final @NotNull BigDecimal value) {
-        DecimalFormat format = new DecimalFormat(Banco.get().getSettings().get().getCurrency().getFormat());
-        return format.format(value);
-    }
-
     private static Component getPrefix(String configPrefix) {
         Component prefix = Component.empty();
         if (configPrefix != null && !configPrefix.isEmpty())
-            prefix = MiniMessage.miniMessage().deserialize(configPrefix + " ");
+            prefix = MINI_MESSAGE.deserialize(configPrefix + " ");
 
         return prefix;
     }

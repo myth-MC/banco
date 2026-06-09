@@ -19,7 +19,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.accounts.Transaction;
-import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 
 public final class TransactionHistoryDialog {
 
@@ -52,7 +52,7 @@ public final class TransactionHistoryDialog {
                     Component.text(dateFormat.format(Date.from(transaction.timestamp())), NamedTextColor.GRAY)
                         .append(Component.text(" | ", NamedTextColor.DARK_GRAY))
                         .append(operationComponent)
-                        .append(Component.text(MessageUtil.format(transaction.amount()) + Banco.get().getSettings().get().getCurrency().getSymbol(), NamedTextColor.WHITE))
+                        .append(MoneyUtil.format(transaction.amount()))
                 )
             );
         }

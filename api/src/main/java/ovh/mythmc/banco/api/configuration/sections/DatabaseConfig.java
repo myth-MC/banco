@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class DatabaseConfig {
 
-    @Comment("Database type (SQLITE, MYSQL or POSTGRESQL)")
+    @Comment("Database type (supports SQLITE, MYSQL or POSTGRESQL)")
     private DatabaseType type = DatabaseType.SQLITE;
 
     @Comment("MySQL connection")
@@ -28,7 +28,7 @@ public class DatabaseConfig {
     @Comment({"(SQLite) Whether database writes should run on a separate thread", "Don't change this unless your server has performance issues while saving data"})
     private boolean asynchronousWrites = false;
 
-    @Comment("Don't change this, you might lose all your data")
+    @Comment("Don't change this, it's used to keep track of the database version and update it when necessary. If you change it to a lower value, you might lose data")
     private int databaseVersion = 0;
 
     @Comment("Don't change this, you might lose all your data")

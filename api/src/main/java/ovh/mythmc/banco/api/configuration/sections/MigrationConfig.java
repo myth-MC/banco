@@ -11,6 +11,7 @@ import lombok.Getter;
 public class MigrationConfig {
 
     @Comment({
+        "EXPERIMENTAL FEATURE - USE WITH CAUTION!!",
         "Set to 'true' to enable the migration from another Vault provider (only TNE is supported for now):", 
         "  1. Back up the current economy database", 
         "  2. Configure the item registry", 

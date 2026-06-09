@@ -1,5 +1,6 @@
 package ovh.mythmc.banco.common.hooks;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -10,8 +11,8 @@ import org.bukkit.plugin.ServicePriority;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.banco.api.util.PlayerUtil;
-import ovh.mythmc.banco.common.util.MessageUtil;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -21,6 +22,8 @@ import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class BancoVaultHook implements Economy, BancoEconomyHook {
+
+    private static LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -73,7 +76,7 @@ public class BancoVaultHook implements Economy, BancoEconomyHook {
 
     @Override
     public String format(double v) {
-        return MessageUtil.format(BigDecimal.valueOf(v)) + Banco.get().getSettings().get().getCurrency().getSymbol();
+        return LEGACY.serialize(MoneyUtil.format(BigDecimal.valueOf(v)));
     }
 
     @Override

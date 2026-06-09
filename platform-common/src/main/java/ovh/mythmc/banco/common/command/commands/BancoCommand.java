@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.incendo.cloud.CommandManager;
@@ -23,8 +24,11 @@ import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.items.BancoItem;
+import ovh.mythmc.banco.api.items.impl.VanillaBancoItem;
 import ovh.mythmc.banco.api.scheduler.BancoScheduler;
 import ovh.mythmc.banco.api.util.ItemUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
@@ -102,9 +106,7 @@ public final class BancoCommand implements MainCommand {
                 Banco.get().getAccountManager().deposit(target, amount);
                 MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.banco.give.success",
                     Component.text(target.getName()),
-                    Component.text(MessageUtil.format(amount)),
-                    Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
-                );
+                    MoneyUtil.format(amount)));
             })
         );
 
@@ -122,9 +124,7 @@ public final class BancoCommand implements MainCommand {
                 Banco.get().getAccountManager().set(target, amount);
                 MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.banco.set.success",
                     Component.text(target.getName()),
-                    Component.text(MessageUtil.format(amount)),
-                    Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
-                );
+                    MoneyUtil.format(amount)));
             })
         );
 
@@ -142,19 +142,15 @@ public final class BancoCommand implements MainCommand {
                 final BigDecimal accountAmount = target.balance();
                 if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && amount.compareTo(accountAmount) > 0) {
                     MessageUtil.error(ctx.sender(), Component.translatable("banco.commands.banco.take.amount-too-high",
-                        Component.text(MessageUtil.format(amount)),
-                        Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()),
-                        Component.text(MessageUtil.format(accountAmount))
-                    ));
+                        MoneyUtil.format(amount),
+                        MoneyUtil.format(accountAmount)));
                     return;
                 } 
 
                 Banco.get().getAccountManager().withdraw(target, amount);
                 MessageUtil.success(ctx.sender(), Component.translatable("banco.commands.banco.take.success",
                     Component.text(target.getName()),
-                    Component.text(MessageUtil.format(amount)),
-                    Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
-                );
+                    MoneyUtil.format(amount)));
             })
         );
 
@@ -242,6 +238,35 @@ public final class BancoCommand implements MainCommand {
                     // Global save
                     final long totalTime = Banco.get().getAccountManager().getDatabase().updateAllDatabaseEntries();
                     MessageUtil.debug(ctx.sender(), String.format("Done! (took %sms)", totalTime));
+                })
+            );
+
+            commandManager.command(bancoCommand
+                .literal("debug")
+                .literal("item_id")
+                .permission("banco.use.banco.debug.item_id")
+                .commandDescription(Description.of("Gets the identifier of the item in your main hand"))
+                .handler(ctx -> {
+                    if (!ctx.sender().isPlayer()) {
+                        return;
+                    }
+
+                    final Player player = (Player) ctx.sender().source();
+                    final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+                    if (itemInMainHand == null || itemInMainHand.getType() == Material.AIR) {
+                        return;
+                    }
+
+                    final BancoItem bancoItem = Banco.get().getItemRegistry().getByItemStack(itemInMainHand);
+                    if (bancoItem == null) {
+                        return;
+                    }
+
+                    if (bancoItem instanceof VanillaBancoItem vanillaBancoItem) {
+                        final String identifier = vanillaBancoItem.getIdentifier();
+                        MessageUtil.debug(ctx.sender(), Component.text(identifier)
+                            .clickEvent(ClickEvent.copyToClipboard(identifier)));
+                    }
                 })
             );
         }

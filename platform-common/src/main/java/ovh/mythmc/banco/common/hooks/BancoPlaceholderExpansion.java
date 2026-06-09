@@ -1,18 +1,22 @@
 package ovh.mythmc.banco.common.hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
-import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
 public class BancoPlaceholderExpansion extends PlaceholderExpansion {
+
+    private static LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     @Override
     public @NotNull String getIdentifier() {
@@ -41,9 +45,13 @@ public class BancoPlaceholderExpansion extends PlaceholderExpansion {
             return null;
 
         if (params.equalsIgnoreCase("balance")) {
-            return MessageUtil.format(account.balance());
+            return LEGACY_COMPONENT_SERIALIZER.serialize(MoneyUtil.format(account.balance()));
         } else if (params.equalsIgnoreCase("symbol")) {
             return Banco.get().getSettings().get().getCurrency().getSymbol();
+        } else if (params.equalsIgnoreCase("prefix")) {
+            return LEGACY_COMPONENT_SERIALIZER.serialize(MoneyUtil.prefix());
+        } else if (params.equalsIgnoreCase("suffix")) {
+            return LEGACY_COMPONENT_SERIALIZER.serialize(MoneyUtil.suffix());
         } else if (params.equalsIgnoreCase("name_plural")) {
             return Banco.get().getSettings().get().getCurrency().getNamePlural();
         } else if (params.equalsIgnoreCase("name_singular")) {

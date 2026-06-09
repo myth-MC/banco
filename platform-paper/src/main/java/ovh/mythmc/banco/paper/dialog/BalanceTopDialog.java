@@ -16,11 +16,14 @@ import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.service.OfflinePlayerReference;
-import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 
 public final class BalanceTopDialog {
+
+    private static MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     public void open(@NotNull Player player) {
         Banco.get().getAccountManager().getTopAsync(1024000).thenAccept(map -> {
@@ -37,16 +40,17 @@ public final class BalanceTopDialog {
                 if (optPlayerReference.isEmpty() || !optPlayerReference.get().toOfflinePlayer().hasPlayedBefore())
                     continue;
     
-                final String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
-                final String formattedText = String.format(Banco.get().getSettings().get().getDialogs().getBalanceTop().format(),
-                        index+1,
-                        optPlayerReference.get().toOfflinePlayer().getName(),
-                        balance
+                //final String balance = MessageUtil.format(entry.getValue()) + Banco.get().getSettings().get().getCurrency().getSymbol();
+                final Component balance = MoneyUtil.format(entry.getValue());
+
+                final Component formattedText = MINI_MESSAGE.deserialize(
+                    Banco.get().getSettings().get().getDialogs().getBalanceTop().entryFormat(),
+                    Placeholder.component("position", Component.text(index+1)),
+                    Placeholder.component("player_name", Component.text(optPlayerReference.get().toOfflinePlayer().getName())),
+                    Placeholder.component("balance", balance)
                 );
     
-                dialogBodyList.add(DialogBody.plainMessage(
-                    MiniMessage.miniMessage().deserialize(formattedText)
-                ));
+                dialogBodyList.add(DialogBody.plainMessage(formattedText));
     
                 index++;
             }

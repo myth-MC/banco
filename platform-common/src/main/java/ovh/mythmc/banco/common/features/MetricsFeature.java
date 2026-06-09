@@ -17,7 +17,6 @@ public final class MetricsFeature {
     private final JavaPlugin plugin;
 
     private Metrics metrics = null;
-    // d65d381513288da05a6032eb58ec9c98
 
     @FeatureEnable
     public void enable() {

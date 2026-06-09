@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.NotNull;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault2.economy.AccountPermission;
 import net.milkbowl.vault2.economy.EconomyResponse;
 import net.milkbowl.vault2.economy.EconomyResponse.ResponseType;
@@ -22,9 +23,11 @@ import ovh.mythmc.banco.api.accounts.AccountIdentifierKey;
 import ovh.mythmc.banco.api.accounts.Transaction;
 import ovh.mythmc.banco.api.accounts.Transaction.Operation;
 import ovh.mythmc.banco.api.logger.LoggerWrapper;
-import ovh.mythmc.banco.common.util.MessageUtil;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 
 public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy.Economy, BancoEconomyHook {
+
+    private static LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private final LoggerWrapper logger = new LoggerWrapper() {
         @Override
@@ -99,17 +102,17 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
 
     @Override
     public @NotNull String format(@NotNull String pluginName, @NotNull BigDecimal amount) {
-        return MessageUtil.format(amount) + Banco.get().getSettings().get().getCurrency().getSymbol();
+        return LEGACY.serialize(MoneyUtil.format(amount));
     }
 
     @Override
     public @NotNull String format(@NotNull BigDecimal amount, @NotNull String currency) {
-        return format("banco", amount, currency);
+        return format("banco", amount);
     }
 
     @Override
     public @NotNull String format(@NotNull String pluginName, @NotNull BigDecimal amount, @NotNull String currency) {
-        return MessageUtil.format(amount) + Banco.get().getSettings().get().getCurrency().getSymbol();
+        return format(amount, currency);
     }
 
     @Override

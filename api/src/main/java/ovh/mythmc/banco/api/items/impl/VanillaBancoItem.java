@@ -186,7 +186,7 @@ public final class VanillaBancoItem implements BancoItem {
         return LegacyComponentSerializer.legacySection().serialize(component);
     } 
 
-    private String getIdentifier() {
+    public String getIdentifier() {
         if (this.identifier != null) {
             return this.identifier;
         }
@@ -195,10 +195,13 @@ public final class VanillaBancoItem implements BancoItem {
             return this.identifier = material.name() + ":" + value.toPlainString();
         }
 
-        return this.identifier = material.name() + ":" + value.toPlainString() + ":" + customization.getSignature();
+        return this.customization.identifier == null
+            ? this.identifier = material.name() + ":" + value.toPlainString() + ":" + customization.getSignature()
+            : this.customization.identifier;
     }
 
     public static record BancoItemOptions(
+        String identifier,
         String displayName, 
         List<String> lore, 
         Integer customModelData, 

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.Account;
+import ovh.mythmc.banco.api.util.MoneyUtil;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
@@ -39,15 +40,11 @@ public final class BalanceCommand implements MainCommand {
                     final Account account = ctx.getOrDefault("account", Banco.get().getAccountManager().getByName(ctx.sender().name()));
                     if (!ctx.contains("account")) {
                         MessageUtil.info(ctx.sender(), Component.translatable("banco.commands.balance",
-                            Component.text(MessageUtil.format(account.balance())),
-                            Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
-                        );
+                            MoneyUtil.format(account.balance())));
                     } else {
                         MessageUtil.info(ctx.sender(), Component.translatable("banco.commands.balance.others",
                             Component.text(account.getName()),
-                            Component.text(MessageUtil.format(account.balance())),
-                            Component.text(Banco.get().getSettings().get().getCurrency().getSymbol()))
-                        );
+                            MoneyUtil.format(account.balance())));
                     }
                 });
             })
