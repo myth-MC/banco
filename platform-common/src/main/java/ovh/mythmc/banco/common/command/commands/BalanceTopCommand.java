@@ -10,7 +10,7 @@ import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
-public final class BalanceTopCommand implements MainCommand {
+public final class BalanceTopCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -18,7 +18,7 @@ public final class BalanceTopCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var balanceTopCommand = commandManager.commandBuilder("balancetop", "baltop")
             .permission("banco.use.balancetop")
             .commandDescription(Description.of("Displays the balance top"));

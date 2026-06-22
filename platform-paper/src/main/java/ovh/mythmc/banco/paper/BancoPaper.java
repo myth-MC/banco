@@ -3,14 +3,11 @@ package ovh.mythmc.banco.paper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
-import org.incendo.cloud.paper.LegacyPaperCommandManager;
+import org.incendo.cloud.paper.PaperCommandManager;
 
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
-import ovh.mythmc.banco.common.command.BancoCommandProvider;
-import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ovh.mythmc.banco.api.Banco;
 import ovh.mythmc.banco.api.accounts.AccountManager;
@@ -117,7 +114,8 @@ public final class BancoPaper extends BancoBootstrap {
         Bukkit.getPluginManager().registerEvents(uuidResolver, getPlugin());
     }
 
-    private static BancoCommandProvider provider(@NotNull JavaPlugin plugin) {
+    private static PaperCommandProvider provider(@NotNull JavaPlugin plugin) {
+        /*
         final var commandManager = new LegacyPaperCommandManager<BancoCommandSource>(
             plugin, 
             ExecutionCoordinator.simpleCoordinator(), 
@@ -126,6 +124,16 @@ public final class BancoPaper extends BancoBootstrap {
                 bancoSource -> (CommandSender) bancoSource.source()
             )
         );
+
+        return new PaperCommandProvider(commandManager);
+         */
+        final var commandManager = PaperCommandManager.builder(
+            SenderMapper.create(
+                commandSourceStack -> new PaperCommandSource(commandSourceStack), 
+                bancoSource -> bancoSource.commandSourceStack()
+            ))
+            .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
+            .buildOnEnable(plugin);
 
         return new PaperCommandProvider(commandManager);
     }

@@ -17,7 +17,7 @@ import ovh.mythmc.banco.common.features.MigrationFeature;
 import ovh.mythmc.banco.common.util.MessageUtil;
 import ovh.mythmc.gestalt.Gestalt;
 
-public final class MigrateCommand implements MainCommand {
+public final class MigrateCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -25,7 +25,7 @@ public final class MigrateCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var migrateCommand = commandManager.commandBuilder("bancomigrate")
             .permission("banco.use.bancomigrate")
             .commandDescription(Description.of("Migrates the economy from another provider to banco"));

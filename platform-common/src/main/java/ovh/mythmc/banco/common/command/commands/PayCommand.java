@@ -17,7 +17,7 @@ import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-public final class PayCommand implements MainCommand {
+public final class PayCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -25,7 +25,7 @@ public final class PayCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var payCommand = commandManager.commandBuilder("pay")
             .permission("banco.use.pay")
             .commandDescription(Description.of("Transfers money into another account"));

@@ -10,7 +10,7 @@ import ovh.mythmc.banco.common.boot.BancoBootstrap;
 import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
-public final class BalanceConvertCommand implements MainCommand {
+public final class BalanceConvertCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -18,7 +18,7 @@ public final class BalanceConvertCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var balanceConvertCommand = commandManager.commandBuilder("balanceconvert", "balconvert")
             .permission("banco.use.balanceconvert")
             .commandDescription(Description.of("Allows players to convert their balance into an equivalent amount of a specific item"));

@@ -3,12 +3,11 @@ package ovh.mythmc.banco.bukkit;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 
 import org.incendo.cloud.SenderMapper;
+import org.incendo.cloud.bukkit.CloudBukkitCapabilities;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.LegacyPaperCommandManager;
 
 import ovh.mythmc.banco.common.boot.BancoBootstrap;
-import ovh.mythmc.banco.common.command.BancoCommandProvider;
-import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -134,8 +133,8 @@ public final class BancoBukkit extends BancoBootstrap {
         return adventure;
     }
 
-    private static BancoCommandProvider provider(@NotNull JavaPlugin plugin) {
-        final var commandManager = new LegacyPaperCommandManager<BancoCommandSource>(
+    private static BukkitCommandProvider provider(@NotNull JavaPlugin plugin) {
+        final var commandManager = new LegacyPaperCommandManager<BukkitCommandSource>(
             plugin, 
             ExecutionCoordinator.simpleCoordinator(), 
             SenderMapper.create(
@@ -143,6 +142,13 @@ public final class BancoBukkit extends BancoBootstrap {
                 bancoSource -> (CommandSender) bancoSource.source()
             )
         );
+
+        // Enable platform capabilities
+        if (commandManager.hasCapability(CloudBukkitCapabilities.NATIVE_BRIGADIER)) {
+            commandManager.registerBrigadier();
+        } else if (commandManager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+            commandManager.registerAsynchronousCompletions();
+        }
 
         return new BukkitCommandProvider(commandManager);
     }

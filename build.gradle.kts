@@ -53,9 +53,9 @@ subprojects {
         annotationProcessor("org.projectlombok:lombok:1.18.34")
 
         compileOnly("org.jetbrains:annotations:24.1.0")
-        compileOnly("net.kyori:adventure-api:4.25.0")
-        compileOnly("net.kyori:adventure-text-minimessage:4.25.0")
-        compileOnly("net.kyori:adventure-text-serializer-legacy:4.25.0")
+        compileOnly("net.kyori:adventure-api:5.1.1")
+        compileOnly("net.kyori:adventure-text-minimessage:5.1.1")
+        compileOnly("net.kyori:adventure-text-serializer-legacy:5.1.1")
         
         compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
             exclude(group = "org.bukkit", module = "bukkit")
@@ -73,8 +73,8 @@ subprojects {
         implementation("ovh.mythmc:gestalt-loader:0.3.2")
         implementation("com.j256.ormlite:ormlite-core:6.1")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-        implementation("org.incendo:cloud-paper:2.0.0-beta.15")
-        implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.15")
+        implementation("org.incendo:cloud-paper:2.0.0-beta.16")
+        implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.16")
     }
     
     tasks.withType<JavaCompile> {

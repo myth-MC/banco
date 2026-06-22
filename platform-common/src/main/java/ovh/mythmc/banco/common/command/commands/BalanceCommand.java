@@ -14,7 +14,7 @@ import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-public final class BalanceCommand implements MainCommand {
+public final class BalanceCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -22,7 +22,7 @@ public final class BalanceCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var balanceCommand = commandManager.commandBuilder("balance", "bal", "money")
             .permission("banco.use.balance")
             .commandDescription(Description.of("Displays your current balance"));

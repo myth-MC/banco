@@ -3,7 +3,6 @@ package ovh.mythmc.banco.common.translation;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslationStore;
 import net.kyori.adventure.translation.GlobalTranslator;
-import net.kyori.adventure.util.UTF8ResourceBundleControl;
 
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
@@ -78,7 +77,7 @@ public final class BancoLocalization {
             // Get specific locale
             final String baseName = "i10n_" + langTag;
             final Locale locale = Locale.forLanguageTag(langTag.replace("_", "-"));
-            final ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale, UTF8ResourceBundleControl.utf8ResourceBundleControl());
+            final ResourceBundle resourceBundle = ResourceBundle.getBundle(baseName, locale);
             final Path localeOverridesPath = Paths.get(baseFile + File.separator + "lang" + File.separator + langTag + "_overrides.properties");
 
             // Override global & locale-specific keys

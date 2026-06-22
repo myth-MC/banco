@@ -4,35 +4,40 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.kyori.adventure.audience.Audience;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
 public final class PaperCommandSource implements BancoCommandSource {
 
-    private final CommandSender source;
+    private final CommandSourceStack commandSourceStack;
 
-    public PaperCommandSource(@NotNull CommandSender source) {
-        this.source = source;
+    public PaperCommandSource(@NotNull CommandSourceStack commandSourceStack) {
+        this.commandSourceStack = commandSourceStack;
     }
 
     @Override
     public @NotNull Audience audience() {
-        return this.source;
+        return this.commandSourceStack.getSender();
     }
 
     @Override
     public CommandSender source() {
-        return this.source;
+        return this.commandSourceStack.getSender();
     }
 
     @Override
     public boolean isPlayer() {
-        return this.source instanceof Player;
+        return this.commandSourceStack.getSender() instanceof Player;
     }
 
     @Override
     public String name() {
-        return this.source.getName();
+        return this.commandSourceStack.getSender().getName();
+    }
+
+    public CommandSourceStack commandSourceStack() {
+        return this.commandSourceStack;
     }
     
 }

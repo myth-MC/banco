@@ -32,9 +32,9 @@ import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 import ovh.mythmc.banco.common.update.UpdateChecker;
 import ovh.mythmc.banco.common.util.MessageUtil;
 
-public final class BancoCommand implements MainCommand {
+public final class BancoCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
-    private MinecraftHelp<BancoCommandSource> help;
+    private MinecraftHelp<S> help;
 
     @Override
     public boolean canRegister() {
@@ -42,7 +42,7 @@ public final class BancoCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         // Create MinecraftHelp instance
         help = MinecraftHelp.createNative("/banco help", commandManager);
 

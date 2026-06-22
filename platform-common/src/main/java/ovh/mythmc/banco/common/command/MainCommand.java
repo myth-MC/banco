@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
-public interface MainCommand {
+public interface MainCommand<S extends BancoCommandSource> {
 
     boolean canRegister();
 
-    void register(@NotNull CommandManager<BancoCommandSource> commandManager);
+    void register(@NotNull CommandManager<S> commandManager);
     
 }

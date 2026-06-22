@@ -12,7 +12,7 @@ import ovh.mythmc.banco.common.command.MainCommand;
 import ovh.mythmc.banco.common.command.parser.AccountParser;
 import ovh.mythmc.banco.common.command.sender.BancoCommandSource;
 
-public final class TransactionHistoryCommand implements MainCommand {
+public final class TransactionHistoryCommand<S extends BancoCommandSource> implements MainCommand<S> {
 
     @Override
     public boolean canRegister() {
@@ -20,7 +20,7 @@ public final class TransactionHistoryCommand implements MainCommand {
     }
 
     @Override
-    public void register(@NotNull CommandManager<BancoCommandSource> commandManager) {
+    public void register(@NotNull CommandManager<S> commandManager) {
         final var balanceTopCommand = commandManager.commandBuilder("transactions", "th")
             .permission("banco.use.transactions")
             .commandDescription(Description.of("Displays the transaction history"));
