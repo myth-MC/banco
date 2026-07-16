@@ -53,12 +53,23 @@ public abstract class AbstractLocalUUIDResolver implements LocalUUIDResolver {
             scheduler.runAsync(() -> {
                 try {
                     serverOfflinePlayers().forEach(offlinePlayer -> {
+                        if (offlinePlayer == null) {
+                            Banco.get().getLogger().debug("Encountered a null offline player reference while caching");
+                            return;
+                        }
+
+                        if (offlinePlayer.uuid() == null || offlinePlayer.name() == null) {
+                            Banco.get().getLogger().debug("Encountered an offline player reference with null UUID or name: {}", offlinePlayer);
+                            return;
+                        }
+
                         offlinePlayers.put(offlinePlayer.uuid(), offlinePlayer);
                         uuidMap.put(offlinePlayer.name(), offlinePlayer.uuid());
                     });
                     Banco.get().getLogger().info("Cached {} offline players!", offlinePlayers.size());
                 } catch (Exception e) {
                     Banco.get().getLogger().error("Error caching offline players: {}", e);
+                    e.printStackTrace();
                 }
             });
         });
