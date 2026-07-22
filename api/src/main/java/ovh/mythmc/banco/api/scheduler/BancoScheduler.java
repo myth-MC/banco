@@ -94,6 +94,16 @@ public abstract class BancoScheduler {
     public abstract void run(@NotNull Runnable runnable);
 
     /**
+     * Executes a runnable synchronously on the main server thread after a delay.
+     *
+     * @param runnable         the task to execute
+     * @param delayInTicks     the delay in ticks
+     * @throws IllegalArgumentException if runnable is null
+     * @throws IllegalArgumentException if delayInTicks is negative
+     */
+    public abstract void runDelayed(@NotNull Runnable runnable, long delayInTicks);
+
+    /**
      * Executes a runnable asynchronously.
      *
      * @param runnable the task to execute

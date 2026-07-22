@@ -2,6 +2,7 @@ package ovh.mythmc.banco.paper.scheduler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import lombok.RequiredArgsConstructor;
 import ovh.mythmc.banco.api.Banco;
@@ -15,6 +16,21 @@ public final class BancoSchedulerPaper extends BancoScheduler {
     @Override
     public void run(Runnable runnable) {
         Bukkit.getGlobalRegionScheduler().run(plugin, scheduledTask -> runnable.run());
+    }
+
+    @Override
+    public void runDelayed(@NotNull Runnable runnable, long delayInTicks) {
+        if (runnable == null) {
+            throw new IllegalArgumentException("Runnable cannot be null");
+        }
+        if (delayInTicks < 0) {
+            throw new IllegalArgumentException("Delay in ticks cannot be negative");
+        }
+        if (delayInTicks == 0) {
+            run(runnable);
+            return;
+        }
+        Bukkit.getGlobalRegionScheduler().runDelayed(plugin, scheduledTask -> runnable.run(), delayInTicks);
     }
 
     @Override
