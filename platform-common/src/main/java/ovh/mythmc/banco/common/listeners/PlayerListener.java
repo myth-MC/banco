@@ -3,6 +3,7 @@ package ovh.mythmc.banco.common.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -49,6 +50,20 @@ public class PlayerListener implements Listener {
             return;
 
         BancoScheduler.get().runDelayed(() -> {
+            Banco.get().getAccountManager().balance(uuid); // updates account balance
+        }, 1L);
+    }
+
+    @EventHandler
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
+
+        if (Banco.get().getAccountManager().getByUuid(uuid) == null)
+            return;
+
+        BancoScheduler.get().runDelayed(() -> {
+            Account account = Banco.get().getAccountManager().getByUuid(uuid);
+            Banco.get().getAccountManager().updateTransactions(account);
             Banco.get().getAccountManager().balance(uuid); // updates account balance
         }, 1L);
     }
