@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     group = "ovh.mythmc"
-    version = "1.4.2"
+    version = "1.4.1"
 
     repositories {
         mavenCentral()
