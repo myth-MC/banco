@@ -179,6 +179,12 @@ public class BancoVaultHook implements Economy, BancoEconomyHook {
                     EconomyResponse.ResponseType.FAILURE,
                     "Player is in blacklisted world");
 
+        if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && v > getBalance(s))
+            return new EconomyResponse(0,
+                    getBalance(s),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Not enough funds");
+
         Banco.get().getAccountManager().withdraw(uuid, BigDecimal.valueOf(v));
 
         return new EconomyResponse(v,
@@ -200,6 +206,12 @@ public class BancoVaultHook implements Economy, BancoEconomyHook {
                     getBalance(offlinePlayer),
                     EconomyResponse.ResponseType.FAILURE,
                     "Player is in blacklisted world");
+
+        if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && v > getBalance(offlinePlayer))
+            return new EconomyResponse(0,
+                    getBalance(offlinePlayer),
+                    EconomyResponse.ResponseType.FAILURE,
+                    "Not enough funds");
 
         Banco.get().getAccountManager().withdraw(uuid, BigDecimal.valueOf(v));
 

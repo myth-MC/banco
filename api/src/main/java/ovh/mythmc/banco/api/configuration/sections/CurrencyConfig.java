@@ -48,7 +48,7 @@ public class CurrencyConfig {
     private RoundingMode roundingMode = RoundingMode.HALF_UP;
 
     @Comment({
-        "Whether to prevent items configured below from dropping when killing mobs", 
+        "Whether to prevent items configured below from dropping when killing mobs",
         "This prevents players from building money farms, so it's recommended to keep it enabled"
     })
     private boolean removeDrops = true;
@@ -65,7 +65,11 @@ public class CurrencyConfig {
     @Comment("List of worlds where the plugin will not take effect. You can add or remove entries to customize your setup")
     private @NotNull List<String> blacklistedWorlds = List.of("exampleWorldName");
 
-    @Comment("Whether to allow players to have a negative balance. Some plugins may require tweaking this option to work properly, so you can disable it if you notice any issues")
+    @Comment({
+        "Workaround:",
+        "Some plugins perform account operations without running checks first, which may result in negative balances",
+        "Set this to 'false' to enable fallbacks that prevent negative balances forcefully in those cases"
+    })
     private boolean negativeBalance = true;
 
     @Comment({
@@ -74,26 +78,24 @@ public class CurrencyConfig {
         "The 'options' field allows you to customize the appearance and behavior of each item. For example, you can set a custom name and lore for the item, specify a custom texture for player heads, and even add attribute modifiers that affect player stats when the item is held or worn."
     })
     private List<BancoItem> itemRegistry = List.of(
-        new VanillaBancoItem(Material.EMERALD, BigDecimal.valueOf(1), null),
-        new VanillaBancoItem(Material.EMERALD_BLOCK, BigDecimal.valueOf(9), null),
-        new VanillaBancoItem(Material.PLAYER_HEAD, BigDecimal.valueOf(576), new BancoItemOptions(
-            null,
-            "<white>Bag of Emerald Blocks</white>", 
-            List.of("<gray>Holds <white>64x Emerald Blocks</white></gray>"), 
-            1009, 
-            false, 
-            4,
-            "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
-            null,
-            List.of(
-                RestrictedInteraction.ALL
-            ),
-            null
-            //List.of(
-            //    new BancoItemOptions.AttributeField("minecraft:movement_speed", -0.0025, AttributeModifier.Operation.ADD_NUMBER, "ANY")
-            //)
-        ))
-    );
+            new VanillaBancoItem(Material.EMERALD, BigDecimal.valueOf(1), null),
+            new VanillaBancoItem(Material.EMERALD_BLOCK, BigDecimal.valueOf(9), null),
+            new VanillaBancoItem(Material.PLAYER_HEAD, BigDecimal.valueOf(576), new BancoItemOptions(
+                null,
+                "<white>Bag of Emerald Blocks</white>",
+                List.of("<gray>Holds <white>64x Emerald Blocks</white></gray>"),
+                1009,
+                false,
+                4,
+                "http://textures.minecraft.net/texture/31d827a5decb0ae730abb69617776e1894f2bdb46968540433115d3688fbac38",
+                null,
+                List.of(RestrictedInteraction.ALL),
+                null
+            // List.of(
+            // new BancoItemOptions.AttributeField("minecraft:movement_speed", -0.0025,
+            // AttributeModifier.Operation.ADD_NUMBER, "ANY")
+            // )
+            )));
 
     // Legacy items
     private List<LegacyBancoItem> items = null;

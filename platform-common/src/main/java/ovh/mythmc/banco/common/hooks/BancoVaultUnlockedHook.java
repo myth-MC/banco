@@ -249,7 +249,7 @@ public final class BancoVaultUnlockedHook implements net.milkbowl.vault2.economy
             @NotNull BigDecimal amount) {
 
         final var account = Banco.get().getAccountManager().getByUuid(accountID);
-        if (!has(pluginName, accountID, amount))
+        if (!Banco.get().getSettings().get().getCurrency().isNegativeBalance() && !has(pluginName, accountID, amount))
             return new EconomyResponse(amount, account.balance(), ResponseType.FAILURE, "Not enough funds");
 
         // makes withdrawal synchronously so that callers (Vault/Towny) see the balance
