@@ -23,7 +23,7 @@ dependencies {
         exclude(group = "gs.mclo", module = "java")
     }
     
-    compileOnly("com.nexomc:nexo:1.23") {
+    compileOnly("com.nexomc:nexo:1.27.0") {
         exclude(group = "net.byteflux", module = "libby-bukkit")
         exclude(group = "org.bstats", module = "bstats-bukkit")
     }
