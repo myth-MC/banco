@@ -172,18 +172,22 @@ public class Transaction {
     private void handleDeposit(@NotNull BigDecimal newAmount, @NotNull BigDecimal currentBalance) {
         BigDecimal toAdd = newAmount.subtract(currentBalance);
 
+        // include any pending transactions so that combined deposits are turned into
+        // items once their value reaches the value of the smallest currency item
+        BigDecimal remaining = account.getTransactions().add(toAdd);
+
         final boolean isOnline = Bukkit.getOfflinePlayer(account.getUuid()).isOnline();
 
         if (isOnline) {
             // Online players: add to all storage systems
             for (final BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
-                if (toAdd.compareTo(BigDecimal.ZERO) > 0) {
-                    toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
+                if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                    remaining = remaining.subtract(storage.add(account.getUuid(), remaining));
                 }
             }
 
             // Store remaining as pending transaction
-            account.setTransactions(account.getTransactions().add(MoneyUtil.normalize(toAdd)));
+            account.setTransactions(MoneyUtil.normalize(remaining));
         } else {
             // Offline players: only add to storage systems that support offline players
             for (final BancoStorage storage : Banco.get().getStorageRegistry().getByOrder()) {
@@ -191,13 +195,13 @@ public class Transaction {
                     continue;
                 }
 
-                if (toAdd.compareTo(BigDecimal.ZERO) > 0) {
-                    toAdd = toAdd.subtract(storage.add(account.getUuid(), toAdd));
+                if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                    remaining = remaining.subtract(storage.add(account.getUuid(), remaining));
                 }
             }
 
             // Store remaining as pending transaction
-            account.setTransactions(account.getTransactions().add(toAdd));
+            account.setTransactions(remaining);
         }
 
         Banco.get().getAccountManager().getDatabase().updateCache(account);
