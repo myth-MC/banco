@@ -2,11 +2,13 @@ package ovh.mythmc.banco.api.items.impl;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.BancoItem;
@@ -15,7 +17,8 @@ public record NexoBancoItem(String identifier, BigDecimal value) implements Banc
 
     @Override
     public Component displayName() {
-        return NexoItems.itemFromId(identifier).getCustomName();
+        final ItemBuilder itemBuilder = NexoItems.itemFromId(identifier);
+        return Optional.ofNullable(itemBuilder.getCustomName()).orElse(itemBuilder.getItemName());
     }
 
     @Override
