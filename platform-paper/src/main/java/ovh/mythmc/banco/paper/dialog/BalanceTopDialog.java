@@ -63,6 +63,10 @@ public final class BalanceTopDialog {
             );
     
             player.showDialog(dialog);
+        }).exceptionally(t -> {
+            Banco.get().getLogger().error("Exception while showing balance top dialog:");
+            t.printStackTrace(System.err);
+            return null;
         });
     }
     
