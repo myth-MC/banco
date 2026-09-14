@@ -9,6 +9,7 @@ import de.exlll.configlib.Polymorphic;
 import de.exlll.configlib.PolymorphicTypes;
 import net.kyori.adventure.text.Component;
 import ovh.mythmc.banco.api.items.impl.Base64BancoItem;
+import ovh.mythmc.banco.api.items.impl.CraftEngineBancoItem;
 import ovh.mythmc.banco.api.items.impl.ItemsAdderBancoItem;
 import ovh.mythmc.banco.api.items.impl.MythicMobsBancoItem;
 import ovh.mythmc.banco.api.items.impl.NexoBancoItem;
@@ -42,7 +43,8 @@ import ovh.mythmc.banco.api.items.impl.OraxenBancoItem;
     @PolymorphicTypes.Type(type = OraxenBancoItem.class, alias = "oraxen"),
     @PolymorphicTypes.Type(type = MythicMobsBancoItem.class, alias = "mythicmobs"),
     @PolymorphicTypes.Type(type = NovaBancoItem.class, alias = "nova"),
-    @PolymorphicTypes.Type(type = NexoBancoItem.class, alias = "nexo")
+    @PolymorphicTypes.Type(type = NexoBancoItem.class, alias = "nexo"),
+    @PolymorphicTypes.Type(type = CraftEngineBancoItem.class, alias = "craftengine")
 })
 public interface BancoItem {
 

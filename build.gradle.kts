@@ -20,6 +20,7 @@ allprojects {
         maven("https://repo.papermc.io/repository/maven-public/") { name = "paper-repo" }
         maven("https://repo.codemc.org/repository/maven-public") { name = "codemc-repo" }
         maven("https://repo.faststats.dev/releases") { name = "faststatsReleases" }
+        maven("https://repo.momirealms.net/releases/")
     }
 }
 

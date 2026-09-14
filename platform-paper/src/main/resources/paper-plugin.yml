@@ -58,6 +58,10 @@ dependencies:
       load: OMIT
       required: false
       join-classpath: true
+    CraftEngine:
+      load: OMIT
+      required: false
+      join-classpath: true
 
 permissions:
   # Basic nodes

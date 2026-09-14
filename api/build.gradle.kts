@@ -29,6 +29,10 @@ dependencies {
     }
     
     compileOnly("org.postgresql:postgresql:42.7.9")
+
+    // CraftEngine API
+    compileOnly("net.momirealms:craft-engine-core:26.8")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.8")
 }
 
 tasks.register<Jar>("javadocJar") {
