@@ -12,7 +12,7 @@ public class DialogsConfig {
     private BalanceTopMenu balanceTop = new BalanceTopMenu(
         "ʙᴀɴᴄᴏ", 
         "Displays the players with the highest total balance based on their items.", 
-        "<yellow><bold>#<position></bold></yellow> <green><player_name></green> <gray>-</gray> <green><balance></green>"
+        "<yellow><bold>#<position></bold></yellow> <white><head></white> <green><player_name></green> <gray>-</gray> <green><balance></green>"
     );
 
     private TransactionHistoryMenu transactionHistory = new TransactionHistoryMenu(
