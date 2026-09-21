@@ -72,12 +72,12 @@ subprojects {
 
         // Compile / implementation (from root pom)
         implementation("org.bstats:bstats-bukkit:3.0.2")
-        implementation("dev.faststats.metrics:bukkit:0.25.1")
+        implementation("dev.faststats.metrics:bukkit:0.30.1")
         implementation("ovh.mythmc:gestalt-loader:0.3.2")
         implementation("com.j256.ormlite:ormlite-core:6.1")
         implementation("com.j256.ormlite:ormlite-jdbc:6.1")
-        implementation("org.incendo:cloud-paper:2.0.0-beta.16")
-        implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.16")
+        implementation("org.incendo:cloud-paper:2.0.1")
+        implementation("org.incendo:cloud-minecraft-extras:2.0.1")
     }
     
     tasks.withType<JavaCompile> {
